@@ -45,11 +45,28 @@ static int get_tok() {
             lastChar = getchar();
         } while (isdigit(lastChar) || lastChar == '.');
         if (numString.find(".") > -1) {
-            
+            intVal = strtol(NumStr.c_str(), 0, 10);
             return token_int;
         } else {
-
+            doubleVal = strtod(NumStr.c_str(), 0);
             return token_double;
         }
+    }
+
+    else if (lastChar == "#") {
+        do {
+            lastChar = getChar()
+        } while (lastChar != EOF && lastChar != "\n" && lastChar != "\r");
+        return get_tok();
+    }
+
+    if (lastChar == EOF) {
+        return token_eof
+    }
+
+    else {
+        int charVal = lastChar;
+        lastChar = getchar()
+        return charVal;
     }
 }
