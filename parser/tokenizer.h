@@ -17,6 +17,9 @@ enum TokenType {
     DOT,
     COLON,
     COMMA,
+    PLACEHOLDER,
+    NEWLINE,
+    EQUAL,
 
     // Keywords
     THIS,
@@ -26,11 +29,17 @@ enum TokenType {
     RETURN,
     PRINT,
     ENDOFFILE,
+    ELSE,
 
     // Tokens with data
     OPERATOR,
     NUMBER,
     IDENTIFIER
+};
+
+struct Token {
+    TokenType type;
+    std::variant<std::monostate, int, char, std::string> value;
 };
 
 class Tokenizer {
@@ -46,10 +55,6 @@ public:
 
     Token peek();
     Token next();
+    Token peekNext();
     Token advanceCurrent(); 
-};
-
-struct Token {
-    TokenType type;
-    std::variant<std::monostate, int, char, std::string> value;
 };

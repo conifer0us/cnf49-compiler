@@ -19,7 +19,17 @@ Token Tokenizer::next() {
         return tmp;
     }
 }
-    
+
+Token Tokenizer::peekNext() {
+    int prev = current;
+
+    Token val = advanceCurrent();
+
+    current = prev;
+
+    return val;
+}
+
 Token Tokenizer::advanceCurrent() {
     while (current < text.length() && std::isspace(text.at(current))) {
         current++;
@@ -41,6 +51,9 @@ Token Tokenizer::advanceCurrent() {
         case '&': current++; return Token{TokenType::AMPERSAND};
         case '.': current++; return Token{TokenType::DOT};
         case ',': current++; return Token{TokenType::COMMA};
+        case '_': current++; return Token{TokenType::PLACEHOLDER};
+        case '\n': current++; return Token{TokenType::NEWLINE};
+        case '=': current++; return Token{TokenType::EQUAL};
     
         case '+': current++; return Token{TokenType::OPERATOR, '+'};
         case '-': current++; return Token{TokenType::OPERATOR, '-'};
@@ -72,6 +85,7 @@ Token Tokenizer::advanceCurrent() {
                 else if (fragment == "return") return Token{TokenType::RETURN};
                 else if (fragment == "print") return Token{TokenType::PRINT};
                 else if (fragment == "this") return Token{TokenType::THIS};
+                else if (fragment == "else") return Token{TokenType::ELSE};
                 else return Token{TokenType::IDENTIFIER, fragment};
             } else {
                 throw "Unsupported character: " + text.at(current);
