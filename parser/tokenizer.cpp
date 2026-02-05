@@ -54,6 +54,8 @@ Token Tokenizer::advanceCurrent() {
         case '_': current++; return Token{TokenType::PLACEHOLDER};
         case '\n': current++; return Token{TokenType::NEWLINE};
         case '=': current++; return Token{TokenType::EQUAL};
+        case '[': current++; return Token{TokenType::LEFT_BRACKET};
+        case ']': current++; return Token{TokenType::RIGHT_BRACKET};
     
         case '+': current++; return Token{TokenType::OPERATOR, '+'};
         case '-': current++; return Token{TokenType::OPERATOR, '-'};
@@ -86,6 +88,11 @@ Token Tokenizer::advanceCurrent() {
                 else if (fragment == "print") return Token{TokenType::PRINT};
                 else if (fragment == "this") return Token{TokenType::THIS};
                 else if (fragment == "else") return Token{TokenType::ELSE};
+                else if (fragment == "class") return Token{TokenType::CLASS};
+                else if (fragment == "with") return Token{TokenType::WITH};
+                else if (fragment == "method") return Token{TokenType::METHOD};
+                else if (fragment == "fields") return Token{TokenType::FIELDS};
+                else if (fragment == "locals") return Token{TokenType::LOCALS};
                 else return Token{TokenType::IDENTIFIER, fragment};
             } else {
                 throw "Unsupported character: " + text.at(current);

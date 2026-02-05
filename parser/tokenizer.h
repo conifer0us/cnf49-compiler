@@ -20,6 +20,8 @@ enum TokenType {
     PLACEHOLDER,
     NEWLINE,
     EQUAL,
+    LEFT_BRACKET,
+    RIGHT_BRACKET,
 
     // Keywords
     THIS,
@@ -30,6 +32,11 @@ enum TokenType {
     PRINT,
     ENDOFFILE,
     ELSE,
+    CLASS,
+    METHOD,
+    WITH,
+    FIELDS,
+    LOCALS,
 
     // Tokens with data
     OPERATOR,
