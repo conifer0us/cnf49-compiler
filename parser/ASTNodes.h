@@ -5,6 +5,8 @@
 #include <vector>
 #include <iostream>
 
+#include "ir.h"
+
 struct ASTNode {
     virtual ~ASTNode() = default;
     virtual void print(int ind) const = 0;
@@ -42,7 +44,7 @@ struct ClassRef : Expression {
 
     void print(int ind) const override {
         indent(ind);
-        std::cout << classname << "\n";
+        std::cout << "ClassRef (" << classname << ")\n";
     }
 
     explicit ClassRef(std::string cname):

@@ -2,17 +2,34 @@
     "version": 8,
     "configurePresets": [
         {
-            "name": "gcc",
+            "name": "debug",
             "displayName": "GCC 15.2.0 x86_64-w64-mingw32 (ucrt64)",
             "description": "Using compilers: C = C:\\msys64\\ucrt64\\bin\\gcc.exe, CXX = C:\\msys64\\ucrt64\\bin\\g++.exe",
             "generator": "MinGW Makefiles",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "binaryDir": "${sourceDir}/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
                 "CMAKE_C_COMPILER": "C:/msys64/ucrt64/bin/gcc.exe",
                 "CMAKE_CXX_COMPILER": "C:/msys64/ucrt64/bin/g++.exe",
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug" 
+            }
+        },
+        {
+            "name": "release",
+            "displayName": "GCC 15.2.0 x86_64-w64-mingw32 (ucrt64)",
+            "description": "Using compilers: C = C:\\msys64\\ucrt64\\bin\\gcc.exe, CXX = C:\\msys64\\ucrt64\\bin\\g++.exe",
+            "generator": "MinGW Makefiles",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
+                "CMAKE_C_COMPILER": "C:/msys64/ucrt64/bin/gcc.exe",
+                "CMAKE_CXX_COMPILER": "C:/msys64/ucrt64/bin/g++.exe",
+                "CMAKE_BUILD_TYPE": "Release" 
             }
         }
+    ],
+    "buildPresets": [
+        {"name": "debug", "configurePreset": "debug"},
+        {"name": "release", "configurePreset": "release"}
     ]
 }

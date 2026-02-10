@@ -60,8 +60,11 @@ public:
     explicit Tokenizer(std::string t) :
         text(std::move(t)) {};
 
+    unsigned char curChar();
+    void failCurrentLine(std::string error_msg);
+
+    Token advanceCurrent(); 
     Token peek();
     Token next();
     Token peekNext();
-    Token advanceCurrent(); 
 };

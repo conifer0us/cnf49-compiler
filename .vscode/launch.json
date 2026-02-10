@@ -3,5 +3,41 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": []
+
+    "inputs": [
+        {
+            "id": "compilerOpt",
+            "type": "pickString",
+            "description": "Select compiler options",
+            "options": [
+                "-help",
+                "-print-AST",
+                "-noSSA",
+                "-noopt",
+                ""
+            ],
+            "default": ""
+        },
+        {
+            "id": "inputFile",
+            "type": "promptString",
+            "description": "Input source file",
+            "default": "sample.prg"
+        }
+    ],
+
+    "configurations": [
+        {
+            "name": "Debug Compiler",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}",
+            "args": [
+                "${input:compilerOpt}",
+                "${input:inputFile}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+        }
+    ]
 }

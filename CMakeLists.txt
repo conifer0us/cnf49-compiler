@@ -5,8 +5,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(${PROJECT_SOURCE_DIR}/parser)
+include_directories(${PROJECT_SOURCE_DIR}/IR)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/parser)
+add_subdirectory(${PROJECT_SOURCE_DIR}/IR)
 
 add_executable(comp comp.cpp)
 target_link_libraries(comp PRIVATE parserlib)
+target_link_libraries(comp PRIVATE irlib)
