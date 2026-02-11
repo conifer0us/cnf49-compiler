@@ -8,7 +8,7 @@
 #include <map>
 
 struct Value {
-    virtual ~Value() = default;
+    virtual ~Value();
     virtual void outputIR() const;
 };
 
@@ -92,7 +92,7 @@ struct Phi : IROp {
     void outputIR() const override;
     
     Phi(Local d, std::vector<std::pair<std::string, Value>> in): 
-        dest(std::move(d)), incoming(std::move(in)) {}
+        dest(d), incoming(std::move(in)) {}
 };
 
 struct Alloc : IROp {
@@ -102,7 +102,7 @@ struct Alloc : IROp {
     void outputIR() const override;
     
     Alloc(Local d, int n): 
-        dest(std::move(d)), numSlots(n) {}
+        dest(d), numSlots(n) {}
 };
 
 struct Print : IROp {
@@ -111,7 +111,7 @@ struct Print : IROp {
     void outputIR() const override;
     
     explicit Print(Value v): 
-        val(std::move(v)) {}
+        val(v) {}
 };
 
 struct GetElt : IROp {
@@ -122,7 +122,7 @@ struct GetElt : IROp {
     void outputIR() const override;
     
     GetElt(Local d, Value a, Value i): 
-        dest(std::move(d)), array(std::move(a)), index(std::move(i)) {}
+        dest(d), array(a), index(i) {}
 };
 
 struct SetElt : IROp {
@@ -133,7 +133,7 @@ struct SetElt : IROp {
     void outputIR() const override;
     
     SetElt(Value a, Value i, Value v): 
-           array(std::move(a)), index(std::move(i)), val(std::move(v)) {}
+           array(a), index(i), val(v) {}
 };
 
 struct Load : IROp {
@@ -143,7 +143,7 @@ struct Load : IROp {
     void outputIR() const override;
     
     Load(Local d, Value addy): 
-        dest(std::move(d)), addr(std::move(addy)) {}
+        dest(d), addr(addy) {}
 };
 
 struct Store : IROp {
@@ -153,39 +153,41 @@ struct Store : IROp {
     void outputIR() const override;
     
     Store(Value addy, Value v): 
-        addr(std::move(addy)), val(std::move(v)) {}
+        addr(addy), val(v) {}
 };
 
-struct ControlTransfer {
-    virtual ~ControlTransfer() = default;
+// forward declare bb so that conditionals can use it
+struct BasicBlock;
 
+struct ControlTransfer {
+    virtual ~ControlTransfer();
     virtual void outputIR() const;
-    virtual std::set<std::string> successors() const = 0;
+    virtual std::set<BasicBlock*> successors() const = 0;
 };
 
 struct Jump : ControlTransfer {
-    std::string target;
+    BasicBlock *target;
 
-    explicit Jump(std::string t) : target(std::move(t)) {}
+    explicit Jump(BasicBlock *t) : target(t) {}
 
     void outputIR() const override;
     
-    std::set<std::string> successors() const override {
+    std::set<BasicBlock *> successors() const override {
         return {target};
     }
 };
 
 struct Conditional : ControlTransfer {
     Value condition;
-    std::string trueTarget;
-    std::string falseTarget;
+    BasicBlock *trueTarget;
+    BasicBlock *falseTarget;
 
-    Conditional(Value cond, std::string t, std::string f): 
-        condition(std::move(cond)), trueTarget(std::move(t)), falseTarget(std::move(f)) {}
+    Conditional(Value cond, BasicBlock *t, BasicBlock *f): 
+        condition(cond), trueTarget(t), falseTarget(f) {}
 
     void outputIR() const override;
     
-    std::set<std::string> successors() const override {
+    std::set<BasicBlock *> successors() const override {
         return {trueTarget, falseTarget};
     }
 };
@@ -193,13 +195,26 @@ struct Conditional : ControlTransfer {
 struct Return : ControlTransfer {
     Value val;
 
+    std::set<BasicBlock *> successors() const override {
+        return {};
+    }
+
     void outputIR() const override;
 
     explicit Return(Value v): 
-        val(std::move(v)) {}
+        val(v) {}
 };
 
-struct HangingBlock : ControlTransfer {};
+struct HangingBlock : ControlTransfer {
+    std::set<BasicBlock *> successors() const override {
+        return {};
+    }
+
+    void outputIR() const override;
+
+    virtual ~HangingBlock();
+    HangingBlock() {}
+};
 
 enum class FailReason {
     NotAPointer,
@@ -211,7 +226,7 @@ enum class FailReason {
 struct Fail : ControlTransfer {
     FailReason reason;
 
-    std::set<std::string> successors() const override {
+    std::set<BasicBlock *> successors() const override {
         return {};
     }
 
@@ -219,6 +234,23 @@ struct Fail : ControlTransfer {
 
     explicit Fail(FailReason r): 
         reason(r) {}
+};
+
+struct BasicBlock {
+    std::vector<std::unique_ptr<IROp>> instructions;
+    std::unique_ptr<ControlTransfer> blockTransfer;
+    std::vector<BasicBlock *> nextBlocks;
+    std::string label;
+
+    ~BasicBlock() = default;
+
+    void outputIR() const;
+    
+    BasicBlock(std::string lbl): label(std::move(lbl)) {
+            // Basic Block has a hanging end while instantiating
+            // Code with proper control flow will replace all instances with valid jumps
+            blockTransfer = std::make_unique<HangingBlock>();
+        } 
 };
 
 // In IR, global method table and field table labeled "vtableCLASSNAME" and "ftableCLASSNAME"
@@ -242,25 +274,6 @@ struct ClassMetadata {
     ~ClassMetadata() = default;
 };
 
-struct BasicBlock {
-    std::vector<std::unique_ptr<IROp>> instructions;
-    std::unique_ptr<ControlTransfer> blockTransfer;
-    std::vector<BasicBlock *> nextBlocks;
-    std::string label;
-
-    ~BasicBlock() = default;
-
-    void outputIR() const;
-    
-    BasicBlock(std::string lbl): label(std::move(lbl)) {
-            // Basic Block has a hanging end while instantiating
-            // Code with proper control flow will replace all instances with valid jumps
-            blockTransfer = std::make_unique<HangingBlock>();
-            instructions = {};
-            nextBlocks = {};
-        } 
-};
-
 class MethodIR {
     std::string name;
     BasicBlock* startBlock;
@@ -280,7 +293,7 @@ public:
             bname = std::format("%s%d", name, lastblknum);
 
         auto newBlock = std::make_unique<BasicBlock>(bname);
-        blocks.push_back(newBlock);
+        blocks.push_back(std::move(newBlock));
         return newBlock.get();
     }
 
@@ -299,14 +312,14 @@ public:
 struct CFG {
     std::vector<std::string> classfields;
     std::vector<std::string> classmethods;
-    std::map<std::string, ClassMetadata> classinfo;
-    std::map<std::string, MethodIR> methodinfo;
+    std::map<std::string, std::unique_ptr<ClassMetadata>> classinfo;
+    std::map<std::string, std::unique_ptr<MethodIR>> methodinfo;
 
     void outputIR() const;
 
     CFG (std::vector<std::string> allfields, std::vector<std::string> allmethods,
-            std::map<std::string, ClassMetadata> classdata,
-            std::map<std::string, MethodIR> methodIR):
+            std::map<std::string, std::unique_ptr<ClassMetadata>> classdata,
+            std::map<std::string, std::unique_ptr<MethodIR>> methodIR):
         classfields(std::move(allfields)), 
         classmethods(std::move(allmethods)), 
         classinfo(std::move(classdata)),

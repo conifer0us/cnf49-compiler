@@ -154,13 +154,13 @@ void Store::outputIR() const {
 }
 
 void Jump::outputIR() const {
-    std::cout << "jump " << target;
+    std::cout << "jump " << target->label;
 }
 
 void Conditional::outputIR() const {
     std::cout << "if ";
     condition.outputIR();
-    std::cout << " then " << trueTarget << " else " << falseTarget;
+    std::cout << " then " << trueTarget->label << " else " << falseTarget->label;
 }
 
 void Return::outputIR() const {
@@ -169,8 +169,11 @@ void Return::outputIR() const {
 }
 
 void Fail::outputIR() const {
-    std::cout << "Program threw exception: ";
+    std::cout << "fail ";
     switch (reason) {
+        case FailReason::NotANumber:
+            std::cout << "NotANumber";
+            break;
         case FailReason::NotAPointer:
             std::cout << "NotAPointer";
             break;
@@ -184,7 +187,6 @@ void Fail::outputIR() const {
 }
 
 void ClassMetadata::outputIR(const std::vector<std::string>& methods, const std::vector<std::string>& fields) const {
-    std::cout << "@";
     VTABLE(name).outputIR();
     std::cout << ": { ";
     
@@ -195,7 +197,6 @@ void ClassMetadata::outputIR(const std::vector<std::string>& methods, const std:
     
     std::cout << " }\n";
 
-    std::cout << "@";
     FTABLE(name).outputIR();
     std::cout << ": { ";
     for (size_t i = 0; i < ftable.size(); ++i) {
@@ -231,12 +232,30 @@ void CFG::outputIR() const {
     std::cout << "data:\n";
 
     for (const auto& [_, meta] : classinfo) {
-        meta.outputIR(classmethods, classfields);
+        meta->outputIR(classmethods, classfields);
     }
 
     std::cout << "\ncode:\n\n";
 
     for (const auto& [_, method] : methodinfo) {
-        method.outputIR();
+        method->outputIR();
     }
+}
+
+// Add these to prevent linker errors!
+// lesson learned to write in cpp files instead of headers next time
+Value::~Value() = default;
+HangingBlock::~HangingBlock() = default;
+ControlTransfer::~ControlTransfer() = default;
+
+void Value::outputIR() const {
+    return;
+}
+
+void ControlTransfer::outputIR() const {
+    return;
+}
+
+void HangingBlock::outputIR() const {
+    return;
 }

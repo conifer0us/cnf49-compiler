@@ -36,17 +36,17 @@ int main(int argc, char **argv) {
     Tokenizer tok = Tokenizer(sourcestring);
     Parser parser = Parser(tok);
 
-    ProgramPtr AST = parser.parseProgram();
+    auto AST = parser.parseProgram();
 
     if (strcmp(argv[1], "-printAST")) {
         AST->print(0);
         return 0;
     }
 
-    CFG prgIR = AST->convertToIR();
+    auto prgIR = AST->convertToIR();
 
     if (strcmp(argv[1], "-noSSA")) {
-        prgIR.outputIR();
+        prgIR->outputIR();
         return 0;
     }
 

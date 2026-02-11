@@ -4,13 +4,14 @@
 #include <string>
 #include <vector>
 #include <iostream>
-
 #include "ir.h"
-#include "irbuilder.h"
+
+// forward declare IRBuilder because I didn't design this with a pattern like I clearly should have
+struct IRBuilder;
 
 struct ASTNode {
-    virtual ~ASTNode() = default;
-    virtual void print(int ind) const = 0;
+    virtual ~ASTNode();
+    virtual void print(int ind) const;
 };
 
 inline void indent(int n) {
@@ -18,7 +19,8 @@ inline void indent(int n) {
 }
 
 struct Expression : ASTNode {
-    virtual Value convertToIR(IRBuilder& builder, Local* out) const = 0;
+    virtual ~Expression();
+    virtual Value convertToIR(IRBuilder& builder, Local* out) const;
 };
 
 using ExprPtr = std::unique_ptr<Expression>;
@@ -145,7 +147,8 @@ struct MethodCall : Expression {
 };
 
 struct Statement : ASTNode {
-    virtual void convertToIR(IRBuilder& builder) const = 0;
+    virtual ~Statement();
+    virtual void convertToIR(IRBuilder& builder) const;
 };
 
 using StmtPtr = std::unique_ptr<Statement>;
@@ -166,7 +169,7 @@ struct AssignStatement : Statement {
         value->print(ind + 4);
     }
 
-    void convertToIR(IRBuilder& builder) const = 0;
+    void convertToIR(IRBuilder& builder) const override;
     
     AssignStatement(std::string name, ExprPtr value): 
         name(std::move(name)), value(std::move(value)) {}
@@ -184,7 +187,7 @@ struct DiscardStatement : Statement {
         expr->print(ind + 4);
     }
 
-    void convertToIR(IRBuilder& builder) const = 0;
+    void convertToIR(IRBuilder& builder) const override;
     
     explicit DiscardStatement(ExprPtr expr): 
         expr(std::move(expr)) {}
@@ -211,7 +214,7 @@ struct FieldAssignStatement : Statement {
         value->print(ind + 4);
     }
 
-    void convertToIR(IRBuilder& builder) const = 0;
+    void convertToIR(IRBuilder& builder) const override;
     
     FieldAssignStatement(ExprPtr object, std::string field, ExprPtr value): 
         object(std::move(object)), field(std::move(field)), value(std::move(value)) {}
@@ -243,7 +246,7 @@ struct IfStatement : Statement {
         }
     }
 
-    void convertToIR(IRBuilder& builder) const = 0;
+    void convertToIR(IRBuilder& builder) const override;
     
     IfStatement(ExprPtr condition, std::vector<StmtPtr> thenBranch, std::vector<StmtPtr> elseBranch): 
         condition(std::move(condition)), thenBranch(std::move(thenBranch)), elseBranch(std::move(elseBranch)) {}
@@ -267,7 +270,7 @@ struct IfOnlyStatement : Statement {
             stmt->print(ind + 4);
     }
 
-    void convertToIR(IRBuilder& builder) const = 0;
+    void convertToIR(IRBuilder& builder) const override;
     
     IfOnlyStatement(ExprPtr condition, std::vector<StmtPtr> body): 
         condition(std::move(condition)), body(std::move(body)) {}
@@ -291,7 +294,7 @@ struct WhileStatement : Statement {
             stmt->print(ind + 4);
     }
 
-    void convertToIR(IRBuilder& builder) const = 0;
+    void convertToIR(IRBuilder& builder) const override;
     
     WhileStatement(ExprPtr condition, std::vector<StmtPtr> body): 
         condition(std::move(condition)), body(std::move(body)) {}
@@ -309,7 +312,7 @@ struct ReturnStatement : Statement {
         value->print(ind + 4);
     }
 
-    void convertToIR(IRBuilder& builder) const = 0;
+    void convertToIR(IRBuilder& builder) const override;
     
     explicit ReturnStatement(ExprPtr value): 
         value(std::move(value)) {}
@@ -327,7 +330,7 @@ struct PrintStatement : Statement {
         value->print(ind + 4);
     }
 
-    void convertToIR(IRBuilder& builder) const = 0;
+    void convertToIR(IRBuilder& builder) const override;
     
     explicit PrintStatement(ExprPtr value): 
         value(std::move(value)) {}
@@ -342,7 +345,7 @@ struct Method : ASTNode {
     Method(std::string nm, std::vector<VarPtr> arg, std::vector<VarPtr> lcls, std::vector<StmtPtr> bdy): 
         name(std::move(nm)), args(std::move(arg)), locals(std::move(lcls)), body(std::move(bdy)) {}
 
-    MethodIR convertToIR(std::string classname, std::map<std::string, ClassMetadata>& cls, std::vector<std::string>& mem, std::vector<std::string>& mthd) const;
+    std::unique_ptr<MethodIR> convertToIR(std::string classname, std::map<std::string, std::unique_ptr<ClassMetadata>>& cls, std::vector<std::string>& mem, std::vector<std::string>& mthd) const;
 
     void print(int ind) const override {
         indent(ind);
@@ -408,7 +411,7 @@ struct Program : ASTNode {
     Program(MethodPtr mainmethod, std::vector<ClassPtr> classlist)
         : main(std::move(mainmethod)), classes(std::move(classlist)) {}
 
-    CFG convertToIR() const;
+    std::unique_ptr<CFG> convertToIR() const;
 
     void print(int ind) const override {
         indent(ind);

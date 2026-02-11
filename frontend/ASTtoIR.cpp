@@ -1,4 +1,7 @@
 #include "ASTNodes.h"
+#include "irbuilder.h"
+
+#include <format>
 
 Value ThisExpr::convertToIR(IRBuilder& builder, Local *out) const {
     auto newLocal = Local("this", 0);
@@ -43,7 +46,6 @@ Value ClassRef::convertToIR(IRBuilder& builder, Local *out) const {
 
     // 2 already factored into object size so take as is
     int memspace = builder.getClassSize(classname);
-
     auto allocInst = std::make_unique<Alloc>(var, memspace);
 
     builder.addInstruction(std::move(allocInst));
@@ -55,7 +57,7 @@ Value ClassRef::convertToIR(IRBuilder& builder, Local *out) const {
     auto ftblAddr = std::make_unique<BinInst>(ftblVar, Oper::Add, var, Const(8));
     builder.addInstruction(std::move(ftblAddr));
 
-    auto storeFtbl = std::make_unique<Store>(ftblAddr, ftblVar);
+    auto storeFtbl = std::make_unique<Store>(ftblVar, ftable);
     builder.addInstruction(std::move(storeFtbl));
 
     return var;
@@ -109,30 +111,30 @@ Value FieldRead::convertToIR(IRBuilder& builder, Local* out) const {
 
     // Offset 8 is position of the field table
     auto fmapAddr = builder.getNextTemp();
-    builder.addInstruction(std::make_unique<BinInst>(fmapAddr, Oper::Add, objVar, Const(8)));
+    builder.addInstruction(std::move(std::make_unique<BinInst>(fmapAddr, Oper::Add, objVar, Const(8))));
 
     auto fmap = builder.getNextTemp();
-    builder.addInstruction(std::make_unique<Load>(fmap, fmapAddr));
+    builder.addInstruction(std::move(std::make_unique<Load>(fmap, fmapAddr)));
 
     auto fieldOffset = builder.getFieldOffset(fieldname);
     auto fieldEntry = builder.getNextTemp();
-    builder.addInstruction(std::make_unique<GetElt>(fieldEntry, fmap, Const(fieldOffset)));
+    builder.addInstruction(std::move(std::make_unique<GetElt>(fieldEntry, fmap, Const(fieldOffset))));
 
     auto dneBlock = builder.createBlock();
     builder.setCurrentBlock(dneBlock);
-    builder.terminate(std::make_unique<Fail>(FailReason::NoSuchField));
+    builder.terminate(std::move(std::make_unique<Fail>(FailReason::NoSuchField)));
 
     auto existsBlock = builder.createBlock();
-    builder.terminate(std::make_unique<Conditional>(fieldEntry, existsBlock, dneBlock));
+    builder.terminate(std::move(std::make_unique<Conditional>(fieldEntry, existsBlock, dneBlock)));
 
     builder.setCurrentBlock(existsBlock);
 
     auto fieldAddr = builder.getNextTemp();
-    builder.addInstruction(std::make_unique<BinInst>(
+    builder.addInstruction(std::move(std::make_unique<BinInst>(
         fieldAddr, Oper::Add, objVar, fieldEntry) // jump to offset (fieldEntry) from table
-    );
+    ));
 
-    builder.addInstruction(std::make_unique<Load>(target, fieldAddr));
+    builder.addInstruction(std::move(std::make_unique<Load>(target, fieldAddr)));
     return target;
 }
 
@@ -142,23 +144,23 @@ Value MethodCall::convertToIR(IRBuilder& builder, Local* out) const {
 
     // Get vtable from address of pointer
     auto vtableAddr = builder.getNextTemp();
-    builder.addInstruction(std::make_unique<BinInst>(vtableAddr, Oper::Add, objVar, Const(0)));
+    builder.addInstruction(std::move(std::make_unique<BinInst>(vtableAddr, Oper::Add, objVar, Const(0))));
 
     auto vtable = builder.getNextTemp();
-    builder.addInstruction(std::make_unique<Load>(vtable, vtableAddr));
+    builder.addInstruction(std::move(std::make_unique<Load>(vtable, vtableAddr)));
 
     auto methodIndex = builder.getMethodOffset(methodname);
     auto funcEntry = builder.getNextTemp();
-    builder.addInstruction(std::make_unique<GetElt>(funcEntry, vtable, Const(methodIndex)));
+    builder.addInstruction(std::move(std::make_unique<GetElt>(funcEntry, vtable, Const(methodIndex))));
 
     auto dneBlock = builder.createBlock();
 
     auto existsBlock = builder.createBlock();
 
-    builder.terminate(std::make_unique<Conditional>(funcEntry, existsBlock, dneBlock));
+    builder.terminate(std::move(std::make_unique<Conditional>(funcEntry, existsBlock, dneBlock)));
 
     builder.setCurrentBlock(dneBlock);
-    builder.terminate(std::make_unique<Fail>(FailReason::NoSuchMethod));
+    builder.terminate(std::move(std::make_unique<Fail>(FailReason::NoSuchMethod)));
     
     builder.setCurrentBlock(existsBlock);
 
@@ -167,7 +169,7 @@ Value MethodCall::convertToIR(IRBuilder& builder, Local* out) const {
         argVars.push_back(arg->convertToIR(builder, nullptr));
     }
 
-    builder.addInstruction(std::make_unique<Call>(retVar, funcEntry, objVar, argVars));
+    builder.addInstruction(std::move(std::make_unique<Call>(retVar, funcEntry, objVar, argVars)));
 
     return retVar;
 }
@@ -187,29 +189,29 @@ void FieldAssignStatement::convertToIR(IRBuilder& builder) const {
 
     // Use ftable to find the field being assigned to for the given object (ftable is +8)
     auto fmapAddr = builder.getNextTemp();
-    builder.addInstruction(std::make_unique<BinInst>(fmapAddr, Oper::Add, objVar, Const(8)));
+    builder.addInstruction(std::move(std::make_unique<BinInst>(fmapAddr, Oper::Add, objVar, Const(8))));
 
     auto fmap = builder.getNextTemp();
-    builder.addInstruction(std::make_unique<Load>(fmap, fmapAddr));
+    builder.addInstruction(std::move(std::make_unique<Load>(fmap, fmapAddr)));
 
     // field offset from in ftable
     auto fieldOffset = builder.getFieldOffset(field);
     auto fieldEntry = builder.getNextTemp();
-    builder.addInstruction(std::make_unique<GetElt>(fieldEntry, fmap, Const(fieldOffset)));
+    builder.addInstruction(std::move(std::make_unique<GetElt>(fieldEntry, fmap, Const(fieldOffset))));
 
     auto existsBlock = builder.createBlock();
     auto dneBlock = builder.createBlock();
-    builder.terminate(std::make_unique<Conditional>(fieldEntry, existsBlock, dneBlock));    
+    builder.terminate(std::move(std::make_unique<Conditional>(fieldEntry, existsBlock, dneBlock)));    
     
     builder.setCurrentBlock(dneBlock);
-    builder.terminate(std::make_unique<Fail>(FailReason::NoSuchField));
+    builder.terminate(std::move(std::make_unique<Fail>(FailReason::NoSuchField)));
 
     builder.setCurrentBlock(existsBlock);
 
     auto fieldAddr = builder.getNextTemp();
-    builder.addInstruction(std::make_unique<BinInst>(fieldAddr, Oper::Add, objVar, fieldEntry));
+    builder.addInstruction(std::move(std::make_unique<BinInst>(fieldAddr, Oper::Add, objVar, fieldEntry)));
 
-    builder.addInstruction(std::make_unique<Store>(fieldAddr, targetVal));
+    builder.addInstruction(std::move(std::make_unique<Store>(fieldAddr, targetVal)));
 }
 
 void IfStatement::convertToIR(IRBuilder& builder) const {
@@ -219,18 +221,18 @@ void IfStatement::convertToIR(IRBuilder& builder) const {
     auto elseBlock = builder.createBlock();
     auto mergeBlock = builder.createBlock();
     
-    builder.terminate(std::make_unique<Conditional>(condVar, thenBlock, elseBlock));
+    builder.terminate(std::move(std::make_unique<Conditional>(condVar, thenBlock, elseBlock)));
     builder.setCurrentBlock(thenBlock);
     
     auto terminated = builder.processBlock(thenBranch);
     if (!terminated)
-        builder.terminate(std::make_unique<Jump>(mergeBlock));
+        builder.terminate(std::move(std::make_unique<Jump>(mergeBlock)));
     
     builder.setCurrentBlock(elseBlock);
     
     terminated = builder.processBlock(elseBranch);
     if (!terminated)
-        builder.terminate(std::make_unique<Jump>(mergeBlock));
+        builder.terminate(std::move(std::make_unique<Jump>(mergeBlock)));
     
     builder.setCurrentBlock(mergeBlock);
 }
@@ -241,12 +243,12 @@ void IfOnlyStatement::convertToIR(IRBuilder& builder) const {
     auto bodyBlock = builder.createBlock();
     auto mergeBlock = builder.createBlock();
     
-    builder.terminate(std::make_unique<Conditional>(condVar, bodyBlock, mergeBlock));
+    builder.terminate(std::move(std::make_unique<Conditional>(condVar, bodyBlock, mergeBlock)));
     builder.setCurrentBlock(bodyBlock);
     
     auto terminated = builder.processBlock(body);
     if (!terminated)
-        builder.terminate(std::make_unique<Jump>(mergeBlock));
+        builder.terminate(std::move(std::make_unique<Jump>(mergeBlock)));
     
     builder.setCurrentBlock(mergeBlock);
 }
@@ -254,7 +256,7 @@ void IfOnlyStatement::convertToIR(IRBuilder& builder) const {
 void WhileStatement::convertToIR(IRBuilder& builder) const {
     // separate block to evaluate condition to make it easier to jump back to later
     auto condBlock = builder.createBlock();
-    builder.terminate(std::make_unique<Jump>(condBlock));
+    builder.terminate(std::move(std::make_unique<Jump>(condBlock)));
     
     builder.setCurrentBlock(condBlock);
 
@@ -262,32 +264,38 @@ void WhileStatement::convertToIR(IRBuilder& builder) const {
     auto bodyBlock = builder.createBlock();
     auto mergeBlock = builder.createBlock();
     
-    builder.terminate(std::make_unique<Conditional>(condVar, bodyBlock, mergeBlock));
+    builder.terminate(std::move(std::make_unique<Conditional>(condVar, bodyBlock, mergeBlock)));
     builder.setCurrentBlock(bodyBlock);
     
     auto terminated = builder.processBlock(body);
     if (!terminated)
-        builder.terminate(std::make_unique<Jump>(condBlock));
+        builder.terminate(std::move(std::make_unique<Jump>(condBlock)));
     
     builder.setCurrentBlock(mergeBlock);
 }
 
 void ReturnStatement::convertToIR(IRBuilder& builder) const {
     auto val = value->convertToIR(builder, nullptr);
-    builder.terminate(std::make_unique<Return>(val));
+    builder.terminate(std::move(std::make_unique<Return>(val)));
 }
 
 void PrintStatement::convertToIR(IRBuilder& builder) const {
     auto val = value->convertToIR(builder, nullptr);
-    builder.addInstruction(std::make_unique<Print>(val));
+    builder.addInstruction(std::move(std::make_unique<Print>(val)));
 }
 
-MethodIR Method::convertToIR(std::string classname, std::map<std::string, ClassMetadata>& cls, std::vector<std::string>& mem, std::vector<std::string>& mthd) const {
-    std::vector<std::string> lnames;
-    std::transform(locals.begin(), locals.end(), lnames.begin(), [](Var i){ return i.name; });
-    auto ret = MethodIR(classname + "_" + name, lnames);
+std::unique_ptr<MethodIR> Method::convertToIR(std::string classname, 
+        std::map<std::string, std::unique_ptr<ClassMetadata>>& cls, 
+        std::vector<std::string>& mem, 
+        std::vector<std::string>& mthd) const {
 
-    auto builder = IRBuilder(ret, cls, mem, mthd);
+    std::vector<std::string> lnames;
+
+    for (auto const& local : locals)
+        lnames.push_back(local->name);
+    
+    auto ret = std::make_unique<MethodIR>(classname + "-" + name, lnames);
+    auto builder = IRBuilder(*ret, cls, mem, mthd);
 
     for (auto &name : lnames) {
         auto varVersion = builder.getSSAVar(name, true);
@@ -303,15 +311,15 @@ MethodIR Method::convertToIR(std::string classname, std::map<std::string, ClassM
     return ret;
 };
 
-CFG Program::convertToIR() const {
+std::unique_ptr<CFG> Program::convertToIR() const {
     std::set<std::string> methodset;
     std::vector<std::string> methods;
 
     std::set<std::string> fieldset;
     std::vector<std::string> fields;
 
-    std::map<std::string, ClassMetadata> classinfo;
-    std::map<std::string, MethodIR> methodinfo;
+    std::map<std::string, std::unique_ptr<ClassMetadata>> classinfo;
+    std::map<std::string, std::unique_ptr<MethodIR>> methodinfo;
 
     // Collect global field + method names
     for (const auto& cls : classes) {
@@ -329,7 +337,7 @@ CFG Program::convertToIR() const {
             }
         }
 
-        classinfo.insert_or_assign(cls->name, ClassMetadata(cls->name));
+        classinfo.insert_or_assign(cls->name, std::move(std::make_unique<ClassMetadata>((cls->name))));
     }
 
     // for each class build ftable for every field name
@@ -340,14 +348,14 @@ CFG Program::convertToIR() const {
         for (const auto& fieldName : fields) {
             for (const auto& field : cls->fields) {
                 if (field->name == fieldName) {
-                    classinfo[cls->name].ftable.push_back(offset++);
+                    classinfo[cls->name]->ftable.push_back(offset++);
                 }
 
-                classinfo[cls->name].ftable.push_back(0);
+                classinfo[cls->name]->ftable.push_back(0);
             }
         }
 
-        classinfo[cls->name].objsize = offset;
+        classinfo[cls->name]->objsize = offset;
     }
 
     // for each class build ftable for every field name
@@ -357,22 +365,23 @@ CFG Program::convertToIR() const {
         for (const auto& methodName : methods) {
             for (const auto& method : cls->methods) {
                 if (method->name == methodName) {
-                    classinfo[cls->name].vtable.push_back(methodName);
+                    classinfo[cls->name]->vtable.push_back(methodName);
                 }
             }
 
-            classinfo[cls->name].vtable.push_back("0");
+            classinfo[cls->name]->vtable.push_back("0");
             vtableindex++;
         }
     }
 
     for (const auto& cls : classes) {
         for (const auto& method : cls->methods) {
-            MethodIR ir = method->convertToIR(cls->name, classinfo, fields, methods);
+            std::unique_ptr<MethodIR> ir = method->convertToIR(cls->name, classinfo, fields, methods);
 
-            methodinfo.insert_or_assign(cls->name + "::" + method->name, std::move(ir));
+            auto nm = format("%s%c%s", cls->name, '-', method->name);
+            methodinfo.insert_or_assign(nm, std::move(ir));
         }
     }
 
-    return CFG(fields, methods, classinfo, methodinfo);
+    return std::move(std::make_unique<CFG>(fields, methods, std::move(classinfo), std::move(methodinfo)));
 }

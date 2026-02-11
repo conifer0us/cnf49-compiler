@@ -274,7 +274,8 @@ ClassPtr Parser::parseClass() {
         if (tok.next().type != LEFT_PAREN)
             tok.failCurrentLine("Expected ( after method declaration");
 
-        std::vector<VarPtr> args = {std::make_unique<Var>("this")};
+        std::vector<VarPtr> args;
+        args.push_back(std::move(std::make_unique<Var>("this")));
 
         do {
             if (tok.next().type != IDENTIFIER) { 
