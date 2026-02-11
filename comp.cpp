@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
 
     if (strcmp(argv[1], "-help") == 0) {
         std::cout << helpstr;
-        printf("Provide one or no arguments. -help shows this menu.\n-printAST, -printCFG, -noSSA, and -noopt stop the compiler after the corresponding pass and print results.");
+        printf("Provide one or no arguments. -help shows this menu.\n-printAST, -noSSA, and -noopt stop the compiler after the corresponding pass and print results.");
         return 0;
     }
 

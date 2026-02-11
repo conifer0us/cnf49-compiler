@@ -15,7 +15,7 @@ ExprPtr Parser::parseExpr() {
             auto curtok = tok.peek().value;
             auto ch = std::get_if<std::string>(&curtok);
             if (ch)
-                return std::make_unique<Variable>(*ch);
+                return std::make_unique<Var>(*ch);
             else
                 tok.failCurrentLine("Parser failed parsing variable name variant (bad initialization)"); 
         } 
@@ -251,7 +251,7 @@ ClassPtr Parser::parseClass() {
             if (!fname)
                 tok.failCurrentLine("Parser failed parsing Field Name variant (bad initialization)");
 
-            fptr.push_back(std::make_unique<Variable>(*fname));
+            fptr.push_back(std::make_unique<Var>(*fname));
         } while(tok.next().type == COMMA);
 
         if (tok.peek().type != NEWLINE)
@@ -274,7 +274,7 @@ ClassPtr Parser::parseClass() {
         if (tok.next().type != LEFT_PAREN)
             tok.failCurrentLine("Expected ( after method declaration");
 
-        std::vector<VarPtr> args = {};
+        std::vector<VarPtr> args = {std::make_unique<Var>("this")};
 
         do {
             if (tok.next().type != IDENTIFIER) { 
@@ -289,7 +289,7 @@ ClassPtr Parser::parseClass() {
             if (!aname)
                 tok.failCurrentLine("Parser failed parsing Method Argument variant (bad initialization)");
 
-            args.push_back(std::make_unique<Variable>(*aname));
+            args.push_back(std::make_unique<Var>(*aname));
         } while(tok.next().type == COMMA);
 
         if (tok.peek().type != RIGHT_PAREN)
@@ -314,7 +314,7 @@ ClassPtr Parser::parseClass() {
                 if (!lname)
                     tok.failCurrentLine("Parser failed parsing Method Locals variant (bad initialization)");
 
-                locals.push_back(std::make_unique<Variable>(*lname));
+                locals.push_back(std::make_unique<Var>(*lname));
             } while(tok.next().type == COMMA);
         }
 
@@ -373,7 +373,7 @@ ProgramPtr Parser::parseProgram() {
         if (!lname)
             tok.failCurrentLine("Parser failed parsing Assignment variant (bad initialization)");
 
-        locals.push_back(std::make_unique<Variable>(*lname));
+        locals.push_back(std::make_unique<Var>(*lname));
     } while(tok.next().type == COMMA);
 
     if (tok.peek().type != COLON || tok.next().type != NEWLINE)

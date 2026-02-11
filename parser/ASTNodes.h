@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "ir.h"
+#include "irbuilder.h"
 
 struct ASTNode {
     virtual ~ASTNode() = default;
@@ -16,7 +17,9 @@ inline void indent(int n) {
     while (n--) std::cout << ' ';
 }
 
-struct Expression : ASTNode {};
+struct Expression : ASTNode {
+    virtual Value convertToIR(IRBuilder& builder, Local* out) const = 0;
+};
 
 using ExprPtr = std::unique_ptr<Expression>;
 
@@ -25,6 +28,8 @@ struct ThisExpr : Expression {
         indent(ind);
         std::cout << "this\n";
     }
+
+    Value convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
 };
 
 struct Constant : Expression {
@@ -34,6 +39,8 @@ struct Constant : Expression {
         indent(ind);
         std::cout << value << "\n";
     }
+        
+    Value convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
     
     explicit Constant(long val):
         value(val) {}
@@ -47,6 +54,8 @@ struct ClassRef : Expression {
         std::cout << "ClassRef (" << classname << ")\n";
     }
 
+    Value convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
+    
     explicit ClassRef(std::string cname):
         classname(std::move(cname)) {}
 };
@@ -66,6 +75,8 @@ struct Binop : Expression {
         rhs->print(ind + 2);
     }
 
+    Value convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
+    
     Binop(ExprPtr left, char oper, ExprPtr right):
         lhs(std::move(left)), rhs(std::move(right)), op(oper) {}
 };
@@ -83,11 +94,13 @@ struct FieldRead : Expression {
         std::cout << "to field" << fieldname << "\n";
     }
 
+    Value convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
+    
     FieldRead(ExprPtr b, std::string fname):
         base(std::move(b)), fieldname(std::move(fname)) {}
 };
 
-struct Variable : Expression {
+struct Var : Expression {
     const std::string name;
 
     void print(int ind) const override {
@@ -95,11 +108,13 @@ struct Variable : Expression {
         std::cout << name << "\n";
     }
 
-    explicit Variable(std::string n):
+    Value convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
+    
+    explicit Var(std::string n):
         name(std::move(n)) {};
 };
 
-using VarPtr = std::unique_ptr<Variable>;
+using VarPtr = std::unique_ptr<Var>;
 
 struct MethodCall : Expression {
     const ExprPtr base;
@@ -123,11 +138,15 @@ struct MethodCall : Expression {
         std::cout << "END ARGS\n";
     }
 
+    Value convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
+    
     MethodCall(ExprPtr b, std::string mname, std::vector<ExprPtr> arglist) :
         base(std::move(b)), methodname(std::move(mname)), args(std::move(arglist)) {}
 };
 
-struct Statement : ASTNode { };
+struct Statement : ASTNode {
+    virtual void convertToIR(IRBuilder& builder) const = 0;
+};
 
 using StmtPtr = std::unique_ptr<Statement>;
 
@@ -147,8 +166,10 @@ struct AssignStatement : Statement {
         value->print(ind + 4);
     }
 
-    AssignStatement(std::string name, ExprPtr value)
-        : name(std::move(name)), value(std::move(value)) {}
+    void convertToIR(IRBuilder& builder) const = 0;
+    
+    AssignStatement(std::string name, ExprPtr value): 
+        name(std::move(name)), value(std::move(value)) {}
 };
 
 struct DiscardStatement : Statement {
@@ -163,8 +184,10 @@ struct DiscardStatement : Statement {
         expr->print(ind + 4);
     }
 
-    explicit DiscardStatement(ExprPtr expr)
-        : expr(std::move(expr)) {}
+    void convertToIR(IRBuilder& builder) const = 0;
+    
+    explicit DiscardStatement(ExprPtr expr): 
+        expr(std::move(expr)) {}
 };
 
 struct FieldAssignStatement : Statement {
@@ -188,8 +211,10 @@ struct FieldAssignStatement : Statement {
         value->print(ind + 4);
     }
 
-    FieldAssignStatement(ExprPtr object, std::string field, ExprPtr value)
-        : object(std::move(object)), field(std::move(field)), value(std::move(value)) {}
+    void convertToIR(IRBuilder& builder) const = 0;
+    
+    FieldAssignStatement(ExprPtr object, std::string field, ExprPtr value): 
+        object(std::move(object)), field(std::move(field)), value(std::move(value)) {}
 };
 
 struct IfStatement : Statement {
@@ -218,10 +243,10 @@ struct IfStatement : Statement {
         }
     }
 
-    IfStatement(ExprPtr condition, std::vector<StmtPtr> thenBranch, std::vector<StmtPtr> elseBranch)
-        : condition(std::move(condition)),
-          thenBranch(std::move(thenBranch)),
-          elseBranch(std::move(elseBranch)) {}
+    void convertToIR(IRBuilder& builder) const = 0;
+    
+    IfStatement(ExprPtr condition, std::vector<StmtPtr> thenBranch, std::vector<StmtPtr> elseBranch): 
+        condition(std::move(condition)), thenBranch(std::move(thenBranch)), elseBranch(std::move(elseBranch)) {}
 };
 
 struct IfOnlyStatement : Statement {
@@ -242,8 +267,10 @@ struct IfOnlyStatement : Statement {
             stmt->print(ind + 4);
     }
 
-    IfOnlyStatement(ExprPtr condition, std::vector<StmtPtr> body)
-        : condition(std::move(condition)), body(std::move(body)) {}
+    void convertToIR(IRBuilder& builder) const = 0;
+    
+    IfOnlyStatement(ExprPtr condition, std::vector<StmtPtr> body): 
+        condition(std::move(condition)), body(std::move(body)) {}
 };
 
 struct WhileStatement : Statement {
@@ -264,8 +291,10 @@ struct WhileStatement : Statement {
             stmt->print(ind + 4);
     }
 
-    WhileStatement(ExprPtr condition, std::vector<StmtPtr> body)
-        : condition(std::move(condition)), body(std::move(body)) {}
+    void convertToIR(IRBuilder& builder) const = 0;
+    
+    WhileStatement(ExprPtr condition, std::vector<StmtPtr> body): 
+        condition(std::move(condition)), body(std::move(body)) {}
 };
 
 struct ReturnStatement : Statement {
@@ -280,8 +309,10 @@ struct ReturnStatement : Statement {
         value->print(ind + 4);
     }
 
-    explicit ReturnStatement(ExprPtr value)
-        : value(std::move(value)) {}
+    void convertToIR(IRBuilder& builder) const = 0;
+    
+    explicit ReturnStatement(ExprPtr value): 
+        value(std::move(value)) {}
 };
 
 struct PrintStatement : Statement {
@@ -296,8 +327,10 @@ struct PrintStatement : Statement {
         value->print(ind + 4);
     }
 
-    explicit PrintStatement(ExprPtr value)
-        : value(std::move(value)) {}
+    void convertToIR(IRBuilder& builder) const = 0;
+    
+    explicit PrintStatement(ExprPtr value): 
+        value(std::move(value)) {}
 };
 
 struct Method : ASTNode {
@@ -306,8 +339,10 @@ struct Method : ASTNode {
     std::vector<VarPtr> locals;
     std::vector<StmtPtr> body;
 
-    Method(std::string nm, std::vector<VarPtr> arg, std::vector<VarPtr> lcls, std::vector<StmtPtr> bdy)
-        : name(std::move(nm)), args(std::move(arg)), locals(std::move(lcls)), body(std::move(bdy)) {}
+    Method(std::string nm, std::vector<VarPtr> arg, std::vector<VarPtr> lcls, std::vector<StmtPtr> bdy): 
+        name(std::move(nm)), args(std::move(arg)), locals(std::move(lcls)), body(std::move(bdy)) {}
+
+    MethodIR convertToIR(std::string classname, std::map<std::string, ClassMetadata>& cls, std::vector<std::string>& mem, std::vector<std::string>& mthd) const;
 
     void print(int ind) const override {
         indent(ind);
@@ -341,8 +376,10 @@ struct Class : ASTNode {
     std::vector<VarPtr> fields;
     std::vector<MethodPtr> methods;
 
-    Class(std::string n, std::vector<VarPtr> f, std::vector<MethodPtr> m)
-        : name(std::move(n)), fields(std::move(f)), methods(std::move(m)) {}
+    Class(std::string n, std::vector<VarPtr> f, std::vector<MethodPtr> m): 
+        name(std::move(n)), fields(std::move(f)), methods(std::move(m)) {}
+
+    void convertToIR() const;
 
     void print(int ind) const override {
         indent(ind);
@@ -370,6 +407,8 @@ struct Program : ASTNode {
 
     Program(MethodPtr mainmethod, std::vector<ClassPtr> classlist)
         : main(std::move(mainmethod)), classes(std::move(classlist)) {}
+
+    CFG convertToIR() const;
 
     void print(int ind) const override {
         indent(ind);
