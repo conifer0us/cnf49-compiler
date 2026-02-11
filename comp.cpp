@@ -5,6 +5,7 @@
 #include "tokenizer.h"
 #include "parser.h"
 #include "ASTNodes.h"
+#include "ir.h"
 
 #define helpstr "Usage: <comp> {-help | -printAST | -noSSA | -noopt} sourcefile\n"
 
@@ -39,6 +40,13 @@ int main(int argc, char **argv) {
 
     if (strcmp(argv[1], "-printAST")) {
         AST->print(0);
+        return 0;
+    }
+
+    CFG prgIR = AST->convertToIR();
+
+    if (strcmp(argv[1], "-noSSA")) {
+        prgIR.outputIR();
         return 0;
     }
 
