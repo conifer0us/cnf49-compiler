@@ -190,17 +190,19 @@ void ClassMetadata::outputIR(const std::vector<std::string>& methods, const std:
     
     for (size_t i = 0; i < vtable.size(); ++i) {
         if (i) std::cout << ", ";
-        std::cout << "@" << methods[i];
+        std::cout << "@" << vtable[i];
     }
     
     std::cout << " }\n";
 
-    std::cout << "global array fields" << name << ": { ";
+    std::cout << "@";
+    FTABLE(name).outputIR();
+    std::cout << ": { ";
     for (size_t i = 0; i < ftable.size(); ++i) {
         if (i) std::cout << ", ";
-        std::cout << fields[i];
+        std::cout << ftable[i];
     }
-    std::cout << " }\n";
+    std::cout << " }\n\n";
 }
 
 void BasicBlock::outputIR() const {

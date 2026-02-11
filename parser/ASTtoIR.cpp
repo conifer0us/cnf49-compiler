@@ -340,12 +340,11 @@ CFG Program::convertToIR() const {
         for (const auto& fieldName : fields) {
             for (const auto& field : cls->fields) {
                 if (field->name == fieldName) {
-                    classinfo[cls->name].ftable[ftableindex] = offset;
-                    offset++;
+                    classinfo[cls->name].ftable.push_back(offset++);
                 }
-            }
 
-            ftableindex++;
+                classinfo[cls->name].ftable.push_back(0);
+            }
         }
 
         classinfo[cls->name].objsize = offset;
@@ -353,17 +352,16 @@ CFG Program::convertToIR() const {
 
     // for each class build ftable for every field name
     for (const auto& cls : classes) {
-        size_t offset = 0;
         int vtableindex = 0;
 
         for (const auto& methodName : methods) {
             for (const auto& method : cls->methods) {
                 if (method->name == methodName) {
-                    classinfo[cls->name].vtable[vtableindex] = offset;
-                    offset++;
+                    classinfo[cls->name].vtable.push_back(methodName);
                 }
             }
 
+            classinfo[cls->name].vtable.push_back("0");
             vtableindex++;
         }
     }

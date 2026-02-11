@@ -226,7 +226,7 @@ struct Fail : ControlTransfer {
 #define FTABLE(classname) Global("ftable" + classname)
 
 struct ClassMetadata {
-    std::vector<size_t> vtable;
+    std::vector<std::string> vtable;
     std::vector<size_t> ftable;
     std::string name;
     size_t objsize;
