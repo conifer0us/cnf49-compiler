@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
 
     if (strcmp(argv[1], "-help") == 0) {
         std::cout << helpstr;
-        printf("Provide one or no arguments. -help shows this menu.\n-printAST, -noSSA, and -noopt stop the compiler after the corresponding pass and print results.");
+        printf("Please provide one or no arguments. -help shows this menu.\n-printAST, -noSSA, and -noopt stop the compiler after the corresponding pass and print results.");
         return 0;
     }
 
@@ -41,6 +41,11 @@ int main(int argc, char **argv) {
     if (strcmp(argv[1], "-printAST") == 0) {
         AST->print(0);
         return 0;
+    }
+
+    if (strcmp(argv[1], "-noopt") == 0) {
+        auto prgIR = AST->convertToIR(false);
+        prgIR->outputIR();
     }
 
     auto prgIR = AST->convertToIR();

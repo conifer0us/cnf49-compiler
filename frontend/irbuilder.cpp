@@ -15,6 +15,54 @@ void IRBuilder::addInstruction(std::unique_ptr<IROp> op) {
     current->instructions.push_back(std::move(op));
 }
 
+void IRBuilder::tagCheck(ValPtr lcl, TagType tag) {
+    // PINHOLE OPTIMIZATION: AVOID TAG CHECKS IF WORKING WITH %THIS
+    if (pinhole && lcl->getString() == "this") {
+        return;
+    }
+
+    auto istagbranch = createBlock();
+    auto nottagbranch = createBlock();
+
+    auto tmp = std::make_shared<Local>(getNextTemp());
+    addInstruction(std::move(std::make_unique<BinInst>(tmp, Oper::BitAnd, lcl, std::make_shared<Const>(tag))));
+
+    if (tag)
+        terminate(std::move(std::make_unique<Conditional>(tmp, istagbranch, nottagbranch)));
+    else
+        terminate(std::move(std::make_unique<Conditional>(tmp, nottagbranch, istagbranch)));
+
+    setCurrentBlock(nottagbranch);
+    terminate(std::move(std::make_unique<Fail>(FailReason::NotANumber)));
+
+    setCurrentBlock(istagbranch);
+}
+
+ValPtr IRBuilder::tagVal(ValPtr val, TagType tag) {
+    // PINHOLE OPTIMIZATION: AVOID TAG CHECKS IF WORKING WITH %THIS
+    if (pinhole && val->getString() == "this") {
+        return val;
+    }
+
+    // increment SSA since variable is going to be updated by tag check
+    auto ret = std::make_shared<Local>(getSSAVar(val->getString(), true));
+    auto tmp = std::make_shared<Local>(getNextTemp()); 
+    addInstruction(std::move(std::make_unique<BinInst>(tmp, Oper::Mul, val, std::make_shared<Const>(2))));
+    addInstruction(std::move(std::make_unique<BinInst>(ret, Oper::Add, tmp, std::make_shared<Const>(tag))));
+    return ret;
+}
+
+ValPtr IRBuilder::untagVal(ValPtr val) {
+    // PINHOLE OPTIMIZATION: AVOID TAG CHECKS IF WORKING WITH %THIS
+    if (pinhole && val->getString() == "this") {
+        return val;
+    }
+
+    auto ret = std::make_shared<Local>(getSSAVar(val->getString()));
+    addInstruction(std::move(std::make_unique<BinInst>(ret, Oper::Div, val, std::make_shared<Const>(2))));
+    return ret;
+}
+
 void IRBuilder::terminate(std::unique_ptr<ControlTransfer> blockTerm) {
     current->blockTransfer = std::move(blockTerm);
 }

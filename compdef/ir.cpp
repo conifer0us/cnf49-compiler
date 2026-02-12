@@ -8,12 +8,40 @@ void Local::outputIR() const {
         std::cout << "%" << name;
 }
 
+std::string Local::getString() const {
+    return name;
+}
+
+ValType Local::getValType() const {
+    return ValType::VarType;
+}
+
 void Global::outputIR() const {
     std::cout << "@" << name;
 }
 
+std::string Global::getString() const {
+    return name; 
+}
+
+ValType Global::getValType() const {
+    return ValType::Label;
+}
+
+// only tag from ir generation
 void Const::outputIR() const {
-    std::cout << value;
+    if (tag)
+        std::cout << ((value << 1) | 1);
+    else
+        std::cout << value;
+}
+
+std::string Const::getString() const {
+    return std::format("{}", value);
+}
+
+ValType Const::getValType() const {
+    return ValType::ConstInt;
 }
 
 void Assign::outputIR() const {
@@ -73,10 +101,6 @@ void Call::outputIR() const {
     std::cout << " = call(";
 
     code->outputIR();
-
-    std::cout << ", ";
-
-    receiver->outputIR();
 
     for (const auto& arg : args) {
         std::cout << ", ";
@@ -186,16 +210,20 @@ void Fail::outputIR() const {
     }
 }
 
+// for methods that do not return anything!!
+HangingBlock::~HangingBlock() = default;
+
+void HangingBlock::outputIR() const {
+    std::cout << "ret";
+}
+
 void ClassMetadata::outputIR(const std::vector<std::string>& methods, const std::vector<std::string>& fields) const {
     VTABLE(name).outputIR();
     std::cout << ": { ";
     
     for (size_t i = 0; i < vtable.size(); ++i) {
         if (i) std::cout << ", ";
-        if (vtable[i] == "0")
-            std::cout << vtable[i];
-        else
-            std::cout << "@" << vtable[i];
+        std::cout << vtable[i];
     }
     
     std::cout << " }\n";
@@ -260,10 +288,9 @@ void CFG::outputIR() const {
     }
 }
 
-// Add these to prevent linker errors!
-// lesson learned to write in cpp files instead of headers next time
+// Add these to prevent linker errors! None should be called! Ever!
+// the linker and I have a bad relationship these days
 Value::~Value() = default;
-HangingBlock::~HangingBlock() = default;
 ControlTransfer::~ControlTransfer() = default;
 
 void Value::outputIR() const {
@@ -271,9 +298,5 @@ void Value::outputIR() const {
 }
 
 void ControlTransfer::outputIR() const {
-    return;
-}
-
-void HangingBlock::outputIR() const {
     return;
 }

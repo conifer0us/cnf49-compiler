@@ -349,6 +349,7 @@ struct Method : ASTNode {
         std::map<std::string, std::unique_ptr<ClassMetadata>>& cls,
         std::vector<std::string>& mem, 
         std::vector<std::string>& mthd,
+        bool pinhole,
         bool mainmethod) const;
 
     void print(int ind) const override {
@@ -415,7 +416,7 @@ struct Program : ASTNode {
     Program(MethodPtr mainmethod, std::vector<ClassPtr> classlist)
         : main(std::move(mainmethod)), classes(std::move(classlist)) {}
 
-    std::unique_ptr<CFG> convertToIR() const;
+    std::unique_ptr<CFG> convertToIR(bool pinhole = true) const;
 
     void print(int ind) const override {
         indent(ind);

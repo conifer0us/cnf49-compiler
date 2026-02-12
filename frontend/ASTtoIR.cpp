@@ -16,7 +16,8 @@ ValPtr ThisExpr::convertToIR(IRBuilder& builder, Local *out) const {
 }
 
 ValPtr Constant::convertToIR(IRBuilder& builder, Local *out) const {
-    auto newConst = std::make_shared<Const>(value);
+    // mark any const read from the program to tag on output
+    auto newConst = std::make_shared<Const>(value, true);
     
     if (out) {
         auto o = std::make_shared<Local>(out->name, out->version);
@@ -68,10 +69,18 @@ ValPtr ClassRef::convertToIR(IRBuilder& builder, Local *out) const {
 
 ValPtr Binop::convertToIR(IRBuilder& builder, Local *out) const {
     auto lhsVar = lhs->convertToIR(builder, nullptr);
+    if (lhsVar->getValType() == ValType::VarType)
+        builder.tagCheck(lhsVar, TagType::Integer);
+
     auto rhsVar = rhs->convertToIR(builder, nullptr);
+
+    if (rhsVar->getValType() == ValType::VarType)
+        builder.tagCheck(rhsVar, TagType::Integer);
 
     auto result = std::make_shared<Local>((out) ? *out : builder.getNextTemp());
 
+    // operations by default require untagging ints, but some can unmark this, such as == or !=
+    bool untag = true;
     Oper optype;
     switch(op) {
         case '+':
@@ -93,16 +102,34 @@ ValPtr Binop::convertToIR(IRBuilder& builder, Local *out) const {
             optype = Oper::Lt;
             break;
         case 'e':
+            untag = false;
             optype = Oper::Eq;
             break; 
         case 'n':
+            untag = false;
             optype =Oper::Ne;
             break;
         default:
             std::runtime_error(std::format("Unknown Operation: {}", op));
     }
 
+    if (untag) {
+        if (lhsVar->getValType() == ValType::VarType)
+            lhsVar = builder.untagVal(lhsVar);
+
+        if (rhsVar->getValType() == ValType::VarType)
+            rhsVar = builder.untagVal(rhsVar);
+    }
+
     auto binInst = std::make_unique<BinInst>(result, optype, lhsVar, rhsVar);
+
+    if (untag) {
+        if (lhsVar->getValType() == ValType::VarType)
+            builder.tagVal(lhsVar, TagType::Integer);
+
+        if (rhsVar->getValType() == ValType::VarType)
+            builder.tagVal(rhsVar, TagType::Integer);
+    }
 
     builder.addInstruction(std::move(binInst));
 
@@ -111,6 +138,11 @@ ValPtr Binop::convertToIR(IRBuilder& builder, Local *out) const {
 
 ValPtr FieldRead::convertToIR(IRBuilder& builder, Local* out) const {
     auto objVar = base->convertToIR(builder, nullptr);
+    if (objVar->getValType() == ValType::VarType) {
+        builder.tagCheck(objVar, TagType::Pointer);
+        objVar = builder.untagVal(objVar);
+    }
+        
     auto target = std::make_shared<Local>((out) ? *out : builder.getNextTemp());
 
     // Offset 8 is position of the field table
@@ -141,16 +173,24 @@ ValPtr FieldRead::convertToIR(IRBuilder& builder, Local* out) const {
     ));
 
     builder.addInstruction(std::move(std::make_unique<Load>(target, fieldAddr)));
+
+    objVar = builder.tagVal(objVar, TagType::Pointer);
     return target;
 }
 
 ValPtr MethodCall::convertToIR(IRBuilder& builder, Local* out) const {
     auto objVar = base->convertToIR(builder, nullptr);
+    if (objVar->getValType() == ValType::VarType) {
+        builder.tagCheck(objVar, TagType::Pointer);
+        objVar = builder.untagVal(objVar);
+    }
+
     auto retVar = std::make_shared<Local>((out) ? *out : builder.getNextTemp());
 
     // can directly get objectVar memory since vtable is stored at 0
     auto vtable = std::make_shared<Local>(builder.getNextTemp());
     builder.addInstruction(std::move(std::make_unique<Load>(vtable, objVar)));
+    objVar = builder.tagVal(objVar, TagType::Pointer);
 
     auto methodIndex = builder.getMethodOffset(methodname);
     auto funcEntry = std::make_shared<Local>(builder.getNextTemp());
@@ -166,13 +206,14 @@ ValPtr MethodCall::convertToIR(IRBuilder& builder, Local* out) const {
     
     builder.setCurrentBlock(existsBlock);
 
+    // object passed to first argument for %this
     std::vector<ValPtr> argVars;
     argVars.push_back(objVar);
     for (auto& arg : args) {
         argVars.push_back(arg->convertToIR(builder, nullptr));
     }
 
-    builder.addInstruction(std::move(std::make_unique<Call>(retVar, funcEntry, objVar, std::move(argVars))));
+    builder.addInstruction(std::move(std::make_unique<Call>(retVar, funcEntry, std::move(argVars))));
 
     return retVar;
 }
@@ -188,6 +229,11 @@ void DiscardStatement::convertToIR(IRBuilder& builder) const {
 
 void FieldAssignStatement::convertToIR(IRBuilder& builder) const {
     auto objVar = object->convertToIR(builder, nullptr);
+    if (objVar->getValType() == ValType::VarType) {
+        builder.tagCheck(objVar, TagType::Pointer);
+        objVar = builder.untagVal(objVar);
+    }
+        
     auto targetVal = value->convertToIR(builder, nullptr);
 
     // Use ftable to find the field being assigned to for the given object (ftable is +8)
@@ -215,6 +261,8 @@ void FieldAssignStatement::convertToIR(IRBuilder& builder) const {
     builder.addInstruction(std::move(std::make_unique<BinInst>(fieldAddr, Oper::Add, objVar, fieldEntry)));
 
     builder.addInstruction(std::move(std::make_unique<Store>(fieldAddr, targetVal)));
+
+    builder.tagVal(objVar, TagType::Pointer);
 }
 
 void IfStatement::convertToIR(IRBuilder& builder) const {
@@ -290,13 +338,21 @@ void ReturnStatement::convertToIR(IRBuilder& builder) const {
 
 void PrintStatement::convertToIR(IRBuilder& builder) const {
     auto val = value->convertToIR(builder, nullptr);
+    if (val->getValType() == ValType::VarType) {
+        builder.tagCheck(val, TagType::Integer);
+        val = builder.untagVal(val);
+    }
+        
     builder.addInstruction(std::move(std::make_unique<Print>(val)));
+
+    if (val->getValType() == ValType::VarType)
+        builder.tagVal(val, Integer);
 }
 
 std::shared_ptr<MethodIR> Method::convertToIR(std::string classname, 
         std::map<std::string, std::unique_ptr<ClassMetadata>>& cls, 
         std::vector<std::string>& mem, 
-        std::vector<std::string>& mthd,
+        std::vector<std::string>& mthd, bool pinhole,
         bool mainmethod = false) const {
 
     std::vector<std::string> lnames;
@@ -310,7 +366,7 @@ std::shared_ptr<MethodIR> Method::convertToIR(std::string classname,
         ags.push_back(args[i]->name);
 
     auto ret = std::make_shared<MethodIR>(nm, lnames, ags);
-    auto builder = IRBuilder(ret, cls, mem, mthd);
+    auto builder = IRBuilder(ret, cls, mem, mthd, pinhole);
 
     for (auto &name : lnames) {
         auto varVersion = std::make_shared<Local>(builder.getSSAVar(name, true));
@@ -327,7 +383,7 @@ std::shared_ptr<MethodIR> Method::convertToIR(std::string classname,
     return ret;
 };
 
-std::unique_ptr<CFG> Program::convertToIR() const {
+std::unique_ptr<CFG> Program::convertToIR(bool pinhole) const {
     std::set<std::string> methodset;
     std::vector<std::string> methods;
 
@@ -399,14 +455,14 @@ std::unique_ptr<CFG> Program::convertToIR() const {
 
     for (const auto& cls : classes) {
         for (const auto& method : cls->methods) {
-            std::shared_ptr<MethodIR> ir = method->convertToIR(cls->name, classinfo, fields, methods);
+            std::shared_ptr<MethodIR> ir = method->convertToIR(cls->name, classinfo, fields, methods, pinhole, false);
 
             auto nm = std::format("{}{}{}", cls->name, '_', method->name);
             methodinfo[nm] = ir;
         }
     }
 
-    std::shared_ptr<MethodIR> mainir = main->convertToIR("", classinfo, fields, methods, true);
+    std::shared_ptr<MethodIR> mainir = main->convertToIR("", classinfo, fields, methods, pinhole, true);
     methodinfo["main"] = mainir;
 
     return std::move(std::make_unique<CFG>(fields, methods, std::move(classinfo), std::move(methodinfo)));

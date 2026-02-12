@@ -7,9 +7,14 @@
 #include <set>
 #include <map>
 
+enum ValType { VarType, ConstInt, Label };
+enum TagType { Pointer = 0, Integer = 1 };
+
 struct Value {
     virtual ~Value();
     virtual void outputIR() const = 0;
+    virtual ValType getValType() const = 0;
+    virtual std::string getString() const = 0;
 };
 
 // not ideal but avoids lots of ownership overheads while building AST into IR
@@ -23,7 +28,9 @@ struct Local : Value {
     explicit Local(std::string n, int v):
         name(std::move(n)), version(v) {}
 
+    ValType getValType() const override;
     void outputIR() const override;
+    std::string getString() const override;
 };
 
 struct Global : Value {
@@ -32,14 +39,19 @@ struct Global : Value {
     explicit Global(std::string n):
         name(std::move(n)) {}
 
+    ValType getValType() const override;
     void outputIR() const override;
+    std::string getString() const override;
 };
 
 struct Const : Value {
     long value;
-    explicit Const(long v) : value(v) {}
+    bool tag;
+    explicit Const(long v, bool tag = false) : value(v), tag(tag) {}
 
+    ValType getValType() const override;
     void outputIR() const override;
+    std::string getString() const override;
 };
 
 enum class Oper {    
@@ -78,13 +90,12 @@ struct BinInst : IROp {
 struct Call : IROp {
     ValPtr dest;
     ValPtr code;
-    ValPtr receiver;
     std::vector<ValPtr> args;
 
     void outputIR() const override;
     
-    Call(ValPtr d, ValPtr c, ValPtr r, std::vector<ValPtr> a): 
-        dest(d), code(std::move(c)), receiver(std::move(r)), args(std::move(a)) {}
+    Call(ValPtr d, ValPtr c, std::vector<ValPtr> a): 
+        dest(d), code(std::move(c)), args(std::move(a)) {}
 };
 
 struct Phi : IROp {
@@ -328,6 +339,7 @@ struct CFG {
     std::map<std::string, std::shared_ptr<MethodIR>> methodinfo;
 
     void outputIR() const;
+    void naiveSSA();
 
     CFG (std::vector<std::string> allfields, std::vector<std::string> allmethods,
             std::map<std::string, std::unique_ptr<ClassMetadata>> classdata,
