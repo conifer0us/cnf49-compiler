@@ -8,7 +8,7 @@
 class IRBuilder {
     std::shared_ptr<MethodIR> method;
     BasicBlock* current;
-    std::map<std::string, int> ssaVersion;
+    int nexttmp = 1;
     std::map<std::string, std::unique_ptr<ClassMetadata>>& classes;
     std::vector<std::string>& members;
     std::vector<std::string>& methods;
@@ -23,14 +23,7 @@ public:
         method(m), classes(cls), members(mem), methods(mthd), pinhole(pinhole) { 
             auto lcls = method->getLocals();
             auto args = method->getArgs();
-            current = m->getStartingBlock();
-
-            ssaVersion[""] = 0;
-            for (std::string str : lcls)
-                ssaVersion[str] = 0;
-
-            for (std::string str : args)
-                ssaVersion[str] = 0;
+            current = m->getStartBlock();
         }
 
     BasicBlock* createBlock();
@@ -40,13 +33,10 @@ public:
     void addInstruction(std::unique_ptr<IROp> op);
 
     void tagCheck(ValPtr lcl, TagType tag);
-    ValPtr tagVal(ValPtr lcl, TagType tag);
-    ValPtr untagVal(ValPtr lcl);
+    void tagVal(ValPtr lcl, TagType tag);
+    void untagVal(ValPtr lcl);
 
     void terminate(std::unique_ptr<ControlTransfer> blockTerm);
-
-    // turn on the increment flag when writing new value to the var
-    Local getSSAVar(std::string name, bool increment = false);
 
     // Use SSA machinery to produce temp values
     Local getNextTemp();

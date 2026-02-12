@@ -38,52 +38,31 @@ void IRBuilder::tagCheck(ValPtr lcl, TagType tag) {
     setCurrentBlock(istagbranch);
 }
 
-ValPtr IRBuilder::tagVal(ValPtr val, TagType tag) {
+void IRBuilder::tagVal(ValPtr val, TagType tag) {
     // PINHOLE OPTIMIZATION: AVOID TAG CHECKS IF WORKING WITH %THIS
     if (pinhole && val->getString() == "this") {
-        return val;
+        return;
     }
 
-    // increment SSA since variable is going to be updated by tag check
-    auto ret = std::make_shared<Local>(getSSAVar(val->getString(), true));
-    auto tmp = std::make_shared<Local>(getNextTemp()); 
-    addInstruction(std::move(std::make_unique<BinInst>(tmp, Oper::Mul, val, std::make_shared<Const>(2))));
-    addInstruction(std::move(std::make_unique<BinInst>(ret, Oper::Add, tmp, std::make_shared<Const>(tag))));
-    return ret;
+    addInstruction(std::move(std::make_unique<BinInst>(val, Oper::Mul, val, std::make_shared<Const>(2))));
+    addInstruction(std::move(std::make_unique<BinInst>(val, Oper::Add, val, std::make_shared<Const>(tag))));
 }
 
-ValPtr IRBuilder::untagVal(ValPtr val) {
+void IRBuilder::untagVal(ValPtr val) {
     // PINHOLE OPTIMIZATION: AVOID TAG CHECKS IF WORKING WITH %THIS
     if (pinhole && val->getString() == "this") {
-        return val;
+        return;
     }
 
-    auto ret = std::make_shared<Local>(getSSAVar(val->getString()));
-    addInstruction(std::move(std::make_unique<BinInst>(ret, Oper::Div, val, std::make_shared<Const>(2))));
-    return ret;
+    addInstruction(std::move(std::make_unique<BinInst>(val, Oper::Div, val, std::make_shared<Const>(2))));
 }
 
 void IRBuilder::terminate(std::unique_ptr<ControlTransfer> blockTerm) {
     current->blockTransfer = std::move(blockTerm);
 }
 
-Local IRBuilder::getSSAVar(std::string name, bool increment) {
-    if (!ssaVersion.contains(name)) {
-        std::runtime_error(std::format("Unknown variable: {}\n", name));
-    }
-
-    auto ver = ssaVersion[name];
-    
-    if (increment) {
-        ver++;
-        ssaVersion[name] = ver;
-    }
-        
-    return Local(name, ver);
-}
-
 Local IRBuilder::getNextTemp() {
-    return getSSAVar("", true);
+    return Local(std::format("{}", nexttmp++), 0);
 }
 
 int IRBuilder::getClassSize(std::string classname) {

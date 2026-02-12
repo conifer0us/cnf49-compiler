@@ -31,7 +31,7 @@ ValPtr Constant::convertToIR(IRBuilder& builder, Local *out) const {
 ValPtr Var::convertToIR(IRBuilder& builder, Local *out) const {
     // do not increment for SSA since var is only being read in this context
     // if written to, var incremented at statement level, with var being passed in as Local *
-    auto newVar = std::make_shared<Local>(builder.getSSAVar(name, false));
+    auto newVar = std::make_shared<Local>(name, 0);
     
     if (out) { 
         auto o = std::make_shared<Local>(out->name, out->version);
@@ -115,10 +115,10 @@ ValPtr Binop::convertToIR(IRBuilder& builder, Local *out) const {
 
     if (untag) {
         if (lhsVar->getValType() == ValType::VarType)
-            lhsVar = builder.untagVal(lhsVar);
+            builder.untagVal(lhsVar);
 
         if (rhsVar->getValType() == ValType::VarType)
-            rhsVar = builder.untagVal(rhsVar);
+            builder.untagVal(rhsVar);
     }
 
     auto binInst = std::make_unique<BinInst>(result, optype, lhsVar, rhsVar);
@@ -140,7 +140,7 @@ ValPtr FieldRead::convertToIR(IRBuilder& builder, Local* out) const {
     auto objVar = base->convertToIR(builder, nullptr);
     if (objVar->getValType() == ValType::VarType) {
         builder.tagCheck(objVar, TagType::Pointer);
-        objVar = builder.untagVal(objVar);
+        builder.untagVal(objVar);
     }
         
     auto target = std::make_shared<Local>((out) ? *out : builder.getNextTemp());
@@ -174,7 +174,7 @@ ValPtr FieldRead::convertToIR(IRBuilder& builder, Local* out) const {
 
     builder.addInstruction(std::move(std::make_unique<Load>(target, fieldAddr)));
 
-    objVar = builder.tagVal(objVar, TagType::Pointer);
+    builder.tagVal(objVar, TagType::Pointer);
     return target;
 }
 
@@ -182,7 +182,7 @@ ValPtr MethodCall::convertToIR(IRBuilder& builder, Local* out) const {
     auto objVar = base->convertToIR(builder, nullptr);
     if (objVar->getValType() == ValType::VarType) {
         builder.tagCheck(objVar, TagType::Pointer);
-        objVar = builder.untagVal(objVar);
+        builder.untagVal(objVar);
     }
 
     auto retVar = std::make_shared<Local>((out) ? *out : builder.getNextTemp());
@@ -190,7 +190,7 @@ ValPtr MethodCall::convertToIR(IRBuilder& builder, Local* out) const {
     // can directly get objectVar memory since vtable is stored at 0
     auto vtable = std::make_shared<Local>(builder.getNextTemp());
     builder.addInstruction(std::move(std::make_unique<Load>(vtable, objVar)));
-    objVar = builder.tagVal(objVar, TagType::Pointer);
+    builder.tagVal(objVar, TagType::Pointer);
 
     auto methodIndex = builder.getMethodOffset(methodname);
     auto funcEntry = std::make_shared<Local>(builder.getNextTemp());
@@ -219,7 +219,7 @@ ValPtr MethodCall::convertToIR(IRBuilder& builder, Local* out) const {
 }
 
 void AssignStatement::convertToIR(IRBuilder& builder) const {
-    auto target = std::make_shared<Local>(builder.getSSAVar(name, true));
+    auto target = std::make_shared<Local>(name, 0);
     auto val = value->convertToIR(builder, target.get());
 }
 
@@ -231,7 +231,7 @@ void FieldAssignStatement::convertToIR(IRBuilder& builder) const {
     auto objVar = object->convertToIR(builder, nullptr);
     if (objVar->getValType() == ValType::VarType) {
         builder.tagCheck(objVar, TagType::Pointer);
-        objVar = builder.untagVal(objVar);
+        builder.untagVal(objVar);
     }
         
     auto targetVal = value->convertToIR(builder, nullptr);
@@ -340,7 +340,7 @@ void PrintStatement::convertToIR(IRBuilder& builder) const {
     auto val = value->convertToIR(builder, nullptr);
     if (val->getValType() == ValType::VarType) {
         builder.tagCheck(val, TagType::Integer);
-        val = builder.untagVal(val);
+        builder.untagVal(val);
     }
         
     builder.addInstruction(std::move(std::make_unique<Print>(val)));
@@ -369,7 +369,7 @@ std::shared_ptr<MethodIR> Method::convertToIR(std::string classname,
     auto builder = IRBuilder(ret, cls, mem, mthd, pinhole);
 
     for (auto &name : lnames) {
-        auto varVersion = std::make_shared<Local>(builder.getSSAVar(name, true));
+        auto varVersion = std::make_shared<Local>(name, 0);
         auto initInstruction = std::make_unique<Assign>(varVersion, std::make_shared<Const>(0));
         builder.addInstruction(std::move(initInstruction));
     }

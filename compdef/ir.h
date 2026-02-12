@@ -260,6 +260,7 @@ struct BasicBlock {
     ~BasicBlock() = default;
 
     void outputIR() const;
+    void naiveSSA();
     
     BasicBlock(std::string lbl): label(std::move(lbl)) {
             // Basic Block has a hanging end while instantiating
@@ -268,30 +269,8 @@ struct BasicBlock {
         } 
 };
 
-// In IR, global method table and field table labeled "vtableCLASSNAME" and "ftableCLASSNAME"
-#define VTABLE(classname) Global("vtable" + classname)
-#define FTABLE(classname) Global("ftable" + classname)
-
-struct ClassMetadata {
-    std::vector<std::string> vtable;
-    std::vector<size_t> ftable;
-    std::string name;
-    size_t objsize;
-
-    int size() {
-        return objsize;
-    }
-
-    // output vtable and ftable for the method
-    void outputIR(const std::vector<std::string>& methods, const std::vector<std::string>& fields) const;
-    
-    ClassMetadata(std::string nm) : name(nm) {}
-    ~ClassMetadata() = default;
-};
-
 class MethodIR {
     std::string name;
-    BasicBlock* startBlock;
     std::vector<std::string> locals;
     std::vector<std::string> args;
 
@@ -313,8 +292,9 @@ public:
         blocks.push_back(std::move(newBlock));
         return ptr;
     }
-
-    BasicBlock *getStartingBlock() { return startBlock; }
+    
+    BasicBlock *getBlock(int index) { return blocks[index].get(); }
+    BasicBlock *getStartBlock() { return getBlock(0); }
 
     std::vector<std::string> getLocals() {
         return locals;
@@ -325,11 +305,31 @@ public:
     }
 
     void outputIR() const;
+    void naiveSSA();
 
     ~MethodIR() = default;
-    MethodIR(std::string nm, std::vector<std::string> lcls, std::vector<std::string> ars): name(nm), locals(lcls), args(ars) {
-        startBlock = newBasicBlock();
+    MethodIR(std::string nm, std::vector<std::string> lcls, std::vector<std::string> ars): name(nm), locals(lcls), args(ars) { newBasicBlock(); }
+};
+
+// In IR, global method table and field table labeled "vtableCLASSNAME" and "ftableCLASSNAME"
+#define VTABLE(classname) Global("vtable" + classname)
+#define FTABLE(classname) Global("ftable" + classname)
+
+struct ClassMetadata {
+    std::vector<std::string> vtable;
+    std::vector<size_t> ftable;
+    std::string name;
+    size_t objsize;
+
+    int size() {
+        return objsize;
     }
+
+    // output vtable and ftable for the method
+    void outputIR(const std::vector<std::string>& methods, const std::vector<std::string>& fields) const;
+    
+    ClassMetadata(std::string nm) : name(nm) {}
+    ~ClassMetadata() = default;
 };
 
 struct CFG {
