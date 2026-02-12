@@ -3,7 +3,7 @@
 
 void Local::outputIR() const {
     if (version)
-        std::cout << "%" << version << name;
+        std::cout << "%" << name << version;
     else 
         std::cout << "%" << name;
 }
@@ -17,77 +17,77 @@ void Const::outputIR() const {
 }
 
 void Assign::outputIR() const {
-    dest.outputIR();
+    dest->outputIR();
     std::cout << " = ";
-    src.outputIR();
+    src->outputIR();
 }
 
 void BinInst::outputIR() const {
-    dest.outputIR();
+    dest->outputIR();
     std::cout << " = ";
-    lhs.outputIR();
+    lhs->outputIR();
     
     switch(op) {
         case Oper::Add:
-            std::cout << '+';
+            std::cout << " +";
             break;
         case Oper::BitAnd:
-            std::cout << '&';
+            std::cout << " &";
             break;
         case Oper::BitOr:
-            std::cout << '|';
+            std::cout << " |";
             break;
         case Oper::BitXor:
-            std::cout << '^';
+            std::cout << " ^";
             break;
         case Oper::Div:    
-            std::cout << '/';
+            std::cout << " /";
             break;
         case Oper::Eq:
-            std::cout << "==";
+            std::cout << " ==";
             break;
         case Oper::Gt:
-            std::cout << '>';
+            std::cout << " >";
             break;
         case Oper::Lt:
-            std::cout << '<';
+            std::cout << " <";
             break;
         case Oper::Mul:
-            std::cout << '*';
+            std::cout << " *";
             break;
         case Oper::Ne:
-            std::cout << "!=";
+            std::cout << " !=";
             break;
         case Oper::Sub:
-            std::cout << '-';
+            std::cout << " -";
             break;
     }
 
     std::cout << " ";
-    rhs.outputIR();
+    rhs->outputIR();
 }
 
 void Call::outputIR() const {
-    dest.outputIR();
+    dest->outputIR();
 
     std::cout << " = call(";
 
-    code.outputIR();
+    code->outputIR();
 
     std::cout << ", ";
 
-    receiver.outputIR();
+    receiver->outputIR();
 
-    for (auto arg : args) {
+    for (const auto& arg : args) {
         std::cout << ", ";
-        arg.outputIR();
+        arg->outputIR();
     }
 
     std::cout << ")";
 }
 
 void Phi::outputIR() const {
-    dest.outputIR();
+    dest->outputIR();
 
     std::cout << " = phi(";
 
@@ -100,14 +100,14 @@ void Phi::outputIR() const {
 
         std::cout << pair.first;
         std::cout << ", ";
-        pair.second.outputIR();
+        pair.second->outputIR();
     }
 
     std::cout << ")";
 }
 
 void Alloc::outputIR() const {
-    dest.outputIR();
+    dest->outputIR();
     
     std::cout << " = ";
     std::cout << "alloc(" << numSlots << ")";
@@ -115,41 +115,41 @@ void Alloc::outputIR() const {
 
 void Print::outputIR() const {
     std::cout << "print(";
-    val.outputIR();
+    val->outputIR();
     std::cout << ")";
 }
 
 void GetElt::outputIR() const {
-    dest.outputIR();
+    dest->outputIR();
     std::cout << " = getelt(";
-    dest.outputIR();
+    array->outputIR();
     std::cout << ", ";
-    index.outputIR();
+    index->outputIR();
     std::cout << ")";
 }
 
 void SetElt::outputIR() const {
     std::cout << "setelt(";
-    array.outputIR();
+    array->outputIR();
     std::cout << ", ";
-    index.outputIR();
+    index->outputIR();
     std::cout << ", ";
-    val.outputIR();
+    val->outputIR();
     std::cout << ")";
 }
 
 void Load::outputIR() const {
-    dest.outputIR();
+    dest->outputIR();
     std::cout << " = load(";
-    addr.outputIR();
+    addr->outputIR();
     std::cout << ")";
 }
 
 void Store::outputIR() const {
     std::cout << "store(";
-    addr.outputIR();
+    addr->outputIR();
     std::cout << ", ";
-    val.outputIR();
+    val->outputIR();
     std::cout << ")";
 }
 
@@ -159,13 +159,13 @@ void Jump::outputIR() const {
 
 void Conditional::outputIR() const {
     std::cout << "if ";
-    condition.outputIR();
+    condition->outputIR();
     std::cout << " then " << trueTarget->label << " else " << falseTarget->label;
 }
 
 void Return::outputIR() const {
     std::cout << "ret ";
-    val.outputIR();
+    val->outputIR();
 }
 
 void Fail::outputIR() const {
@@ -192,7 +192,10 @@ void ClassMetadata::outputIR(const std::vector<std::string>& methods, const std:
     
     for (size_t i = 0; i < vtable.size(); ++i) {
         if (i) std::cout << ", ";
-        std::cout << "@" << vtable[i];
+        if (vtable[i] == "0")
+            std::cout << vtable[i];
+        else
+            std::cout << "@" << vtable[i];
     }
     
     std::cout << " }\n";
@@ -221,6 +224,21 @@ void BasicBlock::outputIR() const {
 }
 
 void MethodIR::outputIR() const {
+    // replace first block label with one that has arguments
+    if (args.size() > 0) {
+        auto newlbl = name;
+
+        newlbl += "(";
+
+        for (int i = 0; i < args.size(); i++) {
+            if (i) newlbl += ", ";
+            newlbl += args[i];
+        }
+
+        newlbl += ")";
+        blocks[0]->label = newlbl;
+    }
+
     for (const auto& block : blocks) {
         block->outputIR();
     }

@@ -6,7 +6,7 @@
 #include "ir.h"
 
 class IRBuilder {
-    MethodIR& method;
+    std::shared_ptr<MethodIR> method;
     BasicBlock* current;
     std::map<std::string, int> ssaVersion;
     std::map<std::string, std::unique_ptr<ClassMetadata>>& classes;
@@ -14,12 +14,17 @@ class IRBuilder {
     std::vector<std::string>& methods;
 
 public:
-    IRBuilder(MethodIR& m, std::map<std::string, std::unique_ptr<ClassMetadata>>& cls, std::vector<std::string>& mem, std::vector<std::string>& mthd): 
-        method(m), current(m.getStartingBlock()), classes(cls), members(mem), methods(mthd) { 
-            auto lcls = method.getLocals();
+    IRBuilder(std::shared_ptr<MethodIR> m, std::map<std::string, std::unique_ptr<ClassMetadata>>& cls, std::vector<std::string>& mem, std::vector<std::string>& mthd): 
+        method(m), classes(cls), members(mem), methods(mthd) { 
+            auto lcls = method->getLocals();
+            auto args = method->getArgs();
+            current = m->getStartingBlock();
 
             ssaVersion[""] = 0;
             for (std::string str : lcls)
+                ssaVersion[str] = 0;
+
+            for (std::string str : args)
                 ssaVersion[str] = 0;
         }
 

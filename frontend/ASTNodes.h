@@ -20,7 +20,7 @@ inline void indent(int n) {
 
 struct Expression : ASTNode {
     virtual ~Expression();
-    virtual Value convertToIR(IRBuilder& builder, Local* out) const;
+    virtual ValPtr convertToIR(IRBuilder& builder, Local* out) const;
 };
 
 using ExprPtr = std::unique_ptr<Expression>;
@@ -31,7 +31,7 @@ struct ThisExpr : Expression {
         std::cout << "this\n";
     }
 
-    Value convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
+    ValPtr convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
 };
 
 struct Constant : Expression {
@@ -42,7 +42,7 @@ struct Constant : Expression {
         std::cout << value << "\n";
     }
         
-    Value convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
+    ValPtr convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
     
     explicit Constant(long val):
         value(val) {}
@@ -56,7 +56,7 @@ struct ClassRef : Expression {
         std::cout << "ClassRef (" << classname << ")\n";
     }
 
-    Value convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
+    ValPtr convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
     
     explicit ClassRef(std::string cname):
         classname(std::move(cname)) {}
@@ -77,7 +77,7 @@ struct Binop : Expression {
         rhs->print(ind + 2);
     }
 
-    Value convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
+    ValPtr convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
     
     Binop(ExprPtr left, char oper, ExprPtr right):
         lhs(std::move(left)), rhs(std::move(right)), op(oper) {}
@@ -96,7 +96,7 @@ struct FieldRead : Expression {
         std::cout << "to field" << fieldname << "\n";
     }
 
-    Value convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
+    ValPtr convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
     
     FieldRead(ExprPtr b, std::string fname):
         base(std::move(b)), fieldname(std::move(fname)) {}
@@ -110,7 +110,7 @@ struct Var : Expression {
         std::cout << name << "\n";
     }
 
-    Value convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
+    ValPtr convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
     
     explicit Var(std::string n):
         name(std::move(n)) {};
@@ -140,7 +140,7 @@ struct MethodCall : Expression {
         std::cout << "END ARGS\n";
     }
 
-    Value convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
+    ValPtr convertToIR(IRBuilder& builder, Local *out = nullptr) const override;
     
     MethodCall(ExprPtr b, std::string mname, std::vector<ExprPtr> arglist) :
         base(std::move(b)), methodname(std::move(mname)), args(std::move(arglist)) {}
@@ -345,7 +345,11 @@ struct Method : ASTNode {
     Method(std::string nm, std::vector<VarPtr> arg, std::vector<VarPtr> lcls, std::vector<StmtPtr> bdy): 
         name(std::move(nm)), args(std::move(arg)), locals(std::move(lcls)), body(std::move(bdy)) {}
 
-    std::unique_ptr<MethodIR> convertToIR(std::string classname, std::map<std::string, std::unique_ptr<ClassMetadata>>& cls, std::vector<std::string>& mem, std::vector<std::string>& mthd) const;
+    std::shared_ptr<MethodIR> convertToIR(std::string classname, 
+        std::map<std::string, std::unique_ptr<ClassMetadata>>& cls,
+        std::vector<std::string>& mem, 
+        std::vector<std::string>& mthd,
+        bool mainmethod) const;
 
     void print(int ind) const override {
         indent(ind);

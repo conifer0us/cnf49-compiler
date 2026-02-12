@@ -38,14 +38,14 @@ int main(int argc, char **argv) {
 
     auto AST = parser.parseProgram();
 
-    if (strcmp(argv[1], "-printAST")) {
+    if (strcmp(argv[1], "-printAST") == 0) {
         AST->print(0);
         return 0;
     }
 
     auto prgIR = AST->convertToIR();
 
-    if (strcmp(argv[1], "-noSSA")) {
+    if (strcmp(argv[1], "-noSSA") == 0) {
         prgIR->outputIR();
         return 0;
     }

@@ -1,7 +1,7 @@
 #include "irbuilder.h"
  
 BasicBlock* IRBuilder::createBlock() {
-    return method.newBasicBlock();
+    return method->newBasicBlock();
 }
 
 void IRBuilder::setCurrentBlock(BasicBlock* b) {
@@ -9,6 +9,9 @@ void IRBuilder::setCurrentBlock(BasicBlock* b) {
 }
 
 void IRBuilder::addInstruction(std::unique_ptr<IROp> op) {
+    if (!current)
+        std::runtime_error("IRBuilder has corrupt block structure. Aborting.");
+
     current->instructions.push_back(std::move(op));
 }
 
@@ -18,14 +21,14 @@ void IRBuilder::terminate(std::unique_ptr<ControlTransfer> blockTerm) {
 
 Local IRBuilder::getSSAVar(std::string name, bool increment) {
     if (!ssaVersion.contains(name)) {
-        std::runtime_error(std::format("Unknown variable: %d\n", name));
+        std::runtime_error(std::format("Unknown variable: {}\n", name));
     }
 
     auto ver = ssaVersion[name];
     
     if (increment) {
-        ssaVersion[name] += 1;
         ver++;
+        ssaVersion[name] = ver;
     }
         
     return Local(name, ver);
@@ -37,7 +40,7 @@ Local IRBuilder::getNextTemp() {
 
 int IRBuilder::getClassSize(std::string classname) {
     if (!classes.contains(classname)) 
-        std::runtime_error(std::format("Could not find classname %d", classname));
+        std::runtime_error(std::format("Could not find classname {}", classname));
     
     return classes[classname]->size();
 }
@@ -47,7 +50,7 @@ int IRBuilder::getFieldOffset(std::string member) {
         if (members[i] == member)
             return i;
 
-    std::runtime_error(std::format("Could not find member %d", member));
+    std::runtime_error(std::format("Could not find member {}", member));
     
     return -1;
 }
@@ -57,7 +60,7 @@ int IRBuilder::getMethodOffset(std::string method) {
         if (methods[i] == method)
             return i;
 
-    std::runtime_error(std::format("Could not find method %d", method));
+    std::runtime_error(std::format("Could not find method {}", method));
     
     return -1;
 }

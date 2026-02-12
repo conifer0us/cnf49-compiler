@@ -9,8 +9,12 @@
 
 struct Value {
     virtual ~Value();
-    virtual void outputIR() const;
+    virtual void outputIR() const = 0;
 };
+
+// not ideal but avoids lots of ownership overheads while building AST into IR
+// need to keep all Values only owned by the instructions they're a part of
+using ValPtr = std::shared_ptr<Value>;
 
 struct Local : Value {
     std::string name;
@@ -50,110 +54,110 @@ struct IROp {
 };
 
 struct Assign : IROp {
-    Local dest;
-    Value src;
+    ValPtr dest;
+    ValPtr src;
 
     void outputIR() const override;
     
-    Assign(Local d, Value s): 
-        dest(d), src(s) {}
+    Assign(ValPtr d, ValPtr s): 
+        dest(d), src(std::move(s)) {}
 };
 
 struct BinInst : IROp {
-    Local dest;
+    ValPtr dest;
     Oper op;
-    Value lhs;
-    Value rhs;
+    ValPtr lhs;
+    ValPtr rhs;
 
     void outputIR() const override;
     
-    BinInst(Local d, Oper o, Value l, Value r): 
-        dest(d), op(o), lhs(l), rhs(r) {}
+    BinInst(ValPtr d, Oper o, ValPtr l, ValPtr r): 
+        dest(d), op(o), lhs(std::move(l)), rhs(std::move(r)) {}
 };
 
 struct Call : IROp {
-    Local dest;
-    Value code;
-    Value receiver;
-    std::vector<Value> args;
+    ValPtr dest;
+    ValPtr code;
+    ValPtr receiver;
+    std::vector<ValPtr> args;
 
     void outputIR() const override;
     
-    Call(Local d, Value c, Value r, std::vector<Value> a): 
-        dest(d), code(c), receiver(r), args(std::move(a)) {}
+    Call(ValPtr d, ValPtr c, ValPtr r, std::vector<ValPtr> a): 
+        dest(d), code(std::move(c)), receiver(std::move(r)), args(std::move(a)) {}
 };
 
 struct Phi : IROp {
-    Local dest;
+    ValPtr dest;
 
     // even number of pairs: (predecessor name, value)
-    std::vector<std::pair<std::string, Value>> incoming;
+    std::vector<std::pair<std::string, ValPtr>> incoming;
 
     void outputIR() const override;
     
-    Phi(Local d, std::vector<std::pair<std::string, Value>> in): 
+    Phi(ValPtr d, std::vector<std::pair<std::string, ValPtr>> in): 
         dest(d), incoming(std::move(in)) {}
 };
 
 struct Alloc : IROp {
-    Local dest;
+    ValPtr dest;
     int numSlots;
 
     void outputIR() const override;
     
-    Alloc(Local d, int n): 
+    Alloc(ValPtr d, int n): 
         dest(d), numSlots(n) {}
 };
 
 struct Print : IROp {
-    Value val;
+    ValPtr val;
     
     void outputIR() const override;
     
-    explicit Print(Value v): 
-        val(v) {}
+    explicit Print(ValPtr v): 
+        val(std::move(v)) {}
 };
 
 struct GetElt : IROp {
-    Local dest;
-    Value array;
-    Value index;
+    ValPtr dest;
+    ValPtr array;
+    ValPtr index;
 
     void outputIR() const override;
     
-    GetElt(Local d, Value a, Value i): 
-        dest(d), array(a), index(i) {}
+    GetElt(ValPtr d, ValPtr a, ValPtr i): 
+        dest(d), array(std::move(a)), index(std::move(i)) {}
 };
 
 struct SetElt : IROp {
-    Value array;
-    Value index;
-    Value val;
+    ValPtr array;
+    ValPtr index;
+    ValPtr val;
 
     void outputIR() const override;
     
-    SetElt(Value a, Value i, Value v): 
-           array(a), index(i), val(v) {}
+    SetElt(ValPtr a, ValPtr i, ValPtr v): 
+           array(std::move(a)), index(std::move(i)), val(std::move(v)) {}
 };
 
 struct Load : IROp {
-    Local dest;
-    Value addr;
+    ValPtr dest;
+    ValPtr addr;
 
     void outputIR() const override;
     
-    Load(Local d, Value addy): 
-        dest(d), addr(addy) {}
+    Load(ValPtr d, ValPtr addy): 
+        dest(d), addr(std::move(addy)) {}
 };
 
 struct Store : IROp {
-    Value addr;
-    Value val;
+    ValPtr addr;
+    ValPtr val;
 
     void outputIR() const override;
     
-    Store(Value addy, Value v): 
-        addr(addy), val(v) {}
+    Store(ValPtr addy, ValPtr v): 
+        addr(std::move(addy)), val(std::move(v)) {}
 };
 
 // forward declare bb so that conditionals can use it
@@ -178,12 +182,12 @@ struct Jump : ControlTransfer {
 };
 
 struct Conditional : ControlTransfer {
-    Value condition;
+    ValPtr condition;
     BasicBlock *trueTarget;
     BasicBlock *falseTarget;
 
-    Conditional(Value cond, BasicBlock *t, BasicBlock *f): 
-        condition(cond), trueTarget(t), falseTarget(f) {}
+    Conditional(ValPtr cond, BasicBlock *t, BasicBlock *f): 
+        condition(std::move(cond)), trueTarget(t), falseTarget(f) {}
 
     void outputIR() const override;
     
@@ -193,7 +197,7 @@ struct Conditional : ControlTransfer {
 };
 
 struct Return : ControlTransfer {
-    Value val;
+    ValPtr val;
 
     std::set<BasicBlock *> successors() const override {
         return {};
@@ -201,8 +205,8 @@ struct Return : ControlTransfer {
 
     void outputIR() const override;
 
-    explicit Return(Value v): 
-        val(v) {}
+    explicit Return(ValPtr v): 
+        val(std::move(v)) {}
 };
 
 struct HangingBlock : ControlTransfer {
@@ -278,33 +282,41 @@ class MethodIR {
     std::string name;
     BasicBlock* startBlock;
     std::vector<std::string> locals;
+    std::vector<std::string> args;
 
     int lastblknum = 0;
 
 public:
     std::vector<std::unique_ptr<BasicBlock>> blocks;
-    BasicBlock *getStartingBlock() { return startBlock; }
 
     BasicBlock *newBasicBlock() {
         std::string bname;
-        if (lastblknum++ == 0)
+        if (lastblknum == 0)
             bname = name;
         else
-            bname = std::format("%s%d", name, lastblknum);
+            bname = std::format("{}{}", name, lastblknum);
 
+        lastblknum++;
         auto newBlock = std::make_unique<BasicBlock>(bname);
+        auto ptr = newBlock.get();
         blocks.push_back(std::move(newBlock));
-        return newBlock.get();
+        return ptr;
     }
+
+    BasicBlock *getStartingBlock() { return startBlock; }
 
     std::vector<std::string> getLocals() {
         return locals;
     }
 
+    std::vector<std::string> getArgs() {
+        return args;
+    }
+
     void outputIR() const;
 
     ~MethodIR() = default;
-    MethodIR(std::string nm, std::vector<std::string> lcls): name(std::move(nm)), locals(lcls) {
+    MethodIR(std::string nm, std::vector<std::string> lcls, std::vector<std::string> ars): name(nm), locals(lcls), args(ars) {
         startBlock = newBasicBlock();
     }
 };
@@ -313,13 +325,13 @@ struct CFG {
     std::vector<std::string> classfields;
     std::vector<std::string> classmethods;
     std::map<std::string, std::unique_ptr<ClassMetadata>> classinfo;
-    std::map<std::string, std::unique_ptr<MethodIR>> methodinfo;
+    std::map<std::string, std::shared_ptr<MethodIR>> methodinfo;
 
     void outputIR() const;
 
     CFG (std::vector<std::string> allfields, std::vector<std::string> allmethods,
             std::map<std::string, std::unique_ptr<ClassMetadata>> classdata,
-            std::map<std::string, std::unique_ptr<MethodIR>> methodIR):
+            std::map<std::string, std::shared_ptr<MethodIR>> methodIR):
         classfields(std::move(allfields)), 
         classmethods(std::move(allmethods)), 
         classinfo(std::move(classdata)),

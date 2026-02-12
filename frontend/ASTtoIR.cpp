@@ -3,46 +3,49 @@
 
 #include <format>
 
-Value ThisExpr::convertToIR(IRBuilder& builder, Local *out) const {
-    auto newLocal = Local("this", 0);
+ValPtr ThisExpr::convertToIR(IRBuilder& builder, Local *out) const {
+    auto newLocal = std::make_shared<Local>(Local("this", 0));
+    
     if (out) {
-        builder.addInstruction(std::move(std::make_unique<Assign>(*out, newLocal)));
-        return *out;
+            auto o = std::make_shared<Local>(out->name, out->version);
+            builder.addInstruction(std::move(std::make_unique<Assign>(o, newLocal)));
+            return o;
     }
-    else {
+    else
         return newLocal;
-    }
 }
 
-Value Constant::convertToIR(IRBuilder& builder, Local *out) const {
-    auto newConst = Const(value);
+ValPtr Constant::convertToIR(IRBuilder& builder, Local *out) const {
+    auto newConst = std::make_shared<Const>(value);
+    
     if (out) {
-        builder.addInstruction(std::move(std::make_unique<Assign>(*out, newConst)));
-        return *out;
+        auto o = std::make_shared<Local>(out->name, out->version);
+        builder.addInstruction(std::move(std::make_unique<Assign>(o, newConst)));
+        return o;
     }
-    else {
+    else
         return newConst;
-    }
 }
 
-Value Var::convertToIR(IRBuilder& builder, Local *out) const {
+ValPtr Var::convertToIR(IRBuilder& builder, Local *out) const {
     // do not increment for SSA since var is only being read in this context
     // if written to, var incremented at statement level, with var being passed in as Local *
-    auto newVar = builder.getSSAVar(name, false);
-    if (out) {
-        builder.addInstruction(std::move(std::make_unique<Assign>(*out, newVar)));
-        return *out;
+    auto newVar = std::make_shared<Local>(builder.getSSAVar(name, false));
+    
+    if (out) { 
+        auto o = std::make_shared<Local>(out->name, out->version);
+        builder.addInstruction(std::move(std::make_unique<Assign>(o, newVar)));
+        return o;
     }
-    else {
+    else
         return newVar;
-    }
 }
 
-Value ClassRef::convertToIR(IRBuilder& builder, Local *out) const {
-    auto var = (out) ? *out : builder.getNextTemp();
+ValPtr ClassRef::convertToIR(IRBuilder& builder, Local *out) const {
+    auto var = std::make_shared<Local>((out) ? *out : builder.getNextTemp());
     
-    auto vtable = Global(VTABLE(classname));
-    auto ftable = Global(FTABLE(classname));
+    auto vtable = std::make_shared<Global>(VTABLE(classname));
+    auto ftable = std::make_shared<Global>(FTABLE(classname));
 
     // 2 already factored into object size so take as is
     int memspace = builder.getClassSize(classname);
@@ -53,8 +56,8 @@ Value ClassRef::convertToIR(IRBuilder& builder, Local *out) const {
     auto storeVtbl = std::make_unique<Store>(var, vtable);
     builder.addInstruction(std::move(storeVtbl));
 
-    auto ftblVar = builder.getNextTemp();
-    auto ftblAddr = std::make_unique<BinInst>(ftblVar, Oper::Add, var, Const(8));
+    auto ftblVar = std::make_shared<Local>(builder.getNextTemp());
+    auto ftblAddr = std::make_unique<BinInst>(ftblVar, Oper::Add, var, std::make_shared<Const>(8));
     builder.addInstruction(std::move(ftblAddr));
 
     auto storeFtbl = std::make_unique<Store>(ftblVar, ftable);
@@ -63,11 +66,11 @@ Value ClassRef::convertToIR(IRBuilder& builder, Local *out) const {
     return var;
 }
 
-Value Binop::convertToIR(IRBuilder& builder, Local *out) const {
+ValPtr Binop::convertToIR(IRBuilder& builder, Local *out) const {
     auto lhsVar = lhs->convertToIR(builder, nullptr);
     auto rhsVar = rhs->convertToIR(builder, nullptr);
 
-    auto result = (out) ? *out : builder.getNextTemp();
+    auto result = std::make_shared<Local>((out) ? *out : builder.getNextTemp());
 
     Oper optype;
     switch(op) {
@@ -96,40 +99,43 @@ Value Binop::convertToIR(IRBuilder& builder, Local *out) const {
             optype =Oper::Ne;
             break;
         default:
-            std::runtime_error(std::format("Unknown Operation: %c", op));
+            std::runtime_error(std::format("Unknown Operation: {}", op));
     }
 
     auto binInst = std::make_unique<BinInst>(result, optype, lhsVar, rhsVar);
+
     builder.addInstruction(std::move(binInst));
 
     return result;
 }
 
-Value FieldRead::convertToIR(IRBuilder& builder, Local* out) const {
+ValPtr FieldRead::convertToIR(IRBuilder& builder, Local* out) const {
     auto objVar = base->convertToIR(builder, nullptr);
-    auto target = (out) ? *out : builder.getNextTemp();
+    auto target = std::make_shared<Local>((out) ? *out : builder.getNextTemp());
 
     // Offset 8 is position of the field table
-    auto fmapAddr = builder.getNextTemp();
-    builder.addInstruction(std::move(std::make_unique<BinInst>(fmapAddr, Oper::Add, objVar, Const(8))));
+    auto fmapAddr = std::make_shared<Local>(builder.getNextTemp());
+    builder.addInstruction(
+        std::move(std::make_unique<BinInst>(fmapAddr, Oper::Add, objVar, std::make_shared<Const>(8)))
+    );
 
-    auto fmap = builder.getNextTemp();
+    auto fmap = std::make_shared<Local>(builder.getNextTemp());
     builder.addInstruction(std::move(std::make_unique<Load>(fmap, fmapAddr)));
 
     auto fieldOffset = builder.getFieldOffset(fieldname);
-    auto fieldEntry = builder.getNextTemp();
-    builder.addInstruction(std::move(std::make_unique<GetElt>(fieldEntry, fmap, Const(fieldOffset))));
+    auto fieldEntry = std::make_shared<Local>(builder.getNextTemp());
+    builder.addInstruction(std::move(std::make_unique<GetElt>(fieldEntry, fmap, std::make_shared<Const>(fieldOffset))));
 
     auto dneBlock = builder.createBlock();
-    builder.setCurrentBlock(dneBlock);
-    builder.terminate(std::move(std::make_unique<Fail>(FailReason::NoSuchField)));
-
     auto existsBlock = builder.createBlock();
     builder.terminate(std::move(std::make_unique<Conditional>(fieldEntry, existsBlock, dneBlock)));
 
+    builder.setCurrentBlock(dneBlock);
+    builder.terminate(std::move(std::make_unique<Fail>(FailReason::NoSuchField)));
+
     builder.setCurrentBlock(existsBlock);
 
-    auto fieldAddr = builder.getNextTemp();
+    auto fieldAddr = std::make_shared<Local>(builder.getNextTemp());
     builder.addInstruction(std::move(std::make_unique<BinInst>(
         fieldAddr, Oper::Add, objVar, fieldEntry) // jump to offset (fieldEntry) from table
     ));
@@ -138,23 +144,19 @@ Value FieldRead::convertToIR(IRBuilder& builder, Local* out) const {
     return target;
 }
 
-Value MethodCall::convertToIR(IRBuilder& builder, Local* out) const {
+ValPtr MethodCall::convertToIR(IRBuilder& builder, Local* out) const {
     auto objVar = base->convertToIR(builder, nullptr);
-    auto retVar = (out) ? *out : builder.getNextTemp();
+    auto retVar = std::make_shared<Local>((out) ? *out : builder.getNextTemp());
 
-    // Get vtable from address of pointer
-    auto vtableAddr = builder.getNextTemp();
-    builder.addInstruction(std::move(std::make_unique<BinInst>(vtableAddr, Oper::Add, objVar, Const(0))));
-
-    auto vtable = builder.getNextTemp();
-    builder.addInstruction(std::move(std::make_unique<Load>(vtable, vtableAddr)));
+    // can directly get objectVar memory since vtable is stored at 0
+    auto vtable = std::make_shared<Local>(builder.getNextTemp());
+    builder.addInstruction(std::move(std::make_unique<Load>(vtable, objVar)));
 
     auto methodIndex = builder.getMethodOffset(methodname);
-    auto funcEntry = builder.getNextTemp();
-    builder.addInstruction(std::move(std::make_unique<GetElt>(funcEntry, vtable, Const(methodIndex))));
+    auto funcEntry = std::make_shared<Local>(builder.getNextTemp());
+    builder.addInstruction(std::move(std::make_unique<GetElt>(funcEntry, vtable, std::make_shared<Const>(methodIndex))));
 
     auto dneBlock = builder.createBlock();
-
     auto existsBlock = builder.createBlock();
 
     builder.terminate(std::move(std::make_unique<Conditional>(funcEntry, existsBlock, dneBlock)));
@@ -164,19 +166,20 @@ Value MethodCall::convertToIR(IRBuilder& builder, Local* out) const {
     
     builder.setCurrentBlock(existsBlock);
 
-    std::vector<Value> argVars = {objVar};
+    std::vector<ValPtr> argVars;
+    argVars.push_back(objVar);
     for (auto& arg : args) {
         argVars.push_back(arg->convertToIR(builder, nullptr));
     }
 
-    builder.addInstruction(std::move(std::make_unique<Call>(retVar, funcEntry, objVar, argVars)));
+    builder.addInstruction(std::move(std::make_unique<Call>(retVar, funcEntry, objVar, std::move(argVars))));
 
     return retVar;
 }
 
 void AssignStatement::convertToIR(IRBuilder& builder) const {
-    auto target = builder.getSSAVar(name, true);
-    auto val = value->convertToIR(builder, &target);
+    auto target = std::make_shared<Local>(builder.getSSAVar(name, true));
+    auto val = value->convertToIR(builder, target.get());
 }
 
 void DiscardStatement::convertToIR(IRBuilder& builder) const {
@@ -188,16 +191,16 @@ void FieldAssignStatement::convertToIR(IRBuilder& builder) const {
     auto targetVal = value->convertToIR(builder, nullptr);
 
     // Use ftable to find the field being assigned to for the given object (ftable is +8)
-    auto fmapAddr = builder.getNextTemp();
-    builder.addInstruction(std::move(std::make_unique<BinInst>(fmapAddr, Oper::Add, objVar, Const(8))));
+    auto fmapAddr = std::make_shared<Local>(builder.getNextTemp());
+    builder.addInstruction(std::move(std::make_unique<BinInst>(fmapAddr, Oper::Add, objVar, std::make_shared<Const>(8))));
 
-    auto fmap = builder.getNextTemp();
+    auto fmap = std::make_shared<Local>(builder.getNextTemp());
     builder.addInstruction(std::move(std::make_unique<Load>(fmap, fmapAddr)));
 
     // field offset from in ftable
     auto fieldOffset = builder.getFieldOffset(field);
-    auto fieldEntry = builder.getNextTemp();
-    builder.addInstruction(std::move(std::make_unique<GetElt>(fieldEntry, fmap, Const(fieldOffset))));
+    auto fieldEntry = std::make_shared<Local>(builder.getNextTemp());
+    builder.addInstruction(std::move(std::make_unique<GetElt>(fieldEntry, fmap, std::make_shared<Const>(fieldOffset))));
 
     auto existsBlock = builder.createBlock();
     auto dneBlock = builder.createBlock();
@@ -208,7 +211,7 @@ void FieldAssignStatement::convertToIR(IRBuilder& builder) const {
 
     builder.setCurrentBlock(existsBlock);
 
-    auto fieldAddr = builder.getNextTemp();
+    auto fieldAddr = std::make_shared<Local>(builder.getNextTemp());
     builder.addInstruction(std::move(std::make_unique<BinInst>(fieldAddr, Oper::Add, objVar, fieldEntry)));
 
     builder.addInstruction(std::move(std::make_unique<Store>(fieldAddr, targetVal)));
@@ -219,22 +222,28 @@ void IfStatement::convertToIR(IRBuilder& builder) const {
     
     auto thenBlock = builder.createBlock();
     auto elseBlock = builder.createBlock();
-    auto mergeBlock = builder.createBlock();
+    BasicBlock* mergeBlock = nullptr;
     
     builder.terminate(std::move(std::make_unique<Conditional>(condVar, thenBlock, elseBlock)));
     builder.setCurrentBlock(thenBlock);
     
     auto terminated = builder.processBlock(thenBranch);
-    if (!terminated)
+    if (!terminated) {
+        if (!mergeBlock)
+            mergeBlock = builder.createBlock();
+
         builder.terminate(std::move(std::make_unique<Jump>(mergeBlock)));
-    
+    }
+        
     builder.setCurrentBlock(elseBlock);
     
     terminated = builder.processBlock(elseBranch);
-    if (!terminated)
+    if (!terminated) {        
+        if (!mergeBlock)
+            mergeBlock = builder.createBlock();
+
         builder.terminate(std::move(std::make_unique<Jump>(mergeBlock)));
-    
-    builder.setCurrentBlock(mergeBlock);
+    }
 }
 
 void IfOnlyStatement::convertToIR(IRBuilder& builder) const {
@@ -284,29 +293,36 @@ void PrintStatement::convertToIR(IRBuilder& builder) const {
     builder.addInstruction(std::move(std::make_unique<Print>(val)));
 }
 
-std::unique_ptr<MethodIR> Method::convertToIR(std::string classname, 
+std::shared_ptr<MethodIR> Method::convertToIR(std::string classname, 
         std::map<std::string, std::unique_ptr<ClassMetadata>>& cls, 
         std::vector<std::string>& mem, 
-        std::vector<std::string>& mthd) const {
+        std::vector<std::string>& mthd,
+        bool mainmethod = false) const {
 
     std::vector<std::string> lnames;
 
     for (auto const& local : locals)
         lnames.push_back(local->name);
     
-    auto ret = std::make_unique<MethodIR>(classname + "-" + name, lnames);
-    auto builder = IRBuilder(*ret, cls, mem, mthd);
+    auto nm = mainmethod ? "main" : classname + '_' + name;
+    std::vector<std::string> ags;
+    for (int i = 0; i < args.size(); i++)
+        ags.push_back(args[i]->name);
+
+    auto ret = std::make_shared<MethodIR>(nm, lnames, ags);
+    auto builder = IRBuilder(ret, cls, mem, mthd);
 
     for (auto &name : lnames) {
-        auto varVersion = builder.getSSAVar(name, true);
-        auto initInstruction = std::make_unique<Assign>(varVersion, Const(0));
+        auto varVersion = std::make_shared<Local>(builder.getSSAVar(name, true));
+        auto initInstruction = std::make_unique<Assign>(varVersion, std::make_shared<Const>(0));
+        builder.addInstruction(std::move(initInstruction));
     }
 
     auto terminated = builder.processBlock(body);
     
     // if method doesn't terminate, treat as an error
-    if (!terminated)
-        std::runtime_error(std::format("Method does not terminate: %d", name));
+    if (!terminated && !mainmethod)
+        std::runtime_error(std::format("Method does not terminate: {}", name));
 
     return ret;
 };
@@ -319,7 +335,7 @@ std::unique_ptr<CFG> Program::convertToIR() const {
     std::vector<std::string> fields;
 
     std::map<std::string, std::unique_ptr<ClassMetadata>> classinfo;
-    std::map<std::string, std::unique_ptr<MethodIR>> methodinfo;
+    std::map<std::string, std::shared_ptr<MethodIR>> methodinfo;
 
     // Collect global field + method names
     for (const auto& cls : classes) {
@@ -346,13 +362,18 @@ std::unique_ptr<CFG> Program::convertToIR() const {
         int ftableindex = 0;
 
         for (const auto& fieldName : fields) {
+            auto fieldinclass = false;
+
             for (const auto& field : cls->fields) {
                 if (field->name == fieldName) {
                     classinfo[cls->name]->ftable.push_back(offset++);
+                    fieldinclass = true;
+                    break;
                 }
-
-                classinfo[cls->name]->ftable.push_back(0);
             }
+            
+            if (!fieldinclass)
+                classinfo[cls->name]->ftable.push_back(0);
         }
 
         classinfo[cls->name]->objsize = offset;
@@ -360,28 +381,33 @@ std::unique_ptr<CFG> Program::convertToIR() const {
 
     // for each class build ftable for every field name
     for (const auto& cls : classes) {
-        int vtableindex = 0;
-
         for (const auto& methodName : methods) {
+            auto methodinclass = false;
+
             for (const auto& method : cls->methods) {
                 if (method->name == methodName) {
-                    classinfo[cls->name]->vtable.push_back(methodName);
+                    classinfo[cls->name]->vtable.push_back(cls->name + '_' + methodName);
+                    methodinclass = true;
+                    break;
                 }
             }
-
-            classinfo[cls->name]->vtable.push_back("0");
-            vtableindex++;
+            
+            if (!methodinclass)
+                classinfo[cls->name]->vtable.push_back("0");
         }
     }
 
     for (const auto& cls : classes) {
         for (const auto& method : cls->methods) {
-            std::unique_ptr<MethodIR> ir = method->convertToIR(cls->name, classinfo, fields, methods);
+            std::shared_ptr<MethodIR> ir = method->convertToIR(cls->name, classinfo, fields, methods);
 
-            auto nm = format("%s%c%s", cls->name, '-', method->name);
-            methodinfo.insert_or_assign(nm, std::move(ir));
+            auto nm = std::format("{}{}{}", cls->name, '_', method->name);
+            methodinfo[nm] = ir;
         }
     }
+
+    std::shared_ptr<MethodIR> mainir = main->convertToIR("", classinfo, fields, methods, true);
+    methodinfo["main"] = mainir;
 
     return std::move(std::make_unique<CFG>(fields, methods, std::move(classinfo), std::move(methodinfo)));
 }

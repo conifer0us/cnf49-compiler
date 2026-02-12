@@ -11,7 +11,7 @@
             "description": "Select compiler options",
             "options": [
                 "-help",
-                "-print-AST",
+                "-printAST",
                 "-noSSA",
                 "-noopt",
                 ""
