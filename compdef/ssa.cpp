@@ -11,94 +11,59 @@ void CFG::naiveSSA() {
 void MethodIR::naiveSSA() {
     std::map<BasicBlock*, std::vector<BasicBlock*>> predecessors;
     std::map<std::string, int> globalVersion;
-    std::map<BasicBlock*, std::map<std::string, int>> priorVers;
-    std::queue<BasicBlock*> worklist;
+    std::map<BasicBlock*, std::map<std::string, int>> versionsEnd;
+    std::map<BasicBlock*, std::map<std::string, ValPtr>> phiout;
 
     auto startblock = getStartBlock();
 
-    // initialize args (skip 'this')
+    // Initialize args (skip 'this')
     for (int i = 1; i < args.size(); i++)
         globalVersion[args[i]] = 0;
 
-    // initialize locals
+    // Initialize locals
     for (auto& lcl : locals)
         globalVersion[lcl] = 0;
 
-    // compute block predecessors
+    // Compute block predecessors
     for (auto& block : blocks) {
-        for (auto succ : block->getNextBlocks()) {
+        for (auto* succ : block->getNextBlocks()) {
             predecessors[succ].push_back(block.get());
         }
     }
 
-    // start dataflow iteration
-    worklist.push(startblock);
-
-    while (!worklist.empty()) {
-        BasicBlock* block = worklist.front();
-        worklist.pop();
-
-        std::map<std::string, int> incoming;
-
-        if (block == startblock) {
-            incoming = globalVersion;
-        } else {
-            for (auto* pred : predecessors[block]) {
-                auto& predMap = priorVers[pred];
-
-                for (auto& [var, ver] : predMap) {
-                    if (!incoming.count(var)) {
-                        incoming[var] = ver;
-                    } else if (incoming[var] != ver) {
-                        incoming[var] = -1;  // conflict so needs phi
-                    }
-                }
+    // insert phi nodes for every variable in blocks with multiple predecessors
+    for (auto& block : blocks) {
+        if (predecessors[block.get()].size() > 1) {
+            for (auto& [var, _] : globalVersion) {
+                phiout[block.get()][var] = std::make_shared<Local>(var, ++globalVersion[var]);
             }
         }
 
-        // if nothing changed, skip
-        if (priorVers[block] == incoming)
-            continue;
-
-        globalVersion = incoming;
-
-        if (block != startblock) {
-            for (auto& [var, ver] : incoming) {
-
-                if (ver == -1) {
-                    int newVer = ++globalVersion[var];
-
-                    std::vector<std::pair<std::string, ValPtr>> vers;
-
-                    for (auto* pred : predecessors[block]) {
-                        vers.push_back({
-                            pred->label,
-                            std::make_shared<Local>(var, priorVers[pred][var])
-                        });
-                    }
-
-                    auto destvar = std::make_shared<Local>(var, newVer);
-                    auto phiInst = std::make_unique<Phi>(destvar, std::move(vers));
-
-                    block->instructions.insert(
-                        block->instructions.begin(),
-                        std::move(phiInst)
-                    );
-                }
-            }
-        }
-
-        for (auto& inst : block->instructions)
+        for (auto& inst : block->instructions) {
             inst->renameUses(globalVersion);
+        }
 
         block->blockTransfer->renameUses(globalVersion);
+        versionsEnd[block.get()] = globalVersion;
+    }
 
-        priorVers[block] = globalVersion;
+    // nested mess for compiling Phi statement from computed block previous and allotted phi statement dest
+    for (auto& block : blocks) {
+        if (predecessors[block.get()].size() > 1) {
+            for (auto &[var, _]: globalVersion) {
+                std::vector<std::pair<std::string, ValPtr>> phiArgs;
 
-        for (auto* succ : block->getNextBlocks())
-            worklist.push(succ);
+                for (auto* pred : predecessors[block.get()]) {
+                    phiArgs.push_back({pred->label, std::make_shared<Local>(var, versionsEnd[pred][var])});
+                }
+
+                auto phiInst = std::make_unique<Phi>(phiout[block.get()][var], phiArgs);
+                block->blockPhi.push_back(std::move(phiInst));
+            }
+        }
     }
 }
+
 
 // disgusting amount of copy/paste + search/replace in this section but the idea is the same
 // for each instruction, replace all locals with the latest version, increment if assigning

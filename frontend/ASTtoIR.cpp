@@ -1,8 +1,6 @@
 #include "ASTNodes.h"
 #include "irbuilder.h"
 
-#include <format>
-
 ValPtr ThisExpr::convertToIR(IRBuilder& builder, Local *out) const {
     auto newLocal = std::make_shared<Local>(Local("this", 0));
     
@@ -110,7 +108,7 @@ ValPtr Binop::convertToIR(IRBuilder& builder, Local *out) const {
             optype =Oper::Ne;
             break;
         default:
-            std::runtime_error(std::format("Unknown Operation: {}", op));
+            std::runtime_error("Unknown Operation: " + op);
     }
 
     if (untag) {
@@ -377,7 +375,7 @@ std::shared_ptr<MethodIR> Method::convertToIR(std::string classname,
     
     // if method doesn't terminate, treat as an error
     if (!terminated && !mainmethod)
-        std::runtime_error(std::format("Method does not terminate: {}", name));
+        std::runtime_error("Method does not terminate: " + name);
 
     return ret;
 };
@@ -456,7 +454,7 @@ std::unique_ptr<CFG> Program::convertToIR(bool pinhole) const {
         for (const auto& method : cls->methods) {
             std::shared_ptr<MethodIR> ir = method->convertToIR(cls->name, classinfo, fields, methods, pinhole, false);
 
-            auto nm = std::format("{}{}{}", cls->name, '_', method->name);
+            auto nm = cls->name + '_' + method->name;
             methodinfo[nm] = ir;
         }
     }

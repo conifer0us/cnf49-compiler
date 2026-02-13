@@ -37,7 +37,7 @@ void Const::outputIR() const {
 }
 
 std::string Const::getString() const {
-    return std::format("{}", value);
+    return std::to_string(value);
 }
 
 ValType Const::getValType() const {
@@ -239,6 +239,12 @@ void ClassMetadata::outputIR(const std::vector<std::string>& methods, const std:
 
 void BasicBlock::outputIR() const {
     std::cout << label << ":\n";
+
+    for (const auto& inst : blockPhi) {
+        std::cout << "\t";
+        inst->outputIR();
+        std::cout << "\n";
+    }
 
     for (const auto& inst : instructions) {
         std::cout << "\t";

@@ -63,12 +63,12 @@ void IRBuilder::terminate(std::unique_ptr<ControlTransfer> blockTerm) {
 }
 
 Local IRBuilder::getNextTemp() {
-    return Local(std::format("{}", nexttmp++), 0);
+    return Local(std::to_string(nexttmp++), 0);
 }
 
 int IRBuilder::getClassSize(std::string classname) {
     if (!classes.contains(classname)) 
-        std::runtime_error(std::format("Could not find classname {}", classname));
+        std::runtime_error("Could not find classname: " + classname);
     
     return classes[classname]->size();
 }
@@ -78,7 +78,7 @@ int IRBuilder::getFieldOffset(std::string member) {
         if (members[i] == member)
             return i;
 
-    std::runtime_error(std::format("Could not find member {}", member));
+    std::runtime_error("Could not find member: " +  member);
     
     return -1;
 }
@@ -88,7 +88,7 @@ int IRBuilder::getMethodOffset(std::string method) {
         if (methods[i] == method)
             return i;
 
-    std::runtime_error(std::format("Could not find method {}", method));
+    std::runtime_error("Could not find method: " + method);
     
     return -1;
 }

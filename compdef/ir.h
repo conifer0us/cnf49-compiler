@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <string>
-#include <format>
 #include <vector>
 #include <set>
 #include <map>
@@ -270,6 +269,7 @@ struct Fail : ControlTransfer {
 };
 
 struct BasicBlock {
+    std::vector<std::unique_ptr<Phi>> blockPhi;
     std::vector<std::unique_ptr<IROp>> instructions;
     std::unique_ptr<ControlTransfer> blockTransfer;
     std::string label;
@@ -304,7 +304,7 @@ public:
         if (lastblknum == 0)
             bname = name;
         else
-            bname = std::format("{}{}", name, lastblknum);
+            bname = name + std::to_string(lastblknum);
 
         lastblknum++;
         auto newBlock = std::make_unique<BasicBlock>(bname);
