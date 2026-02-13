@@ -213,8 +213,9 @@ void Fail::outputIR() const {
 // for methods that do not return anything!!
 HangingBlock::~HangingBlock() = default;
 
+// return 0 by default from methods that are hanging
 void HangingBlock::outputIR() const {
-    std::cout << "ret";
+    std::cout << "ret 0";
 }
 
 void ClassMetadata::outputIR(const std::vector<std::string>& methods, const std::vector<std::string>& fields) const {
@@ -294,6 +295,7 @@ void CFG::outputIR() const {
     }
     
     std::cout << "\n";
+    std::cout << EOF;
 }
 
 // Add these to prevent linker errors! None should be called! Ever!
