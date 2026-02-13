@@ -63,7 +63,7 @@ void IRBuilder::terminate(std::unique_ptr<ControlTransfer> blockTerm) {
 }
 
 Local IRBuilder::getNextTemp() {
-    auto nxtTmp = "_" + std::to_string(nexttmp++) + "tmp";
+    auto nxtTmp = "tmp_" + std::to_string(nexttmp++) + "_";
     method->registerTemp(nxtTmp);
     return Local(nxtTmp, 0);
 }
