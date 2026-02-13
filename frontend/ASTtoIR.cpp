@@ -193,7 +193,7 @@ ValPtr MethodCall::convertToIR(IRBuilder& builder, Local* out) const {
 
     auto methodIndex = builder.getMethodOffset(methodname);
     auto funcEntry = std::make_shared<Local>(builder.getNextTemp());
-    builder.addInstruction(std::move(std::make_unique<GetElt>(funcEntry, vtable, std::make_shared<Const>(methodIndex))));
+    builder.addInstruction(std::move(std::make_unique<GetElt>(funcEntry, vtable, std::make_shared<Const>(methodIndex * 8))));
 
     auto dneBlock = builder.createBlock();
     auto existsBlock = builder.createBlock();
@@ -245,7 +245,7 @@ void FieldAssignStatement::convertToIR(IRBuilder& builder) const {
     // field offset from in ftable
     auto fieldOffset = builder.getFieldOffset(field);
     auto fieldEntry = std::make_shared<Local>(builder.getNextTemp());
-    builder.addInstruction(std::move(std::make_unique<GetElt>(fieldEntry, fmap, std::make_shared<Const>(fieldOffset))));
+    builder.addInstruction(std::move(std::make_unique<GetElt>(fieldEntry, fmap, std::make_shared<Const>(fieldOffset * 8))));
 
     auto existsBlock = builder.createBlock();
     auto dneBlock = builder.createBlock();
