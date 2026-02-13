@@ -218,7 +218,7 @@ void HangingBlock::outputIR() const {
 }
 
 void ClassMetadata::outputIR(const std::vector<std::string>& methods, const std::vector<std::string>& fields) const {
-    VTABLE(name).outputIR();
+    std::cout << "global array " << VTABLE(name).getString();
     std::cout << ": { ";
     
     for (size_t i = 0; i < vtable.size(); ++i) {
