@@ -155,7 +155,7 @@ ValPtr FieldRead::convertToIR(IRBuilder& builder, Local* out) const {
 
     auto fieldOffset = builder.getFieldOffset(fieldname);
     auto fieldEntry = std::make_shared<Local>(builder.getNextTemp());
-    builder.addInstruction(std::move(std::make_unique<GetElt>(fieldEntry, fmap, std::make_shared<Const>(fieldOffset))));
+    builder.addInstruction(std::move(std::make_unique<GetElt>(fieldEntry, fmap, std::make_shared<Const>(fieldOffset * 8))));
 
     auto dneBlock = builder.createBlock();
     auto existsBlock = builder.createBlock();
