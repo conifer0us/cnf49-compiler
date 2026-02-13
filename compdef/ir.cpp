@@ -228,7 +228,7 @@ void ClassMetadata::outputIR(const std::vector<std::string>& methods, const std:
     
     std::cout << " }\n";
 
-    FTABLE(name).outputIR();
+    std::cout << "global array " << FTABLE(name).getString();
     std::cout << ": { ";
     for (size_t i = 0; i < ftable.size(); ++i) {
         if (i) std::cout << ", ";
