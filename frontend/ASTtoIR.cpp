@@ -157,6 +157,7 @@ ValPtr FieldRead::convertToIR(IRBuilder& builder, Local* out) const {
     auto fieldEntry = std::make_shared<Local>(builder.getNextTemp());
     builder.addInstruction(std::move(std::make_unique<GetElt>(fieldEntry, fmap, std::make_shared<Const>(fieldOffset))));
     builder.tagVal(fieldEntry, TagType::Integer);
+    builder.addInstruction(std::move(std::make_unique<BinInst>(fieldEntry, Oper::Mul, fieldEntry, std::make_shared<Const>(8))));
 
     auto dneBlock = builder.createBlock();
     auto existsBlock = builder.createBlock();
@@ -250,6 +251,7 @@ void FieldAssignStatement::convertToIR(IRBuilder& builder) const {
     // tag offset values from ftable
     builder.addInstruction(std::move(std::make_unique<GetElt>(fieldEntry, fmap, std::make_shared<Const>(fieldOffset))));
     builder.tagVal(fieldEntry, TagType::Integer);
+    builder.addInstruction(std::move(std::make_unique<BinInst>(fieldEntry, Oper::Mul, fieldEntry, std::make_shared<Const>(8))));
 
     auto existsBlock = builder.createBlock();
     auto dneBlock = builder.createBlock();
