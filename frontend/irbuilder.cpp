@@ -25,7 +25,7 @@ void IRBuilder::tagCheck(ValPtr lcl, TagType tag) {
     auto nottagbranch = createBlock();
 
     auto tmp = std::make_shared<Local>(getNextTemp());
-    addInstruction(std::move(std::make_unique<BinInst>(tmp, Oper::BitAnd, lcl, std::make_shared<Const>(tag))));
+    addInstruction(std::move(std::make_unique<BinInst>(tmp, Oper::BitAnd, lcl, std::make_shared<Const>(1))));
 
     if (tag)
         terminate(std::move(std::make_unique<Conditional>(tmp, istagbranch, nottagbranch)));
@@ -63,7 +63,7 @@ void IRBuilder::terminate(std::unique_ptr<ControlTransfer> blockTerm) {
 }
 
 Local IRBuilder::getNextTemp() {
-    auto nxtTmp = "tmp" + std::to_string(nexttmp++) + "ver";
+    auto nxtTmp = "tmp" + std::to_string(nexttmp++) + "v";
     method->registerTemp(nxtTmp);
     return Local(nxtTmp, 0);
 }
