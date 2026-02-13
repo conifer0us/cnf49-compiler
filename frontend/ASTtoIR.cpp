@@ -69,13 +69,14 @@ ValPtr ClassRef::convertToIR(IRBuilder& builder, Local *out) const {
 
 ValPtr Binop::convertToIR(IRBuilder& builder, Local *out) const {
     auto lhsVar = lhs->convertToIR(builder, nullptr);
+    ValPtr valTagL;
     if (lhsVar->getValType() == ValType::VarType)
-        builder.tagCheck(lhsVar, TagType::Integer);
-
+        valTagL = builder.tagCheck(lhsVar, TagType::Integer);
+        
     auto rhsVar = rhs->convertToIR(builder, nullptr);
-
+    ValPtr valTagR;
     if (rhsVar->getValType() == ValType::VarType)
-        builder.tagCheck(rhsVar, TagType::Integer);
+        valTagR = builder.tagCheck(rhsVar, TagType::Integer);
 
     auto result = std::make_shared<Local>((out) ? *out : builder.getNextTemp());
 
@@ -124,12 +125,17 @@ ValPtr Binop::convertToIR(IRBuilder& builder, Local *out) const {
     auto binInst = std::make_unique<BinInst>(result, optype, lhsVar, rhsVar);
     builder.addInstruction(std::move(binInst));
 
+    // if tag is to be stripped before operation, add back the tag that was taken off
     if (untag) {
-        if (lhsVar->getValType() == ValType::VarType)
-            builder.tagVal(lhsVar, TagType::Integer);
+        if (lhsVar->getValType() == ValType::VarType) {
+            builder.addInstruction(std::move(std::make_unique<BinInst>(lhsVar, Oper::Mul, lhsVar, std::make_unique<Const>(1))));
+            builder.addInstruction(std::move(std::make_unique<BinInst>(lhsVar, Oper::BitXor, lhsVar, valTagL)));
+        }
 
-        if (rhsVar->getValType() == ValType::VarType)
-            builder.tagVal(rhsVar, TagType::Integer);
+        if (lhsVar->getValType() == ValType::VarType) {
+            builder.addInstruction(std::move(std::make_unique<BinInst>(rhsVar, Oper::Mul, rhsVar, std::make_unique<Const>(1))));
+            builder.addInstruction(std::move(std::make_unique<BinInst>(rhsVar, Oper::BitXor, rhsVar, valTagR)));
+        }   
     }
 
     return result;

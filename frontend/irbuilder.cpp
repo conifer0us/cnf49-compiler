@@ -15,10 +15,10 @@ void IRBuilder::addInstruction(std::unique_ptr<IROp> op) {
     current->instructions.push_back(std::move(op));
 }
 
-void IRBuilder::tagCheck(ValPtr lcl, TagType tag) {
+ValPtr IRBuilder::tagCheck(ValPtr lcl, TagType tag) {
     // PINHOLE OPTIMIZATION: AVOID TAG CHECKS IF WORKING WITH %THIS
     if (pinhole && lcl->getString() == "this") {
-        return;
+        return lcl;
     }
 
     auto istagbranch = createBlock();
@@ -33,9 +33,13 @@ void IRBuilder::tagCheck(ValPtr lcl, TagType tag) {
         terminate(std::move(std::make_unique<Conditional>(tmp, nottagbranch, istagbranch)));
 
     setCurrentBlock(nottagbranch);
-    terminate(std::move(std::make_unique<Fail>(FailReason::NotANumber)));
+    if (tag = TagType::Integer)
+        terminate(std::move(std::make_unique<Fail>(FailReason::NotANumber)));
+    else
+        terminate(std::move(std::make_unique<Fail>(FailReason::NotAPointer)));
 
     setCurrentBlock(istagbranch);
+    return tmp;
 }
 
 void IRBuilder::tagVal(ValPtr val, TagType tag) {
@@ -46,7 +50,7 @@ void IRBuilder::tagVal(ValPtr val, TagType tag) {
 
     addInstruction(std::move(std::make_unique<BinInst>(val, Oper::Mul, val, std::make_shared<Const>(2))));
     if (tag != 0)
-        addInstruction(std::move(std::make_unique<BinInst>(val, Oper::Add, val, std::make_shared<Const>(tag))));
+        addInstruction(std::move(std::make_unique<BinInst>(val, Oper::BitXor, val, std::make_shared<Const>(tag))));
 }
 
 void IRBuilder::untagVal(ValPtr val) {

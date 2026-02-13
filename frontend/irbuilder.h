@@ -32,7 +32,7 @@ public:
 
     void addInstruction(std::unique_ptr<IROp> op);
 
-    void tagCheck(ValPtr lcl, TagType tag);
+    ValPtr tagCheck(ValPtr lcl, TagType tag);
     void tagVal(ValPtr lcl, TagType tag);
     void untagVal(ValPtr lcl);
 
