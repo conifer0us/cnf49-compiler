@@ -33,7 +33,7 @@ ValPtr IRBuilder::tagCheck(ValPtr lcl, TagType tag) {
         terminate(std::move(std::make_unique<Conditional>(tmp, nottagbranch, istagbranch)));
 
     setCurrentBlock(nottagbranch);
-    if (tag = TagType::Integer)
+    if (tag == TagType::Integer)
         terminate(std::move(std::make_unique<Fail>(FailReason::NotANumber)));
     else
         terminate(std::move(std::make_unique<Fail>(FailReason::NotAPointer)));

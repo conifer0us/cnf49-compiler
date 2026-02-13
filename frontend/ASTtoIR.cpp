@@ -132,7 +132,7 @@ ValPtr Binop::convertToIR(IRBuilder& builder, Local *out) const {
             builder.addInstruction(std::move(std::make_unique<BinInst>(lhsVar, Oper::BitXor, lhsVar, valTagL)));
         }
 
-        if (lhsVar->getValType() == ValType::VarType) {
+        if (rhsVar->getValType() == ValType::VarType) {
             builder.addInstruction(std::move(std::make_unique<BinInst>(rhsVar, Oper::Mul, rhsVar, std::make_shared<Const>(1))));
             builder.addInstruction(std::move(std::make_unique<BinInst>(rhsVar, Oper::BitXor, rhsVar, valTagR)));
         }   
