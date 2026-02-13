@@ -128,12 +128,12 @@ ValPtr Binop::convertToIR(IRBuilder& builder, Local *out) const {
     // if tag is to be stripped before operation, add back the tag that was taken off
     if (untag) {
         if (lhsVar->getValType() == ValType::VarType) {
-            builder.addInstruction(std::move(std::make_unique<BinInst>(lhsVar, Oper::Mul, lhsVar, std::make_unique<Const>(1))));
+            builder.addInstruction(std::move(std::make_unique<BinInst>(lhsVar, Oper::Mul, lhsVar, std::make_shared<Const>(1))));
             builder.addInstruction(std::move(std::make_unique<BinInst>(lhsVar, Oper::BitXor, lhsVar, valTagL)));
         }
 
         if (lhsVar->getValType() == ValType::VarType) {
-            builder.addInstruction(std::move(std::make_unique<BinInst>(rhsVar, Oper::Mul, rhsVar, std::make_unique<Const>(1))));
+            builder.addInstruction(std::move(std::make_unique<BinInst>(rhsVar, Oper::Mul, rhsVar, std::make_shared<Const>(1))));
             builder.addInstruction(std::move(std::make_unique<BinInst>(rhsVar, Oper::BitXor, rhsVar, valTagR)));
         }   
     }
