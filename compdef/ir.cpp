@@ -295,7 +295,6 @@ void CFG::outputIR() const {
     }
     
     std::cout << "\n";
-    std::cout << EOF;
 }
 
 // Add these to prevent linker errors! None should be called! Ever!

@@ -62,6 +62,8 @@ ValPtr ClassRef::convertToIR(IRBuilder& builder, Local *out) const {
     auto storeFtbl = std::make_unique<Store>(ftblVar, ftable);
     builder.addInstruction(std::move(storeFtbl));
 
+    builder.tagVal(var, TagType::Pointer);
+
     return var;
 }
 

@@ -24,6 +24,10 @@ void MethodIR::naiveSSA() {
     for (auto& lcl : locals)
         globalVersion[lcl] = 0;
 
+    // Initialize temps
+    for (auto&tmp : temps)
+        globalVersion[tmp] = 0;
+
     // Compute block predecessors
     for (auto& block : blocks) {
         for (auto* succ : block->getNextBlocks()) {

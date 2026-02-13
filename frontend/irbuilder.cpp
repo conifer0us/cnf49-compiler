@@ -63,7 +63,9 @@ void IRBuilder::terminate(std::unique_ptr<ControlTransfer> blockTerm) {
 }
 
 Local IRBuilder::getNextTemp() {
-    return Local(std::to_string(nexttmp++), 0);
+    auto nxtTmp = "_" + std::to_string(nexttmp++) + "tmp";
+    method->registerTemp(nxtTmp);
+    return Local(nxtTmp, 0);
 }
 
 int IRBuilder::getClassSize(std::string classname) {

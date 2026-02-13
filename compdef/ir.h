@@ -293,6 +293,7 @@ class MethodIR {
     std::string name;
     std::vector<std::string> locals;
     std::vector<std::string> args;
+    std::vector<std::string> temps;
 
     int lastblknum = 0;
 
@@ -326,6 +327,9 @@ public:
 
     void outputIR() const;
     void naiveSSA();
+
+    // register temp values with method from method builder to allow operating on them with SSA
+    void registerTemp(std::string tmp) {temps.push_back(tmp);};
 
     ~MethodIR() = default;
     MethodIR(std::string nm, std::vector<std::string> lcls, std::vector<std::string> ars): name(nm), locals(lcls), args(ars) { newBasicBlock(); }
