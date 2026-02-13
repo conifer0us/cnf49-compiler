@@ -45,7 +45,8 @@ void IRBuilder::tagVal(ValPtr val, TagType tag) {
     }
 
     addInstruction(std::move(std::make_unique<BinInst>(val, Oper::Mul, val, std::make_shared<Const>(2))));
-    addInstruction(std::move(std::make_unique<BinInst>(val, Oper::Add, val, std::make_shared<Const>(tag))));
+    if (tag != 0)
+        addInstruction(std::move(std::make_unique<BinInst>(val, Oper::Add, val, std::make_shared<Const>(tag))));
 }
 
 void IRBuilder::untagVal(ValPtr val) {

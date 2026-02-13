@@ -55,5 +55,8 @@ int main(int argc, char **argv) {
         return 0;
     }
 
+    prgIR->naiveSSA();
+    prgIR->outputIR();
+
     return 0;
 }

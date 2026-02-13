@@ -122,6 +122,7 @@ ValPtr Binop::convertToIR(IRBuilder& builder, Local *out) const {
     }
 
     auto binInst = std::make_unique<BinInst>(result, optype, lhsVar, rhsVar);
+    builder.addInstruction(std::move(binInst));
 
     if (untag) {
         if (lhsVar->getValType() == ValType::VarType)
@@ -130,8 +131,6 @@ ValPtr Binop::convertToIR(IRBuilder& builder, Local *out) const {
         if (rhsVar->getValType() == ValType::VarType)
             builder.tagVal(rhsVar, TagType::Integer);
     }
-
-    builder.addInstruction(std::move(binInst));
 
     return result;
 }

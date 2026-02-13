@@ -63,6 +63,7 @@ enum class Oper {
 struct IROp {
     virtual ~IROp() = default;
     virtual void outputIR() const = 0;
+    virtual void renameUses(std::map<std::string, int>& versions) = 0;
 };
 
 struct Assign : IROp {
@@ -70,7 +71,8 @@ struct Assign : IROp {
     ValPtr src;
 
     void outputIR() const override;
-    
+    void renameUses(std::map<std::string, int>& versions) override;    
+
     Assign(ValPtr d, ValPtr s): 
         dest(d), src(std::move(s)) {}
 };
@@ -82,6 +84,7 @@ struct BinInst : IROp {
     ValPtr rhs;
 
     void outputIR() const override;
+    void renameUses(std::map<std::string, int>& versions) override;
     
     BinInst(ValPtr d, Oper o, ValPtr l, ValPtr r): 
         dest(d), op(o), lhs(std::move(l)), rhs(std::move(r)) {}
@@ -93,6 +96,7 @@ struct Call : IROp {
     std::vector<ValPtr> args;
 
     void outputIR() const override;
+    void renameUses(std::map<std::string, int>& versions) override;
     
     Call(ValPtr d, ValPtr c, std::vector<ValPtr> a): 
         dest(d), code(std::move(c)), args(std::move(a)) {}
@@ -105,6 +109,7 @@ struct Phi : IROp {
     std::vector<std::pair<std::string, ValPtr>> incoming;
 
     void outputIR() const override;
+    void renameUses(std::map<std::string, int>& versions) override;
     
     Phi(ValPtr d, std::vector<std::pair<std::string, ValPtr>> in): 
         dest(d), incoming(std::move(in)) {}
@@ -115,6 +120,7 @@ struct Alloc : IROp {
     int numSlots;
 
     void outputIR() const override;
+    void renameUses(std::map<std::string, int>& versions) override;
     
     Alloc(ValPtr d, int n): 
         dest(d), numSlots(n) {}
@@ -124,6 +130,7 @@ struct Print : IROp {
     ValPtr val;
     
     void outputIR() const override;
+    void renameUses(std::map<std::string, int>& versions) override;
     
     explicit Print(ValPtr v): 
         val(std::move(v)) {}
@@ -135,6 +142,7 @@ struct GetElt : IROp {
     ValPtr index;
 
     void outputIR() const override;
+    void renameUses(std::map<std::string, int>& versions) override;
     
     GetElt(ValPtr d, ValPtr a, ValPtr i): 
         dest(d), array(std::move(a)), index(std::move(i)) {}
@@ -146,6 +154,7 @@ struct SetElt : IROp {
     ValPtr val;
 
     void outputIR() const override;
+    void renameUses(std::map<std::string, int>& versions) override;
     
     SetElt(ValPtr a, ValPtr i, ValPtr v): 
            array(std::move(a)), index(std::move(i)), val(std::move(v)) {}
@@ -156,6 +165,7 @@ struct Load : IROp {
     ValPtr addr;
 
     void outputIR() const override;
+    void renameUses(std::map<std::string, int>& versions) override;
     
     Load(ValPtr d, ValPtr addy): 
         dest(d), addr(std::move(addy)) {}
@@ -166,6 +176,7 @@ struct Store : IROp {
     ValPtr val;
 
     void outputIR() const override;
+    void renameUses(std::map<std::string, int>& versions) override;
     
     Store(ValPtr addy, ValPtr v): 
         addr(std::move(addy)), val(std::move(v)) {}
@@ -177,7 +188,9 @@ struct BasicBlock;
 struct ControlTransfer {
     virtual ~ControlTransfer();
     virtual void outputIR() const;
-    virtual std::set<BasicBlock*> successors() const = 0;
+    virtual std::vector<BasicBlock*> successors() const = 0;
+    virtual void renameUses(std::map<std::string, int>& versions) = 0;
+
 };
 
 struct Jump : ControlTransfer {
@@ -186,8 +199,9 @@ struct Jump : ControlTransfer {
     explicit Jump(BasicBlock *t) : target(t) {}
 
     void outputIR() const override;
+    void renameUses(std::map<std::string, int>& versions) override;
     
-    std::set<BasicBlock *> successors() const override {
+    std::vector<BasicBlock *> successors() const override {
         return {target};
     }
 };
@@ -201,8 +215,9 @@ struct Conditional : ControlTransfer {
         condition(std::move(cond)), trueTarget(t), falseTarget(f) {}
 
     void outputIR() const override;
+    void renameUses(std::map<std::string, int>& versions) override;
     
-    std::set<BasicBlock *> successors() const override {
+    std::vector<BasicBlock *> successors() const override {
         return {trueTarget, falseTarget};
     }
 };
@@ -210,22 +225,24 @@ struct Conditional : ControlTransfer {
 struct Return : ControlTransfer {
     ValPtr val;
 
-    std::set<BasicBlock *> successors() const override {
+    std::vector<BasicBlock *> successors() const override {
         return {};
     }
 
     void outputIR() const override;
+    void renameUses(std::map<std::string, int>& versions) override;
 
     explicit Return(ValPtr v): 
         val(std::move(v)) {}
 };
 
 struct HangingBlock : ControlTransfer {
-    std::set<BasicBlock *> successors() const override {
+    std::vector<BasicBlock *> successors() const override {
         return {};
     }
 
     void outputIR() const override;
+    void renameUses(std::map<std::string, int>& versions) override;
 
     virtual ~HangingBlock();
     HangingBlock() {}
@@ -241,11 +258,12 @@ enum class FailReason {
 struct Fail : ControlTransfer {
     FailReason reason;
 
-    std::set<BasicBlock *> successors() const override {
+    std::vector<BasicBlock *> successors() const override {
         return {};
     }
 
     void outputIR() const override;
+    void renameUses(std::map<std::string, int>& versions) override;
 
     explicit Fail(FailReason r): 
         reason(r) {}
@@ -254,13 +272,15 @@ struct Fail : ControlTransfer {
 struct BasicBlock {
     std::vector<std::unique_ptr<IROp>> instructions;
     std::unique_ptr<ControlTransfer> blockTransfer;
-    std::vector<BasicBlock *> nextBlocks;
     std::string label;
 
     ~BasicBlock() = default;
 
     void outputIR() const;
     void naiveSSA();
+    std::vector<BasicBlock *> getNextBlocks() {
+        return blockTransfer->successors();
+    }
     
     BasicBlock(std::string lbl): label(std::move(lbl)) {
             // Basic Block has a hanging end while instantiating
