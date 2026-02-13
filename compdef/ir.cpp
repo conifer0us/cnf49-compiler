@@ -292,6 +292,8 @@ void CFG::outputIR() const {
     for (const auto& [_, method] : methodinfo) {
         method->outputIR();
     }
+    
+    std::cout << "\n";
 }
 
 // Add these to prevent linker errors! None should be called! Ever!
