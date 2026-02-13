@@ -13,6 +13,3 @@ sample.prg and stack.prg are in the main directory and can be used for testing.
 This milestone includes a parser, a conversion to IR (with tag checking for integers and pointers), a peephole optimization, and a naive implementation of SSA.
 
 The chosen peephole optimization prevents tag checking on 'this' since it's always a pointer. This optimization is done in the IRBuilder.h and IRBuilder.cpp in the helper functions for outputting tag checking, tag stripping, and tagging. Instead of emitting IR, if the pinhole optimization is turned on, these functions will simply pass if dealing with %this.
-
-#### About the Name
-This project is called sufferlang not because it caused me suffering to make, though I do regret using C++. It's a repo I already had for a project I've been brainstorming for a while that will generate a new compiler for every user of a language with keywords and symbols randomized. It doesn't do that right now, but the repo is named sufferlang so I can continue this project in that direction after completion of the class.
