@@ -5,9 +5,9 @@ ValPtr ThisExpr::convertToIR(IRBuilder& builder, Local *out) const {
     auto newLocal = std::make_shared<Local>(Local("this", 0));
     
     if (out) {
-            auto o = std::make_shared<Local>(out->name, out->version);
-            builder.addInstruction(std::move(std::make_unique<Assign>(o, newLocal)));
-            return o;
+        auto o = std::make_shared<Local>(out->name, out->version);
+        builder.addInstruction(std::move(std::make_unique<Assign>(o, newLocal)));
+        return o;
     }
     else
         return newLocal;
@@ -68,15 +68,14 @@ ValPtr ClassRef::convertToIR(IRBuilder& builder, Local *out) const {
 }
 
 ValPtr Binop::convertToIR(IRBuilder& builder, Local *out) const {
-    auto lhsVar = lhs->convertToIR(builder, nullptr);
-    ValPtr valTagL;
-    if (lhsVar->getValType() == ValType::VarType)
-        valTagL = builder.tagCheck(lhsVar, TagType::Integer);
+    // make sure every value passed into binop is placed in a local so that tagging and untagging can be done
+    Local *lOut, *rOut;
+    
+    auto lhsVar = lhs->convertToIR(builder, lOut);
+    ValPtr valTagL = builder.tagCheck(lhsVar, TagType::Integer);
         
-    auto rhsVar = rhs->convertToIR(builder, nullptr);
-    ValPtr valTagR;
-    if (rhsVar->getValType() == ValType::VarType)
-        valTagR = builder.tagCheck(rhsVar, TagType::Integer);
+    auto rhsVar = rhs->convertToIR(builder, rOut);
+    ValPtr valTagR = builder.tagCheck(rhsVar, TagType::Integer);
 
     auto result = std::make_shared<Local>((out) ? *out : builder.getNextTemp());
 
@@ -115,27 +114,17 @@ ValPtr Binop::convertToIR(IRBuilder& builder, Local *out) const {
     }
 
     if (untag) {
-        if (lhsVar->getValType() == ValType::VarType)
-            builder.untagVal(lhsVar);
-
-        if (rhsVar->getValType() == ValType::VarType)
-            builder.untagVal(rhsVar);
+        builder.untagVal(lhsVar);
+        builder.untagVal(rhsVar);
     }
 
     auto binInst = std::make_unique<BinInst>(result, optype, lhsVar, rhsVar);
     builder.addInstruction(std::move(binInst));
 
-    // if tag is to be stripped before operation, add back the tag that was taken off
+    // if tag is stripped before operation, add back integer tag
     if (untag) {
-        if (lhsVar->getValType() == ValType::VarType) {
-            builder.addInstruction(std::move(std::make_unique<BinInst>(lhsVar, Oper::Mul, lhsVar, std::make_shared<Const>(1))));
-            builder.addInstruction(std::move(std::make_unique<BinInst>(lhsVar, Oper::BitXor, lhsVar, valTagL)));
-        }
-
-        if (rhsVar->getValType() == ValType::VarType) {
-            builder.addInstruction(std::move(std::make_unique<BinInst>(rhsVar, Oper::Mul, rhsVar, std::make_shared<Const>(1))));
-            builder.addInstruction(std::move(std::make_unique<BinInst>(rhsVar, Oper::BitXor, rhsVar, valTagR)));
-        }   
+        builder.tagVal(lhsVar, TagType::Integer);
+        builder.tagVal(rhsVar, TagType::Integer);
     }
 
     return result;
@@ -143,10 +132,9 @@ ValPtr Binop::convertToIR(IRBuilder& builder, Local *out) const {
 
 ValPtr FieldRead::convertToIR(IRBuilder& builder, Local* out) const {
     auto objVar = base->convertToIR(builder, nullptr);
-    if (objVar->getValType() == ValType::VarType) {
-        builder.tagCheck(objVar, TagType::Pointer);
-        builder.untagVal(objVar);
-    }
+    
+    builder.tagCheck(objVar, TagType::Pointer);
+    builder.untagVal(objVar);
         
     auto target = std::make_shared<Local>((out) ? *out : builder.getNextTemp());
 
@@ -187,10 +175,8 @@ ValPtr FieldRead::convertToIR(IRBuilder& builder, Local* out) const {
 
 ValPtr MethodCall::convertToIR(IRBuilder& builder, Local* out) const {
     auto objVar = base->convertToIR(builder, nullptr);
-    if (objVar->getValType() == ValType::VarType) {
-        builder.tagCheck(objVar, TagType::Pointer);
-        builder.untagVal(objVar);
-    }
+    builder.tagCheck(objVar, TagType::Pointer);
+    builder.untagVal(objVar);
 
     auto retVar = std::make_shared<Local>((out) ? *out : builder.getNextTemp());
 
@@ -236,10 +222,8 @@ void DiscardStatement::convertToIR(IRBuilder& builder) const {
 
 void FieldAssignStatement::convertToIR(IRBuilder& builder) const {
     auto objVar = object->convertToIR(builder, nullptr);
-    if (objVar->getValType() == ValType::VarType) {
-        builder.tagCheck(objVar, TagType::Pointer);
-        builder.untagVal(objVar);
-    }
+    builder.tagCheck(objVar, TagType::Pointer);
+    builder.untagVal(objVar);
         
     auto targetVal = value->convertToIR(builder, nullptr);
 
@@ -349,15 +333,12 @@ void ReturnStatement::convertToIR(IRBuilder& builder) const {
 
 void PrintStatement::convertToIR(IRBuilder& builder) const {
     auto val = value->convertToIR(builder, nullptr);
-    if (val->getValType() == ValType::VarType) {
-        builder.tagCheck(val, TagType::Integer);
-        builder.untagVal(val);
-    }
+    builder.tagCheck(val, TagType::Integer);
+    builder.untagVal(val);
         
     builder.addInstruction(std::move(std::make_unique<Print>(val)));
 
-    if (val->getValType() == ValType::VarType)
-        builder.tagVal(val, Integer);
+    builder.tagVal(val, Integer);
 }
 
 std::shared_ptr<MethodIR> Method::convertToIR(std::string classname, 

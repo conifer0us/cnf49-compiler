@@ -1,0 +1,113 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2
+					],
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10.0"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "compdef",
+					"jsonFile" : "directory-compdef-Debug-251c55c76c91d362cec5.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "compdef",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "frontend",
+					"jsonFile" : "directory-frontend-Debug-b40a0bdb4e36631bd821.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "frontend",
+					"targetIndexes" : 
+					[
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2
+					],
+					"name" : "sufferlang",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "comp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-comp-Debug-ddddb54ad0d45b867aed.json",
+					"name" : "comp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "compdef::@7c03b0cff4cb3a6a0c15",
+					"jsonFile" : "target-compdef-Debug-f5224c1062fe85115ea0.json",
+					"name" : "compdef",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "frontend::@73e8a6b9a3e1c0d3809b",
+					"jsonFile" : "target-frontend-Debug-e82d2e1c391fae9264e2.json",
+					"name" : "frontend",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/mnt/c/Users/cnfer/Desktop/projects/sufferlang/out/build/debug",
+		"source" : "/mnt/c/Users/cnfer/Desktop/projects/sufferlang"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

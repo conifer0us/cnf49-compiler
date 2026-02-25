@@ -68,7 +68,6 @@ void MethodIR::naiveSSA() {
     }
 }
 
-
 // disgusting amount of copy/paste + search/replace in this section but the idea is the same
 // for each instruction, replace all locals with the latest version, increment if assigning
 
@@ -104,7 +103,6 @@ void BinInst::renameUses(std::map<std::string,int>& versions) {
         if (it != versions.end())
             rhs = std::make_shared<Local>(name, it->second);
     }
-
     if (dest->getValType() == VarType) {
         auto destname = dest->getString();
         auto it = versions.find(destname);

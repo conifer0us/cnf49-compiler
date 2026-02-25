@@ -25,7 +25,7 @@ std::string Global::getString() const {
 }
 
 ValType Global::getValType() const {
-    return ValType::Label;
+    return ValType::GlobalType;
 }
 
 // only tag from ir generation
@@ -41,7 +41,7 @@ std::string Const::getString() const {
 }
 
 ValType Const::getValType() const {
-    return ValType::ConstInt;
+    return ValType::ConstType;
 }
 
 void Assign::outputIR() const {
@@ -283,6 +283,16 @@ void MethodIR::outputIR() const {
 
 void CFG::outputIR() const {
     std::cout << "data:\n";
+
+    if (classfields.size() > 0) {
+        std::cout << "debug fieldnames: {";
+        for (int i = 0; i < classfields.size(); i++) {
+            if (i) std::cout << ", ";
+            std::cout << classfields.at(i);
+        }
+
+        std::cout << "}\n";
+    }
 
     for (const auto& [_, meta] : classinfo) {
         meta->outputIR(classmethods, classfields);

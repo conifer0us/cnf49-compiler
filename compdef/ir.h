@@ -6,14 +6,14 @@
 #include <set>
 #include <map>
 
-enum ValType { VarType, ConstInt, Label };
 enum TagType { Pointer = 0, Integer = 1 };
+enum ValType { VarType = 0, ConstType = 1, GlobalType = 2};
 
 struct Value {
     virtual ~Value();
     virtual void outputIR() const = 0;
-    virtual ValType getValType() const = 0;
     virtual std::string getString() const = 0;
+    virtual ValType getValType() const = 0;
 };
 
 // not ideal but avoids lots of ownership overheads while building AST into IR
@@ -27,9 +27,9 @@ struct Local : Value {
     explicit Local(std::string n, int v):
         name(std::move(n)), version(v) {}
 
-    ValType getValType() const override;
     void outputIR() const override;
     std::string getString() const override;
+    ValType getValType() const override;
 };
 
 struct Global : Value {
@@ -38,9 +38,9 @@ struct Global : Value {
     explicit Global(std::string n):
         name(std::move(n)) {}
 
-    ValType getValType() const override;
     void outputIR() const override;
     std::string getString() const override;
+    ValType getValType() const override;
 };
 
 struct Const : Value {
@@ -48,9 +48,9 @@ struct Const : Value {
     bool tag;
     explicit Const(long v, bool tag = false) : value(v), tag(tag) {}
 
-    ValType getValType() const override;
     void outputIR() const override;
     std::string getString() const override;
+    ValType getValType() const override;
 };
 
 enum class Oper {    
