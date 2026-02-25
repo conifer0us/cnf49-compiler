@@ -1,9 +1,0 @@
-/mnt/c/Users/cnfer/Desktop/projects/sufferlang/out/build/debug/CMakeFiles/comp.dir
-/mnt/c/Users/cnfer/Desktop/projects/sufferlang/out/build/debug/CMakeFiles/edit_cache.dir
-/mnt/c/Users/cnfer/Desktop/projects/sufferlang/out/build/debug/CMakeFiles/rebuild_cache.dir
-/mnt/c/Users/cnfer/Desktop/projects/sufferlang/out/build/debug/compdef/CMakeFiles/compdef.dir
-/mnt/c/Users/cnfer/Desktop/projects/sufferlang/out/build/debug/compdef/CMakeFiles/edit_cache.dir
-/mnt/c/Users/cnfer/Desktop/projects/sufferlang/out/build/debug/compdef/CMakeFiles/rebuild_cache.dir
-/mnt/c/Users/cnfer/Desktop/projects/sufferlang/out/build/debug/frontend/CMakeFiles/frontend.dir
-/mnt/c/Users/cnfer/Desktop/projects/sufferlang/out/build/debug/frontend/CMakeFiles/edit_cache.dir
-/mnt/c/Users/cnfer/Desktop/projects/sufferlang/out/build/debug/frontend/CMakeFiles/rebuild_cache.dir

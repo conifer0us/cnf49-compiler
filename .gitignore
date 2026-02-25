@@ -1,1 +1,9 @@
 build/*
+out/*
+frontend/CMakeFiles/*
+compdef/CMakeFiles/*
+CmakeFiles/*
+**/MakeFile
+**/cmake_install.cmake
+**/CMakeCache.txt
+*.a

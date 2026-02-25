@@ -1,2 +1,0 @@
-/usr/bin/ar qc libfrontend.a CMakeFiles/frontend.dir/tokenizer.cpp.o CMakeFiles/frontend.dir/parser.cpp.o CMakeFiles/frontend.dir/ASTtoIR.cpp.o CMakeFiles/frontend.dir/irbuilder.cpp.o CMakeFiles/frontend.dir/ASTNodes.cpp.o
-/usr/bin/ranlib libfrontend.a
