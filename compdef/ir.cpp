@@ -3,7 +3,7 @@
 
 void Local::outputIR() const {
     if (version)
-        std::cout << "%" << name << version;
+        std::cout << "%" << name << 'v' << version;
     else 
         std::cout << "%" << name;
 }

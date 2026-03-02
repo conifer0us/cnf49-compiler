@@ -32,14 +32,15 @@ public:
 
     void addInstruction(std::unique_ptr<IROp> op);
 
+    ValPtr getTag(ValPtr lcl);
     ValPtr tagCheck(ValPtr lcl, TagType tag);
     void tagVal(ValPtr lcl, TagType tag);
+    void tagVal(ValPtr lcl, ValPtr tag);
     void untagVal(ValPtr lcl);
 
     void terminate(std::unique_ptr<ControlTransfer> blockTerm);
 
-    // Use SSA machinery to produce temp values
-    Local getNextTemp();
+    LclPtr getNextTemp();
 
     int getClassSize(std::string classname);
 
@@ -51,4 +52,7 @@ public:
     // If the block control transfer is set, return true
     // Refuses to process statements in a block after return statement
     bool processBlock(const std::vector<StmtPtr>& statements);
+
+    // returns if pinhole optimization is enabled
+    bool getPinhole();
 };

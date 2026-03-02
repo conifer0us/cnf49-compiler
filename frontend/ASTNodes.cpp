@@ -9,7 +9,7 @@ void ASTNode::print(int ind) const {
 }
 
 Expression::~Expression() = default;
-ValPtr Expression::convertToIR(IRBuilder& builder, Local* out) const {
+ValPtr Expression::convertToIR(IRBuilder& builder, LclPtr out) const {
     std::runtime_error("Tried to print base value on IR conversion");
     return std::shared_ptr<Const>(0);
 }

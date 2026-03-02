@@ -32,6 +32,8 @@ struct Local : Value {
     ValType getValType() const override;
 };
 
+using LclPtr = std::shared_ptr<Local>;
+
 struct Global : Value {
     std::string name;
     
@@ -323,6 +325,10 @@ public:
 
     std::vector<std::string> getArgs() {
         return args;
+    }
+
+    std::vector<std::string> getTemps() {
+        return temps;
     }
 
     void outputIR() const;

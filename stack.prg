@@ -9,10 +9,10 @@ class Stack [
     fields list
     method push(v) with locals tmp:
         tmp = @ListNode
-	!tmp.val = v
-	!tmp.next = &this.list
-	!this.list = tmp
-	return 0
+        !tmp.val = v
+        !tmp.next = &this.list
+        !this.list = tmp
+        return 0
     method pop() with locals tmp, head:
         if (&this.list == 0): {
             return 0
@@ -27,7 +27,7 @@ class Stacker [
     fields
     method do(stk) with locals x, v:
         x = 20
-        while (x > 0): {
+        while (x != 0): {
             _ = ^stk.push(x)
             x = (x - 1)
         }

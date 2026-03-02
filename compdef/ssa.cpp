@@ -1,8 +1,8 @@
 #include "ir.h"
 #include <queue>
 
+// Naive SSA implementation Here, but it never got to working fully
 void CFG::naiveSSA() {
-// loops through all methods
     for (auto & [_, method] : methodinfo) {
         method->naiveSSA();
     }
@@ -24,10 +24,10 @@ void MethodIR::naiveSSA() {
     for (auto& lcl : locals)
         globalVersion[lcl] = 0;
 
-    // Initialize temps
-    for (auto&tmp : temps)
+    for (auto&tmp : temps) {
         globalVersion[tmp] = 0;
-
+    } 
+        
     // Compute block predecessors
     for (auto& block : blocks) {
         for (auto* succ : block->getNextBlocks()) {
@@ -35,11 +35,31 @@ void MethodIR::naiveSSA() {
         }
     }
 
+    std::queue<BasicBlock *> worklist;
+    std::set<BasicBlock *> done;
+    worklist.push(startblock);
+
     // insert phi nodes for every variable in blocks with multiple predecessors
-    for (auto& block : blocks) {
-        if (predecessors[block.get()].size() > 1) {
+    while (!worklist.empty()) {
+        auto block = worklist.front();
+        worklist.pop();
+
+        if (done.contains(block))
+            continue;
+
+        // if block has multiple predecessors, insert placeholders for phi and move on
+        if (predecessors[block].size() > 1) {
             for (auto& [var, _] : globalVersion) {
-                phiout[block.get()][var] = std::make_shared<Local>(var, ++globalVersion[var]);
+                phiout[block][var] = std::make_shared<Local>(var, ++globalVersion[var]);
+            }
+        }
+
+        // if predecessor of block not done, do predecessors first
+        else if (predecessors[block].size() == 1){
+            if (!done.contains(predecessors[block][0])) {
+                worklist.push(predecessors[block][0]);
+                worklist.push(block);
+                continue;
             }
         }
 
@@ -48,7 +68,11 @@ void MethodIR::naiveSSA() {
         }
 
         block->blockTransfer->renameUses(globalVersion);
-        versionsEnd[block.get()] = globalVersion;
+        versionsEnd[block] = globalVersion;
+        done.insert(block);
+        
+        for (auto item : block->getNextBlocks())
+            worklist.push(item);
     }
 
     // nested mess for compiling Phi statement from computed block previous and allotted phi statement dest

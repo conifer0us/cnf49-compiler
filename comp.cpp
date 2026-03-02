@@ -7,7 +7,7 @@
 #include "ASTNodes.h"
 #include "ir.h"
 
-#define helpstr "Usage: <comp> {-help | -printAST | -noSSA | -noopt} sourcefile\n"
+#define helpstr "Usage: <comp> {-help | -printAST | -noopt} sourcefile\n"
 
 int main(int argc, char **argv) {
     if (argc < 2 || argc > 4) {
@@ -38,17 +38,21 @@ int main(int argc, char **argv) {
 
     auto AST = parser.parseProgram();
 
+    // just print AST if this option is specified
     if (strcmp(argv[1], "-printAST") == 0) {
         AST->print(0);
         return 0;
     }
 
-    if (strcmp(argv[1], "-noopt") == 0) {
-        auto prgIR = AST->convertToIR(false);
-        prgIR->outputIR();
-    }
+    // output IR with or without pinhole optimization depending on -noopt arg
+    std::unique_ptr<CFG> prgIR;
+    if (strcmp(argv[1], "-noopt") == 0)
+        prgIR = AST->convertToIR(false);
+    else
+        prgIR = AST->convertToIR();
 
-    auto prgIR = AST->convertToIR();
+    /*
+    original SSA code that didn't work; punting to milestone 2 to do better implementation
 
     if (strcmp(argv[1], "-noSSA") == 0) {
         prgIR->outputIR();
@@ -56,6 +60,8 @@ int main(int argc, char **argv) {
     }
 
     prgIR->naiveSSA();
+    */
+   
     prgIR->outputIR();
 
     return 0;

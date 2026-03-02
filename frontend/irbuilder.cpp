@@ -15,16 +15,29 @@ void IRBuilder::addInstruction(std::unique_ptr<IROp> op) {
     current->instructions.push_back(std::move(op));
 }
 
+ValPtr IRBuilder::getTag(ValPtr lcl) {
+    // PINHOLE OPTIMIZATION: DO NOT CHECK TAG ON THIS VAL
+    if (pinhole && lcl->getString() == "this")
+        return nullptr;
+
+    auto tmp = getNextTemp();
+    addInstruction(std::move(std::make_unique<BinInst>(tmp, Oper::BitAnd, lcl, std::make_shared<Const>(1))));
+    return tmp;
+}
+
 ValPtr IRBuilder::tagCheck(ValPtr lcl, TagType tag) {
     // PINHOLE OPTIMIZATION: AVOID TAG CHECKS IF WORKING WITH %THIS
     if (pinhole && lcl->getString() == "this") {
+        if (tag == Integer)
+            std::runtime_error("'this' cannot be used as a numerical value");
+        
         return lcl;
     }
 
     auto istagbranch = createBlock();
     auto nottagbranch = createBlock();
 
-    auto tmp = std::make_shared<Local>(getNextTemp());
+    auto tmp = getNextTemp();
     addInstruction(std::move(std::make_unique<BinInst>(tmp, Oper::BitAnd, lcl, std::make_shared<Const>(1))));
 
     if (tag)
@@ -42,11 +55,21 @@ ValPtr IRBuilder::tagCheck(ValPtr lcl, TagType tag) {
     return tmp;
 }
 
+void IRBuilder::tagVal(ValPtr val, ValPtr tag) {
+    // PINHOLE OPTIMIZATION: AVOID TAG CHECKS IF WORKING WITH %THIS
+    if (pinhole && val->getString() == "this")
+        return;
+
+    addInstruction(std::move(std::make_unique<BinInst>(val, Oper::Mul, val, std::make_shared<Const>(2))));
+    
+    if (tag)
+        addInstruction(std::move(std::make_unique<BinInst>(val, Oper::BitXor, val, tag)));
+}
+
 void IRBuilder::tagVal(ValPtr val, TagType tag) {
     // PINHOLE OPTIMIZATION: AVOID TAG CHECKS IF WORKING WITH %THIS
-    if (pinhole && val->getString() == "this") {
+    if (pinhole && val->getString() == "this")
         return;
-    }
 
     addInstruction(std::move(std::make_unique<BinInst>(val, Oper::Mul, val, std::make_shared<Const>(2))));
     if (tag != 0)
@@ -66,10 +89,10 @@ void IRBuilder::terminate(std::unique_ptr<ControlTransfer> blockTerm) {
     current->blockTransfer = std::move(blockTerm);
 }
 
-Local IRBuilder::getNextTemp() {
-    auto nxtTmp = "tmp" + std::to_string(nexttmp++) + "v";
+LclPtr IRBuilder::getNextTemp() {
+    auto nxtTmp = "tmp" + std::to_string(nexttmp++);
     method->registerTemp(nxtTmp);
-    return Local(nxtTmp, 0);
+    return std::make_shared<Local>(nxtTmp, 0);
 }
 
 int IRBuilder::getClassSize(std::string classname) {
@@ -108,4 +131,8 @@ bool IRBuilder::processBlock(const std::vector<StmtPtr>& statements) {
     }
 
     return false;
+}
+
+bool IRBuilder::getPinhole() {
+    return pinhole;
 }

@@ -1,47 +1,44 @@
 #include "ASTNodes.h"
 #include "irbuilder.h"
 
-ValPtr ThisExpr::convertToIR(IRBuilder& builder, Local *out) const {
+ValPtr ThisExpr::convertToIR(IRBuilder& builder, LclPtr out) const {
     auto newLocal = std::make_shared<Local>(Local("this", 0));
     
     if (out) {
-        auto o = std::make_shared<Local>(out->name, out->version);
-        builder.addInstruction(std::move(std::make_unique<Assign>(o, newLocal)));
-        return o;
+        builder.addInstruction(std::move(std::make_unique<Assign>(out, newLocal)));
+        return out;
     }
     else
         return newLocal;
 }
 
-ValPtr Constant::convertToIR(IRBuilder& builder, Local *out) const {
+ValPtr Constant::convertToIR(IRBuilder& builder, LclPtr out) const {
     // mark any const read from the program to tag on output
     auto newConst = std::make_shared<Const>(value, true);
     
     if (out) {
-        auto o = std::make_shared<Local>(out->name, out->version);
-        builder.addInstruction(std::move(std::make_unique<Assign>(o, newConst)));
-        return o;
+        builder.addInstruction(std::move(std::make_unique<Assign>(out, newConst)));
+        return out;
     }
     else
         return newConst;
 }
 
-ValPtr Var::convertToIR(IRBuilder& builder, Local *out) const {
+ValPtr Var::convertToIR(IRBuilder& builder, LclPtr out) const {
     // do not increment for SSA since var is only being read in this context
-    // if written to, var incremented at statement level, with var being passed in as Local *
+    // if written to, var incremented at statement level, with var being passed in as LclPtr 
     auto newVar = std::make_shared<Local>(name, 0);
     
     if (out) { 
-        auto o = std::make_shared<Local>(out->name, out->version);
-        builder.addInstruction(std::move(std::make_unique<Assign>(o, newVar)));
-        return o;
+        builder.addInstruction(std::move(std::make_unique<Assign>(out, newVar)));
+        return out;
     }
     else
         return newVar;
 }
 
-ValPtr ClassRef::convertToIR(IRBuilder& builder, Local *out) const {
-    auto var = std::make_shared<Local>((out) ? *out : builder.getNextTemp());
+ValPtr ClassRef::convertToIR(IRBuilder& builder, LclPtr out) const {
+    auto var = (out) ? out : builder.getNextTemp();
     
     auto vtable = std::make_shared<Global>(VTABLE(classname));
     auto ftable = std::make_shared<Global>(FTABLE(classname));
@@ -55,32 +52,28 @@ ValPtr ClassRef::convertToIR(IRBuilder& builder, Local *out) const {
     auto storeVtbl = std::make_unique<Store>(var, vtable);
     builder.addInstruction(std::move(storeVtbl));
 
-    auto ftblVar = std::make_shared<Local>(builder.getNextTemp());
+    auto ftblVar = builder.getNextTemp();
     auto ftblAddr = std::make_unique<BinInst>(ftblVar, Oper::Add, var, std::make_shared<Const>(8));
     builder.addInstruction(std::move(ftblAddr));
 
     auto storeFtbl = std::make_unique<Store>(ftblVar, ftable);
     builder.addInstruction(std::move(storeFtbl));
 
+    // tag heap value as a pointer
     builder.tagVal(var, TagType::Pointer);
 
     return var;
 }
 
-ValPtr Binop::convertToIR(IRBuilder& builder, Local *out) const {
+ValPtr Binop::convertToIR(IRBuilder& builder, LclPtr out) const {
     // make sure every value passed into binop is placed in a local so that tagging and untagging can be done
-    Local *lOut, *rOut;
+    auto lOut = builder.getNextTemp();
+    auto rOut = builder.getNextTemp();
     
-    auto lhsVar = lhs->convertToIR(builder, lOut);
-    ValPtr valTagL = builder.tagCheck(lhsVar, TagType::Integer);
-        
-    auto rhsVar = rhs->convertToIR(builder, rOut);
-    ValPtr valTagR = builder.tagCheck(rhsVar, TagType::Integer);
+    auto result = out ? out : builder.getNextTemp();
 
-    auto result = std::make_shared<Local>((out) ? *out : builder.getNextTemp());
-
-    // operations by default require untagging ints, but some can unmark this, such as == or !=
-    bool untag = true;
+    // operations by default allow for only ints, but equal and not equal allow pointers to be considered
+    bool allowptr = false;
     Oper optype;
     switch(op) {
         case '+':
@@ -102,91 +95,101 @@ ValPtr Binop::convertToIR(IRBuilder& builder, Local *out) const {
             optype = Oper::Lt;
             break;
         case 'e':
-            untag = false;
+            allowptr = true;
             optype = Oper::Eq;
             break; 
         case 'n':
-            untag = false;
+            allowptr = true;
             optype =Oper::Ne;
             break;
         default:
             std::runtime_error("Unknown Operation: " + op);
     }
 
-    if (untag) {
-        builder.untagVal(lhsVar);
-        builder.untagVal(rhsVar);
+    auto lhsVar = lhs->convertToIR(builder, lOut);
+    auto rhsVar = rhs->convertToIR(builder, rOut);
+    
+    if (!allowptr) {
+        builder.tagCheck(lhsVar, TagType::Integer);
+        builder.tagCheck(rhsVar, TagType::Integer);
     }
+
+
+    auto lhsTag = builder.getTag(lhsVar);
+    auto rhsTag = builder.getTag(rhsVar);
+    builder.untagVal(lhsVar);
+    builder.untagVal(rhsVar);
 
     auto binInst = std::make_unique<BinInst>(result, optype, lhsVar, rhsVar);
     builder.addInstruction(std::move(binInst));
 
-    // if tag is stripped before operation, add back integer tag
-    if (untag) {
-        builder.tagVal(lhsVar, TagType::Integer);
-        builder.tagVal(rhsVar, TagType::Integer);
-    }
+    // retag values
+    builder.tagVal(lhsVar, lhsTag);
+    builder.tagVal(rhsVar, rhsTag);
+    builder.tagVal(result, TagType::Integer);  
 
     return result;
 }
 
-ValPtr FieldRead::convertToIR(IRBuilder& builder, Local* out) const {
+ValPtr FieldRead::convertToIR(IRBuilder& builder, LclPtr out) const {
     auto objVar = base->convertToIR(builder, nullptr);
     
+    // ensure objVar is a pointer and untag it
     builder.tagCheck(objVar, TagType::Pointer);
     builder.untagVal(objVar);
         
-    auto target = std::make_shared<Local>((out) ? *out : builder.getNextTemp());
+    auto target = out ? out : builder.getNextTemp();
 
     // Offset 8 is position of the field table
-    auto fmapAddr = std::make_shared<Local>(builder.getNextTemp());
+    auto fmapAddr = builder.getNextTemp();
     builder.addInstruction(
         std::move(std::make_unique<BinInst>(fmapAddr, Oper::Add, objVar, std::make_shared<Const>(8)))
     );
 
-    auto fmap = std::make_shared<Local>(builder.getNextTemp());
+    auto fmap = builder.getNextTemp();
     builder.addInstruction(std::move(std::make_unique<Load>(fmap, fmapAddr)));
 
     auto fieldOffset = builder.getFieldOffset(fieldname);
-    auto fieldEntry = std::make_shared<Local>(builder.getNextTemp());
+    auto fieldEntry = builder.getNextTemp();
     builder.addInstruction(std::move(std::make_unique<GetElt>(fieldEntry, fmap, std::make_shared<Const>(fieldOffset))));
-    builder.tagVal(fieldEntry, TagType::Integer);
     builder.addInstruction(std::move(std::make_unique<BinInst>(fieldEntry, Oper::Mul, fieldEntry, std::make_shared<Const>(8))));
 
     auto dneBlock = builder.createBlock();
     auto existsBlock = builder.createBlock();
+    
     builder.terminate(std::move(std::make_unique<Conditional>(fieldEntry, existsBlock, dneBlock)));
 
     builder.setCurrentBlock(dneBlock);
     builder.terminate(std::move(std::make_unique<Fail>(FailReason::NoSuchField)));
-
     builder.setCurrentBlock(existsBlock);
-
-    auto fieldAddr = std::make_shared<Local>(builder.getNextTemp());
+    
+    auto fieldAddr = builder.getNextTemp();
     builder.addInstruction(std::move(std::make_unique<BinInst>(
         fieldAddr, Oper::Add, objVar, fieldEntry) // jump to offset (fieldEntry) from table
     ));
 
     builder.addInstruction(std::move(std::make_unique<Load>(target, fieldAddr)));
 
+    // make sure objvar back to being a pointer all loading has been completed
     builder.tagVal(objVar, TagType::Pointer);
     return target;
 }
 
-ValPtr MethodCall::convertToIR(IRBuilder& builder, Local* out) const {
+ValPtr MethodCall::convertToIR(IRBuilder& builder, LclPtr out) const {
     auto objVar = base->convertToIR(builder, nullptr);
+
+    // check the base value to make sure it's a pointer and then unwrap pointer
     builder.tagCheck(objVar, TagType::Pointer);
     builder.untagVal(objVar);
 
-    auto retVar = std::make_shared<Local>((out) ? *out : builder.getNextTemp());
+    auto retVar = out ? out : builder.getNextTemp();
 
     // can directly get objectVar memory since vtable is stored at 0
-    auto vtable = std::make_shared<Local>(builder.getNextTemp());
+    auto vtable = builder.getNextTemp();
     builder.addInstruction(std::move(std::make_unique<Load>(vtable, objVar)));
-    builder.tagVal(objVar, TagType::Pointer);
 
     auto methodIndex = builder.getMethodOffset(methodname);
-    auto funcEntry = std::make_shared<Local>(builder.getNextTemp());
+    auto funcEntry = builder.getNextTemp();
     builder.addInstruction(std::move(std::make_unique<GetElt>(funcEntry, vtable, std::make_shared<Const>(methodIndex))));
 
     auto dneBlock = builder.createBlock();
@@ -206,14 +209,22 @@ ValPtr MethodCall::convertToIR(IRBuilder& builder, Local* out) const {
         argVars.push_back(arg->convertToIR(builder, nullptr));
     }
 
-    builder.addInstruction(std::move(std::make_unique<Call>(retVar, funcEntry, std::move(argVars))));
+    // if pinhole enabled, make sure to retag the obj var before calling into the method
+    // this needs to be done because, in absence of pinhole optimization, %this is treated as a tagged pointer
+    if (builder.getPinhole()) {
+        builder.addInstruction(std::move(std::make_unique<Call>(retVar, funcEntry, std::move(argVars))));
+        builder.tagVal(objVar, TagType::Pointer);
+    } else {
+        builder.tagVal(objVar, TagType::Pointer);
+        builder.addInstruction(std::move(std::make_unique<Call>(retVar, funcEntry, std::move(argVars))));
+    }
 
     return retVar;
 }
 
 void AssignStatement::convertToIR(IRBuilder& builder) const {
     auto target = std::make_shared<Local>(name, 0);
-    auto val = value->convertToIR(builder, target.get());
+    auto val = value->convertToIR(builder, target);
 }
 
 void DiscardStatement::convertToIR(IRBuilder& builder) const {
@@ -222,25 +233,25 @@ void DiscardStatement::convertToIR(IRBuilder& builder) const {
 
 void FieldAssignStatement::convertToIR(IRBuilder& builder) const {
     auto objVar = object->convertToIR(builder, nullptr);
+    // check field assign is pointer and unwrap pointer
     builder.tagCheck(objVar, TagType::Pointer);
     builder.untagVal(objVar);
         
     auto targetVal = value->convertToIR(builder, nullptr);
 
     // Use ftable to find the field being assigned to for the given object (ftable is +8)
-    auto fmapAddr = std::make_shared<Local>(builder.getNextTemp());
+    auto fmapAddr = builder.getNextTemp();
     builder.addInstruction(std::move(std::make_unique<BinInst>(fmapAddr, Oper::Add, objVar, std::make_shared<Const>(8))));
 
-    auto fmap = std::make_shared<Local>(builder.getNextTemp());
+    auto fmap = builder.getNextTemp();
     builder.addInstruction(std::move(std::make_unique<Load>(fmap, fmapAddr)));
 
     // field offset from in ftable
     auto fieldOffset = builder.getFieldOffset(field);
-    auto fieldEntry = std::make_shared<Local>(builder.getNextTemp());
+    auto fieldEntry = builder.getNextTemp();
     
     // tag offset values from ftable
     builder.addInstruction(std::move(std::make_unique<GetElt>(fieldEntry, fmap, std::make_shared<Const>(fieldOffset))));
-    builder.tagVal(fieldEntry, TagType::Integer);
     builder.addInstruction(std::move(std::make_unique<BinInst>(fieldEntry, Oper::Mul, fieldEntry, std::make_shared<Const>(8))));
 
     auto existsBlock = builder.createBlock();
@@ -252,11 +263,12 @@ void FieldAssignStatement::convertToIR(IRBuilder& builder) const {
 
     builder.setCurrentBlock(existsBlock);
 
-    auto fieldAddr = std::make_shared<Local>(builder.getNextTemp());
+    auto fieldAddr = builder.getNextTemp();
     builder.addInstruction(std::move(std::make_unique<BinInst>(fieldAddr, Oper::Add, objVar, fieldEntry)));
 
     builder.addInstruction(std::move(std::make_unique<Store>(fieldAddr, targetVal)));
 
+    // retag pointer
     builder.tagVal(objVar, TagType::Pointer);
 }
 
@@ -266,10 +278,13 @@ void IfStatement::convertToIR(IRBuilder& builder) const {
     auto thenBlock = builder.createBlock();
     auto elseBlock = builder.createBlock();
     BasicBlock* mergeBlock = nullptr;
-    
+        
+    builder.tagCheck(condVar, TagType::Integer);
+    builder.untagVal(condVar);
     builder.terminate(std::move(std::make_unique<Conditional>(condVar, thenBlock, elseBlock)));
     builder.setCurrentBlock(thenBlock);
-    
+    builder.tagVal(condVar, TagType::Integer);
+
     auto terminated = builder.processBlock(thenBranch);
     if (!terminated) {
         if (!mergeBlock)
@@ -295,9 +310,12 @@ void IfOnlyStatement::convertToIR(IRBuilder& builder) const {
     auto bodyBlock = builder.createBlock();
     auto mergeBlock = builder.createBlock();
     
+    builder.tagCheck(condVar, TagType::Integer);
+    builder.untagVal(condVar);
     builder.terminate(std::move(std::make_unique<Conditional>(condVar, bodyBlock, mergeBlock)));
     builder.setCurrentBlock(bodyBlock);
-    
+    builder.tagVal(condVar, TagType::Integer);
+
     auto terminated = builder.processBlock(body);
     if (!terminated)
         builder.terminate(std::move(std::make_unique<Jump>(mergeBlock)));
@@ -316,9 +334,12 @@ void WhileStatement::convertToIR(IRBuilder& builder) const {
     auto bodyBlock = builder.createBlock();
     auto mergeBlock = builder.createBlock();
     
+    builder.tagCheck(condVar, TagType::Integer);
+    builder.untagVal(condVar);
     builder.terminate(std::move(std::make_unique<Conditional>(condVar, bodyBlock, mergeBlock)));
     builder.setCurrentBlock(bodyBlock);
-    
+    builder.tagVal(condVar, TagType::Integer);
+
     auto terminated = builder.processBlock(body);
     if (!terminated)
         builder.terminate(std::move(std::make_unique<Jump>(condBlock)));
@@ -333,11 +354,13 @@ void ReturnStatement::convertToIR(IRBuilder& builder) const {
 
 void PrintStatement::convertToIR(IRBuilder& builder) const {
     auto val = value->convertToIR(builder, nullptr);
+    // check that value is integer before printing
     builder.tagCheck(val, TagType::Integer);
     builder.untagVal(val);
         
     builder.addInstruction(std::move(std::make_unique<Print>(val)));
 
+    // retag value
     builder.tagVal(val, Integer);
 }
 
@@ -362,7 +385,9 @@ std::shared_ptr<MethodIR> Method::convertToIR(std::string classname,
 
     for (auto &name : lnames) {
         auto varVersion = std::make_shared<Local>(name, 0);
-        auto initInstruction = std::make_unique<Assign>(varVersion, std::make_shared<Const>(0));
+
+        // init method variables to 1 to make sure they're tagged
+        auto initInstruction = std::make_unique<Assign>(varVersion, std::make_shared<Const>(1));
         builder.addInstruction(std::move(initInstruction));
     }
 
