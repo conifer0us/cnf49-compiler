@@ -7,7 +7,7 @@
 #include "ASTNodes.h"
 #include "ir.h"
 
-#define helpstr "Usage: <comp> {-help | -printAST | -noopt} sourcefile\n"
+#define helpstr "Usage: <comp> {-help | -printAST | -noopt | -noSSA | -noVN} sourcefile\n"
 
 int main(int argc, char **argv) {
     if (argc < 2 || argc > 4) {
@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
 
     if (strcmp(argv[1], "-help") == 0) {
         std::cout << helpstr;
-        printf("Please provide one or no arguments. -help shows this menu.\n-printAST, -noSSA, and -noopt stop the compiler after the corresponding pass and print results.");
+        printf("Please provide one or no arguments. -help shows this menu.\n-printAST, -noSSA, -noopt, -noSSA, and -noVN stop the compiler after the corresponding pass and print results.");
         return 0;
     }
 
@@ -51,17 +51,12 @@ int main(int argc, char **argv) {
     else
         prgIR = AST->convertToIR();
 
-    /*
-    original SSA code that didn't work; punting to milestone 2 to do better implementation
-
     if (strcmp(argv[1], "-noSSA") == 0) {
         prgIR->outputIR();
         return 0;
     }
 
-    prgIR->naiveSSA();
-    */
-   
+    prgIR->convertSSA();
     prgIR->outputIR();
 
     return 0;

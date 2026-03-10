@@ -111,20 +111,22 @@ void Call::outputIR() const {
 }
 
 void Phi::outputIR() const {
-    dest->outputIR();
+    Local(outputVar, resultVersion).outputIR();
 
     std::cout << " = phi(";
 
     bool first = true;
-    for (auto& pair : incoming) {
+    for (auto& [inblock, version] : incoming) {
         if (first)
             first = false;
         else
             std::cout << ", ";
 
-        std::cout << pair.first;
+        std::cout << inblock;
         std::cout << ", ";
-        pair.second->outputIR();
+        
+        // output local with 
+        Local(outputVar, version).outputIR();
     }
 
     std::cout << ")";
@@ -241,7 +243,7 @@ void ClassMetadata::outputIR(const std::vector<std::string>& methods, const std:
 void BasicBlock::outputIR() const {
     std::cout << label << ":\n";
 
-    for (const auto& inst : blockPhi) {
+    for (const auto& inst: blockPhi) {
         std::cout << "\t";
         inst->outputIR();
         std::cout << "\n";

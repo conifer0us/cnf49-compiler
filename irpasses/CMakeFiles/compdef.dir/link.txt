@@ -1,0 +1,2 @@
+/usr/bin/ar qc libcompdef.a CMakeFiles/compdef.dir/ir.cpp.o CMakeFiles/compdef.dir/ssa.cpp.o
+/usr/bin/ranlib libcompdef.a

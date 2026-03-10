@@ -16,8 +16,6 @@ struct Value {
     virtual ValType getValType() const = 0;
 };
 
-// not ideal but avoids lots of ownership overheads while building AST into IR
-// need to keep all Values only owned by the instructions they're a part of
 using ValPtr = std::shared_ptr<Value>;
 
 struct Local : Value {
@@ -64,7 +62,9 @@ enum class Oper {
 struct IROp {
     virtual ~IROp() = default;
     virtual void outputIR() const = 0;
-    virtual void renameUses(std::map<std::string, int>& versions) = 0;
+    virtual void renameUses(std::map<std::string, std::vector<int>>& versions) = 0;
+    virtual std::set<std::string> varsUsed() = 0;
+    virtual std::set<std::string> varsDef() = 0;
 };
 
 struct Assign : IROp {
@@ -72,10 +72,28 @@ struct Assign : IROp {
     ValPtr src;
 
     void outputIR() const override;
-    void renameUses(std::map<std::string, int>& versions) override;    
+    void renameUses(std::map<std::string, std::vector<int>>& versions) override;    
 
     Assign(ValPtr d, ValPtr s): 
         dest(d), src(std::move(s)) {}
+
+    std::set<std::string> varsUsed() {
+        std::set<std::string> ret;
+
+        if (src && src->getValType() == VarType && src->getString() != "this")
+            ret.insert(src->getString());
+        
+        return ret;
+    }
+
+    std::set<std::string> varsDef() {
+        std::set<std::string> ret;
+
+        if (dest && dest->getValType() == VarType && dest->getString() != "this")
+            ret.insert(dest->getString());
+
+        return ret;
+    }
 };
 
 struct BinInst : IROp {
@@ -85,10 +103,31 @@ struct BinInst : IROp {
     ValPtr rhs;
 
     void outputIR() const override;
-    void renameUses(std::map<std::string, int>& versions) override;
+    void renameUses(std::map<std::string, std::vector<int>>& versions) override;
     
     BinInst(ValPtr d, Oper o, ValPtr l, ValPtr r): 
         dest(d), op(o), lhs(std::move(l)), rhs(std::move(r)) {}
+
+    std::set<std::string> varsUsed() {
+        std::set<std::string> ret;
+
+        if (lhs && lhs->getValType() == VarType && lhs->getString() != "this")
+            ret.insert(lhs->getString());
+
+        if (rhs && rhs->getValType() == VarType && rhs->getString() != "this")
+            ret.insert(rhs->getString());
+
+        return ret;
+    }
+
+    std::set<std::string> varsDef() {
+        std::set<std::string> ret;
+
+        if (dest && dest->getValType() == VarType && dest->getString() != "this")
+            ret.insert(dest->getString());
+
+        return ret;
+    }
 };
 
 struct Call : IROp {
@@ -97,23 +136,53 @@ struct Call : IROp {
     std::vector<ValPtr> args;
 
     void outputIR() const override;
-    void renameUses(std::map<std::string, int>& versions) override;
+    void renameUses(std::map<std::string, std::vector<int>>& versions) override;
     
     Call(ValPtr d, ValPtr c, std::vector<ValPtr> a): 
         dest(d), code(std::move(c)), args(std::move(a)) {}
+
+    std::set<std::string> varsUsed() {
+        std::set<std::string> ret;
+
+        for (auto& arg : args)
+            if (arg && arg->getValType() == VarType && arg->getString() != "this")
+                ret.insert(arg->getString());
+
+        if (code && code->getValType() == VarType && code->getString() != "this")
+            ret.insert(code->getString());
+
+        return ret;
+    }
+
+    std::set<std::string> varsDef() {
+        std::set<std::string> ret;
+
+        if (dest && dest->getValType() == VarType && dest->getString() != "this")
+            ret.insert(dest->getString());
+
+        return ret;
+    }
 };
 
 struct Phi : IROp {
-    ValPtr dest;
-
-    // even number of pairs: (predecessor name, value)
-    std::vector<std::pair<std::string, ValPtr>> incoming;
+    std::string outputVar;
+    int resultVersion;
+    std::vector<std::pair<std::string, int>> incoming;
 
     void outputIR() const override;
-    void renameUses(std::map<std::string, int>& versions) override;
+    void renameUses(std::map<std::string, std::vector<int>>& versions) override;
     
-    Phi(ValPtr d, std::vector<std::pair<std::string, ValPtr>> in): 
-        dest(d), incoming(std::move(in)) {}
+    explicit Phi(std::string varname): 
+        outputVar(varname) {}
+
+    // phis not checked as part of basic block body
+    std::set<std::string> varsUsed() {
+        return {};
+    }
+
+    std::set<std::string> varsDef() {
+        return {};
+    }
 };
 
 struct Alloc : IROp {
@@ -121,20 +190,46 @@ struct Alloc : IROp {
     int numSlots;
 
     void outputIR() const override;
-    void renameUses(std::map<std::string, int>& versions) override;
+    void renameUses(std::map<std::string, std::vector<int>>& versions) override;
     
     Alloc(ValPtr d, int n): 
         dest(d), numSlots(n) {}
+
+    std::set<std::string> varsUsed() {
+        return {};
+    }
+
+    std::set<std::string> varsDef() {
+        std::set<std::string> ret;
+
+        if (dest && dest->getValType() == VarType && dest->getString() != "this")
+            ret.insert(dest->getString());
+
+        return ret;
+    }
 };
 
 struct Print : IROp {
     ValPtr val;
     
     void outputIR() const override;
-    void renameUses(std::map<std::string, int>& versions) override;
+    void renameUses(std::map<std::string, std::vector<int>>& versions) override;
     
     explicit Print(ValPtr v): 
         val(std::move(v)) {}
+
+    std::set<std::string> varsUsed() {
+        std::set<std::string> ret;
+
+        if (val && val->getValType() == VarType && val->getString() != "this")
+            ret.insert(val->getString());
+
+        return ret;
+    }
+
+    std::set<std::string> varsDef() {
+        return {};
+    }
 };
 
 struct GetElt : IROp {
@@ -143,10 +238,31 @@ struct GetElt : IROp {
     ValPtr index;
 
     void outputIR() const override;
-    void renameUses(std::map<std::string, int>& versions) override;
+    void renameUses(std::map<std::string, std::vector<int>>& versions) override;
     
     GetElt(ValPtr d, ValPtr a, ValPtr i): 
         dest(d), array(std::move(a)), index(std::move(i)) {}
+
+    std::set<std::string> varsUsed() {
+        std::set<std::string> ret;
+
+        if (array && array->getValType() == VarType && array->getString() != "this")
+            ret.insert(array->getString());
+
+        if (index && index->getValType() == VarType && index->getString() != "this")
+            ret.insert(index->getString());
+
+        return ret;
+    }
+
+    std::set<std::string> varsDef() {
+        std::set<std::string> ret;
+
+        if (dest && dest->getValType() == VarType && dest->getString() != "this")
+            ret.insert(dest->getString());
+
+        return ret;
+    }
 };
 
 struct SetElt : IROp {
@@ -155,10 +271,29 @@ struct SetElt : IROp {
     ValPtr val;
 
     void outputIR() const override;
-    void renameUses(std::map<std::string, int>& versions) override;
+    void renameUses(std::map<std::string, std::vector<int>>& versions) override;
     
     SetElt(ValPtr a, ValPtr i, ValPtr v): 
            array(std::move(a)), index(std::move(i)), val(std::move(v)) {}
+
+    std::set<std::string> varsUsed() {
+        std::set<std::string> ret;
+
+        if (array && array->getValType() == VarType && array->getString() != "this")
+            ret.insert(array->getString());
+
+        if (index && index->getValType() == VarType && index->getString() != "this")
+            ret.insert(index->getString());
+
+        if (val && val->getValType() == VarType && val->getString() != "this")
+            ret.insert(val->getString());
+
+        return ret;
+    }
+
+    std::set<std::string> varsDef() {
+        return {};
+    }
 };
 
 struct Load : IROp {
@@ -166,10 +301,28 @@ struct Load : IROp {
     ValPtr addr;
 
     void outputIR() const override;
-    void renameUses(std::map<std::string, int>& versions) override;
+    void renameUses(std::map<std::string, std::vector<int>>& versions) override;
     
     Load(ValPtr d, ValPtr addy): 
         dest(d), addr(std::move(addy)) {}
+
+    std::set<std::string> varsUsed() {
+        std::set<std::string> ret;
+
+        if (addr && addr->getValType() == VarType && addr->getString() != "this")
+            ret.insert(addr->getString());
+
+        return ret;
+    }
+
+    std::set<std::string> varsDef() {
+        std::set<std::string> ret;
+
+        if (dest && dest->getValType() == VarType && dest->getString() != "this")
+            ret.insert(dest->getString());
+
+        return ret;
+    }
 };
 
 struct Store : IROp {
@@ -177,21 +330,36 @@ struct Store : IROp {
     ValPtr val;
 
     void outputIR() const override;
-    void renameUses(std::map<std::string, int>& versions) override;
+    void renameUses(std::map<std::string, std::vector<int>>& versions) override;
     
     Store(ValPtr addy, ValPtr v): 
         addr(std::move(addy)), val(std::move(v)) {}
+
+    std::set<std::string> varsUsed() {
+        std::set<std::string> ret;
+        
+        if (addr && addr->getValType() == VarType && addr->getString() != "this")
+            ret.insert(addr->getString());
+
+        if (val && val->getValType() == VarType && val->getString() != "this")
+            ret.insert(val->getString());
+        
+        return ret;
+    }
+
+    std::set<std::string> varsDef() {
+        return {};
+    }
 };
 
-// forward declare bb so that conditionals can use it
 struct BasicBlock;
 
 struct ControlTransfer {
     virtual ~ControlTransfer();
     virtual void outputIR() const;
     virtual std::vector<BasicBlock*> successors() const = 0;
-    virtual void renameUses(std::map<std::string, int>& versions) = 0;
-
+    virtual void renameUses(std::map<std::string, std::vector<int>>& versions) = 0;
+    virtual std::set<std::string> varsUsed() = 0;
 };
 
 struct Jump : ControlTransfer {
@@ -200,10 +368,14 @@ struct Jump : ControlTransfer {
     explicit Jump(BasicBlock *t) : target(t) {}
 
     void outputIR() const override;
-    void renameUses(std::map<std::string, int>& versions) override;
+    void renameUses(std::map<std::string, std::vector<int>>& versions) override;
     
     std::vector<BasicBlock *> successors() const override {
         return {target};
+    }
+
+    std::set<std::string> varsUsed() {
+        return {};
     }
 };
 
@@ -216,10 +388,19 @@ struct Conditional : ControlTransfer {
         condition(std::move(cond)), trueTarget(t), falseTarget(f) {}
 
     void outputIR() const override;
-    void renameUses(std::map<std::string, int>& versions) override;
+    void renameUses(std::map<std::string, std::vector<int>>& versions) override;
     
     std::vector<BasicBlock *> successors() const override {
         return {trueTarget, falseTarget};
+    }
+
+    std::set<std::string> varsUsed() {
+        std::set<std::string> ret;
+
+        if (condition && condition->getValType() == VarType && condition->getString() != "this")
+            ret.insert(condition->getString());
+
+        return ret;
     }
 };
 
@@ -231,7 +412,16 @@ struct Return : ControlTransfer {
     }
 
     void outputIR() const override;
-    void renameUses(std::map<std::string, int>& versions) override;
+    void renameUses(std::map<std::string, std::vector<int>>& versions) override;
+
+    std::set<std::string> varsUsed() {
+        std::set<std::string> ret;
+
+        if (val && val->getValType() == VarType && val->getString() != "this")
+            ret.insert(val->getString());
+            
+        return ret;
+    }
 
     explicit Return(ValPtr v): 
         val(std::move(v)) {}
@@ -243,10 +433,14 @@ struct HangingBlock : ControlTransfer {
     }
 
     void outputIR() const override;
-    void renameUses(std::map<std::string, int>& versions) override;
+    void renameUses(std::map<std::string, std::vector<int>>& versions) override;
 
     virtual ~HangingBlock();
     HangingBlock() {}
+
+    std::set<std::string> varsUsed() {
+        return {};
+    }
 };
 
 enum class FailReason {
@@ -264,10 +458,12 @@ struct Fail : ControlTransfer {
     }
 
     void outputIR() const override;
-    void renameUses(std::map<std::string, int>& versions) override;
+    void renameUses(std::map<std::string, std::vector<int>>& versions) override;
 
     explicit Fail(FailReason r): 
         reason(r) {}
+
+    std::set<std::string> varsUsed() {return {};}
 };
 
 struct BasicBlock {
@@ -275,11 +471,18 @@ struct BasicBlock {
     std::vector<std::unique_ptr<IROp>> instructions;
     std::unique_ptr<ControlTransfer> blockTransfer;
     std::string label;
+    
+    BasicBlock *immediateDominator;
+    std::set<BasicBlock *> predecessors;
+    std::set<BasicBlock *> dominators;
+    std::set<BasicBlock *> domChildren;
+    std::set<BasicBlock *> dominancefront;
 
     ~BasicBlock() = default;
 
     void outputIR() const;
-    void naiveSSA();
+    void convertSSA();
+    void renameVars(std::map<std::string,int> &counter, std::map<std::string,std::vector<int>> &stack);
     std::vector<BasicBlock *> getNextBlocks() {
         return blockTransfer->successors();
     }
@@ -332,7 +535,9 @@ public:
     }
 
     void outputIR() const;
-    void naiveSSA();
+    void computeBlockPredecessors();
+    void populateDominators();
+    void convertSSA();
 
     // register temp values with method from method builder to allow operating on them with SSA
     void registerTemp(std::string tmp) {temps.push_back(tmp);};
@@ -369,7 +574,7 @@ struct CFG {
     std::map<std::string, std::shared_ptr<MethodIR>> methodinfo;
 
     void outputIR() const;
-    void naiveSSA();
+    void convertSSA();
 
     CFG (std::vector<std::string> allfields, std::vector<std::string> allmethods,
             std::map<std::string, std::unique_ptr<ClassMetadata>> classdata,
