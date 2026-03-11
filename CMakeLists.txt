@@ -7,5 +7,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_subdirectory(${PROJECT_SOURCE_DIR}/irpasses)
 add_subdirectory(${PROJECT_SOURCE_DIR}/frontend)
 
+# helpful in debugging memory issues
+#add_compile_options(-fsanitize=address)
+#add_link_options(-fsanitize=address)
+
 add_executable(comp comp.cpp)
 target_link_libraries(comp PUBLIC irpasses frontend)

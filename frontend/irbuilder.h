@@ -31,12 +31,12 @@ public:
     void setCurrentBlock(BasicBlock* b);
 
     void addInstruction(std::unique_ptr<IROp> op);
-
+    
     ValPtr getTag(ValPtr lcl);
-    ValPtr tagCheck(ValPtr lcl, TagType tag);
+    void tagCheck(ValPtr lcl, TagType tag);
     void tagVal(ValPtr lcl, TagType tag);
     void tagVal(ValPtr lcl, ValPtr tag);
-    void untagVal(ValPtr lcl);
+    LclPtr untagVal(ValPtr lcl);
 
     void terminate(std::unique_ptr<ControlTransfer> blockTerm);
 

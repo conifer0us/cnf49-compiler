@@ -44,7 +44,6 @@ void MethodIR::populateDominators() {
 
     std::set<BasicBlock *> allBlocks;
 
-
     for (auto& block : blocks)
         allBlocks.insert(block.get());
 
@@ -134,18 +133,17 @@ void MethodIR::convertSSA() {
         for (auto &inst : block->instructions) {
 
             for (auto &varused : inst->varsUsed())
-                globals.insert(varused);
+                globals.insert((*varused)->getString());
 
             for (auto &vardef : inst->varsDef()) {
-                globals.insert(vardef);
-                defBlocks[vardef].insert(block.get());
+                globals.insert((*vardef)->getString());
+                defBlocks[(*vardef)->getString()].insert(block.get());
             }
         }
 
-        for (auto &varused : block->blockTransfer->varsUsed())
-            globals.insert(varused);
+        for (auto varused : block->blockTransfer->varsUsed())
+            globals.insert((*varused)->getString());
     }
-
 
     // place required phi functions
     for (auto global : globals) {
@@ -190,11 +188,40 @@ void BasicBlock::renameVars(std::map<std::string,int> &counter, std::map<std::st
         phi->resultVersion = stack[phi->outputVar].back();
     }
 
-    // rename all variable uses in instructions from 
+    // rename all variable uses and definitions in instructions
     for (auto &inst : instructions)
-        inst->renameUses(stack);
+    {
+        for (auto use : inst->varsUsed())
+        {
+            if ((*use)->getValType() == VarType)
+            {
+                auto name = (*use)->getString();
+                (*use) = std::make_shared<Local>(name, stack[name].back());
+            }
+        }
 
-    blockTransfer->renameUses(stack);
+        for (auto def : inst->varsDef())
+        {
+            if ((*def)->getValType() == VarType)
+            {
+                auto name = (*def)->getString();
+
+                int newver = ++counter[name];
+                stack[name].push_back(newver);
+
+                (*def) = std::make_shared<Local>(name, newver);
+            }
+        }
+    }
+
+    for (auto use : blockTransfer->varsUsed())
+    {
+        if ((*use)->getValType() == VarType)
+        {
+            auto name = (*use)->getString();
+            (*use) = std::make_shared<Local>(name, stack[name].back());
+        }
+    }
 
     // populate phi nodes in block successors
     for (auto succ : getNextBlocks()) {
@@ -203,7 +230,7 @@ void BasicBlock::renameVars(std::map<std::string,int> &counter, std::map<std::st
             
             if (!stack[phi->outputVar].empty())
                 version = stack[phi->outputVar].back();
-    
+                
             phi->incoming.push_back({label, version});
         }
     }
@@ -211,209 +238,25 @@ void BasicBlock::renameVars(std::map<std::string,int> &counter, std::map<std::st
     for (auto child : domChildren)
         child->renameVars(counter, stack);
 
-    // pop stack of all variables with new definitions in the function
-    for (auto &inst : instructions)
-        for (auto &d : inst->varsDef())
-            stack[d].pop_back();
-
     // pop all vars that have been updated by phis
-    for (auto& phinode: blockPhi)
+    for (auto& phinode: blockPhi) {
+        // assert(!stack[phinode->outputVar].empty());
         stack[phinode->outputVar].pop_back();
-}
-
-// disgusting amount of copy/paste + search/replace in this section but the idea is the same
-// for each instruction, replace all locals with the latest version, increment if assigning
-
-// not doing anything for phi; handled above as part of the SSA buildout
-void Phi::renameUses(std::map<std::string, std::vector<int>>& versions) {}
-
-void Assign::renameUses(std::map<std::string, std::vector<int>>& versions) {
-    if (src->getValType() == VarType) {
-        auto name = src->getString();
-        auto it = versions.find(name);
-        if (it != versions.end())
-            src = std::make_shared<Local>(name, it->second.back());
     }
-    
-    if (dest->getValType() == VarType) {
-        auto destname = dest->getString();
-        auto it = versions.find(destname);
-        if (it != versions.end())
-            dest = std::make_shared<Local>(destname, ++versions[destname].back());
-    }
-}
-
-void BinInst::renameUses(std::map<std::string, std::vector<int>>& versions) {
-    if (lhs->getValType() == VarType) {
-        auto name = lhs->getString();
-        auto it = versions.find(name);
-        if (it != versions.end())
-            lhs = std::make_shared<Local>(name, it->second.back());
-    }
-    if (rhs->getValType() == VarType) {
-        auto name = rhs->getString();
-        auto it = versions.find(name);
-        if (it != versions.end())
-            rhs = std::make_shared<Local>(name, it->second.back());
-    }
-    if (dest->getValType() == VarType) {
-        auto destname = dest->getString();
-        auto it = versions.find(destname);
-        if (it != versions.end())
-            dest = std::make_shared<Local>(destname, ++versions[destname].back());
-    }
-}
-
-void Call::renameUses(std::map<std::string, std::vector<int>>& versions) {
-    if (code->getValType() == VarType) {
-        auto name = code->getString();
-        auto it = versions.find(name);
-        if (it != versions.end())
-            code = std::make_shared<Local>(name, it->second.back());
-    }
-    for (auto& arg : args) {
-        if (arg->getValType() == VarType) {
-            auto name = arg->getString();
-            auto it = versions.find(name);
-            if (it != versions.end())
-                arg = std::make_shared<Local>(name, it->second.back());
+        
+    // pop stack of all variables with new definitions in the function
+    for (auto &inst : instructions) {
+        for (auto &defVar : inst->varsDef()) {
+            // assert(!stack[(*defVar)->getString()].empty());
+            stack[(*defVar)->getString()].pop_back();
         }
     }
-
-    if (dest->getValType() == VarType) {
-        auto destname = dest->getString();
-        auto it = versions.find(destname);
-        if (it != versions.end())
-            dest = std::make_shared<Local>(destname, ++versions[destname].back());
-    }
 }
-
-void Alloc::renameUses(std::map<std::string, std::vector<int>>& versions) {
-    if (dest->getValType() == VarType) {
-        auto destname = dest->getString();
-        auto it = versions.find(destname);
-        if (it != versions.end())
-            dest = std::make_shared<Local>(destname, ++versions[destname].back());
-    }
-}
-
-void Print::renameUses(std::map<std::string, std::vector<int>>& versions) {
-    if (val->getValType() == VarType) {
-        auto name = val->getString();
-        auto it = versions.find(name);
-        if (it != versions.end())
-            val = std::make_shared<Local>(name, it->second.back());
-    }
-}
-
-void GetElt::renameUses(std::map<std::string, std::vector<int>>& versions) {
-    if (array->getValType() == VarType) {
-        auto name = array->getString();
-        auto it = versions.find(name);
-        if (it != versions.end())
-            array = std::make_shared<Local>(name, it->second.back());
-    }
-    if (index->getValType() == VarType) {
-        auto name = index->getString();
-        auto it = versions.find(name);
-        if (it != versions.end())
-            index = std::make_shared<Local>(name, it->second.back());
-    }
-
-    if (dest->getValType() == VarType) {
-        auto destname = dest->getString();
-        auto it = versions.find(destname);
-        if (it != versions.end())
-            dest = std::make_shared<Local>(destname, ++versions[destname].back());
-    }
-}
-
-void SetElt::renameUses(std::map<std::string, std::vector<int>>& versions) {
-    if (array->getValType() == VarType) {
-        auto name = array->getString();
-        auto it = versions.find(name);
-        if (it != versions.end())
-            array = std::make_shared<Local>(name, it->second.back());
-    }
-    if (index->getValType() == VarType) {
-        auto name = index->getString();
-        auto it = versions.find(name);
-        if (it != versions.end())
-            index = std::make_shared<Local>(name, it->second.back());
-    }
-    if (val->getValType() == VarType) {
-        auto name = val->getString();
-        auto it = versions.find(name);
-        if (it != versions.end())
-            val = std::make_shared<Local>(name, it->second.back());
-    }
-}
-
-void Load::renameUses(std::map<std::string, std::vector<int>>& versions) {
-    if (addr->getValType() == VarType) {
-        auto name = addr->getString();
-        auto it = versions.find(name);
-        if (it != versions.end())
-            addr = std::make_shared<Local>(name, it->second.back());
-    }
-    
-    if (dest->getValType() == VarType) {
-        auto destname = dest->getString();
-        auto it = versions.find(destname);
-        if (it != versions.end())
-            dest = std::make_shared<Local>(destname, ++versions[destname].back());
-    }
-}
-
-void Store::renameUses(std::map<std::string, std::vector<int>>& versions) {
-    if (addr->getValType() == VarType) {
-        auto name = addr->getString();
-        auto it = versions.find(name);
-        if (it != versions.end())
-            addr = std::make_shared<Local>(name, it->second.back());
-    }
-    if (val->getValType() == VarType) {
-        auto name = val->getString();
-        auto it = versions.find(name);
-        if (it != versions.end())
-            val = std::make_shared<Local>(name, it->second.back());
-    }
-}
-
-void Conditional::renameUses(std::map<std::string, std::vector<int>>& versions) {
-    if (condition->getValType() == VarType) {
-        auto name = condition->getString();
-        auto it = versions.find(name);
-        if (it != versions.end())
-            condition = std::make_shared<Local>(name, it->second.back());
-    }
-}
-
-void Return::renameUses(std::map<std::string, std::vector<int>>& versions) {
-    if (val->getValType() == VarType) {
-        auto name = val->getString();
-        auto it = versions.find(name);
-        if (it != versions.end())
-            val = std::make_shared<Local>(name, it->second.back());
-    }
-}
-
-void Jump::renameUses(std::map<std::string, std::vector<int>>& versions) {
-    return;
-}
-
-void HangingBlock::renameUses(std::map<std::string, std::vector<int>>& versions) {
-    return;
-}
-
-void Fail::renameUses(std::map<std::string, std::vector<int>>& versions) {
-    return;
-}
-
 
 /*
 NAIVE SSA IMPLEMENTATION FROM MILESTONE 1
 BROKEN IMPLEMENTATION BUT STUCK HERE LIKE A CIRCUS FREAK
+RENAMEUSES REMOVED FOR BEING ABSURD IN NEW IMPLEMENTATION
 
 void MethodIR::naiveSSA() {
     std::map<BasicBlock*, std::vector<BasicBlock*>> predecessors;

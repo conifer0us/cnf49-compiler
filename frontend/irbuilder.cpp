@@ -25,13 +25,13 @@ ValPtr IRBuilder::getTag(ValPtr lcl) {
     return tmp;
 }
 
-ValPtr IRBuilder::tagCheck(ValPtr lcl, TagType tag) {
+void IRBuilder::tagCheck(ValPtr lcl, TagType tag) {
     // PINHOLE OPTIMIZATION: AVOID TAG CHECKS IF WORKING WITH %THIS
     if (pinhole && lcl->getString() == "this") {
         if (tag == Integer)
             std::runtime_error("'this' cannot be used as a numerical value");
         
-        return lcl;
+        return;
     }
 
     auto istagbranch = createBlock();
@@ -46,13 +46,13 @@ ValPtr IRBuilder::tagCheck(ValPtr lcl, TagType tag) {
         terminate(std::move(std::make_unique<Conditional>(tmp, nottagbranch, istagbranch)));
 
     setCurrentBlock(nottagbranch);
+
     if (tag == TagType::Integer)
         terminate(std::move(std::make_unique<Fail>(FailReason::NotANumber)));
     else
         terminate(std::move(std::make_unique<Fail>(FailReason::NotAPointer)));
 
     setCurrentBlock(istagbranch);
-    return tmp;
 }
 
 void IRBuilder::tagVal(ValPtr val, ValPtr tag) {
@@ -72,17 +72,20 @@ void IRBuilder::tagVal(ValPtr val, TagType tag) {
         return;
 
     addInstruction(std::move(std::make_unique<BinInst>(val, Oper::Mul, val, std::make_shared<Const>(2))));
-    if (tag != 0)
+
+    if (tag)
         addInstruction(std::move(std::make_unique<BinInst>(val, Oper::BitXor, val, std::make_shared<Const>(tag))));
 }
 
-void IRBuilder::untagVal(ValPtr val) {
+LclPtr IRBuilder::untagVal(ValPtr val) {
     // PINHOLE OPTIMIZATION: AVOID TAG CHECKS IF WORKING WITH %THIS
-    if (pinhole && val->getString() == "this") {
-        return;
-    }
+    if (pinhole && val->getString() == "this")
+        return std::make_shared<Local>("this", 0);
 
-    addInstruction(std::move(std::make_unique<BinInst>(val, Oper::Div, val, std::make_shared<Const>(2))));
+    auto tmp = getNextTemp();
+    addInstruction(std::move(std::make_unique<BinInst>(tmp, Oper::Div, val, std::make_shared<Const>(2))));
+
+    return tmp;
 }
 
 void IRBuilder::terminate(std::unique_ptr<ControlTransfer> blockTerm) {
@@ -92,7 +95,7 @@ void IRBuilder::terminate(std::unique_ptr<ControlTransfer> blockTerm) {
 LclPtr IRBuilder::getNextTemp() {
     auto nxtTmp = "tmp" + std::to_string(nexttmp++);
     method->registerTemp(nxtTmp);
-    return std::make_shared<Local>(nxtTmp, 0);
+    return std::make_shared<Local>(nxtTmp, 0, true);
 }
 
 int IRBuilder::getClassSize(std::string classname) {

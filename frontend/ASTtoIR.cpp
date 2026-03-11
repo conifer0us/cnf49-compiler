@@ -100,7 +100,7 @@ ValPtr Binop::convertToIR(IRBuilder& builder, LclPtr out) const {
             break; 
         case 'n':
             allowptr = true;
-            optype =Oper::Ne;
+            optype = Oper::Ne;
             break;
         default:
             std::runtime_error("Unknown Operation: " + op);
@@ -109,25 +109,19 @@ ValPtr Binop::convertToIR(IRBuilder& builder, LclPtr out) const {
     auto lhsVar = lhs->convertToIR(builder, lOut);
     auto rhsVar = rhs->convertToIR(builder, rOut);
     
+    // if operation is not != or ==, must tag check
     if (!allowptr) {
         builder.tagCheck(lhsVar, TagType::Integer);
         builder.tagCheck(rhsVar, TagType::Integer);
     }
 
-
-    auto lhsTag = builder.getTag(lhsVar);
-    auto rhsTag = builder.getTag(rhsVar);
-    builder.untagVal(lhsVar);
-    builder.untagVal(rhsVar);
+    lhsVar = builder.untagVal(lhsVar);
+    rhsVar = builder.untagVal(rhsVar);
 
     auto binInst = std::make_unique<BinInst>(result, optype, lhsVar, rhsVar);
     builder.addInstruction(std::move(binInst));
 
-    // retag values
-    builder.tagVal(lhsVar, lhsTag);
-    builder.tagVal(rhsVar, rhsTag);
-    builder.tagVal(result, TagType::Integer);  
-
+    builder.tagVal(result, TagType::Integer);
     return result;
 }
 
@@ -136,7 +130,7 @@ ValPtr FieldRead::convertToIR(IRBuilder& builder, LclPtr out) const {
     
     // ensure objVar is a pointer and untag it
     builder.tagCheck(objVar, TagType::Pointer);
-    builder.untagVal(objVar);
+    objVar = builder.untagVal(objVar);
         
     auto target = out ? out : builder.getNextTemp();
 
@@ -150,9 +144,11 @@ ValPtr FieldRead::convertToIR(IRBuilder& builder, LclPtr out) const {
     builder.addInstruction(std::move(std::make_unique<Load>(fmap, fmapAddr)));
 
     auto fieldOffset = builder.getFieldOffset(fieldname);
+    auto offset = builder.getNextTemp();
+    builder.addInstruction(std::move(std::make_unique<GetElt>(offset, fmap, std::make_shared<Const>(fieldOffset))));
+    
     auto fieldEntry = builder.getNextTemp();
-    builder.addInstruction(std::move(std::make_unique<GetElt>(fieldEntry, fmap, std::make_shared<Const>(fieldOffset))));
-    builder.addInstruction(std::move(std::make_unique<BinInst>(fieldEntry, Oper::Mul, fieldEntry, std::make_shared<Const>(8))));
+    builder.addInstruction(std::move(std::make_unique<BinInst>(fieldEntry, Oper::Mul, offset, std::make_shared<Const>(8))));
 
     auto dneBlock = builder.createBlock();
     auto existsBlock = builder.createBlock();
@@ -170,8 +166,6 @@ ValPtr FieldRead::convertToIR(IRBuilder& builder, LclPtr out) const {
 
     builder.addInstruction(std::move(std::make_unique<Load>(target, fieldAddr)));
 
-    // make sure objvar back to being a pointer all loading has been completed
-    builder.tagVal(objVar, TagType::Pointer);
     return target;
 }
 
@@ -180,7 +174,7 @@ ValPtr MethodCall::convertToIR(IRBuilder& builder, LclPtr out) const {
 
     // check the base value to make sure it's a pointer and then unwrap pointer
     builder.tagCheck(objVar, TagType::Pointer);
-    builder.untagVal(objVar);
+    objVar = builder.untagVal(objVar);
 
     auto retVar = out ? out : builder.getNextTemp();
 
@@ -204,20 +198,16 @@ ValPtr MethodCall::convertToIR(IRBuilder& builder, LclPtr out) const {
 
     // object passed to first argument for %this
     std::vector<ValPtr> argVars;
+
     argVars.push_back(objVar);
     for (auto& arg : args) {
         argVars.push_back(arg->convertToIR(builder, nullptr));
     }
 
-    // if pinhole enabled, make sure to retag the obj var before calling into the method
-    // this needs to be done because, in absence of pinhole optimization, %this is treated as a tagged pointer
-    if (builder.getPinhole()) {
-        builder.addInstruction(std::move(std::make_unique<Call>(retVar, funcEntry, std::move(argVars))));
+    if (!builder.getPinhole())
         builder.tagVal(objVar, TagType::Pointer);
-    } else {
-        builder.tagVal(objVar, TagType::Pointer);
-        builder.addInstruction(std::move(std::make_unique<Call>(retVar, funcEntry, std::move(argVars))));
-    }
+
+    builder.addInstruction(std::move(std::make_unique<Call>(retVar, funcEntry, std::move(argVars))));
 
     return retVar;
 }
@@ -235,7 +225,7 @@ void FieldAssignStatement::convertToIR(IRBuilder& builder) const {
     auto objVar = object->convertToIR(builder, nullptr);
     // check field assign is pointer and unwrap pointer
     builder.tagCheck(objVar, TagType::Pointer);
-    builder.untagVal(objVar);
+    objVar = builder.untagVal(objVar);
         
     auto targetVal = value->convertToIR(builder, nullptr);
 
@@ -251,8 +241,9 @@ void FieldAssignStatement::convertToIR(IRBuilder& builder) const {
     auto fieldEntry = builder.getNextTemp();
     
     // tag offset values from ftable
-    builder.addInstruction(std::move(std::make_unique<GetElt>(fieldEntry, fmap, std::make_shared<Const>(fieldOffset))));
-    builder.addInstruction(std::move(std::make_unique<BinInst>(fieldEntry, Oper::Mul, fieldEntry, std::make_shared<Const>(8))));
+    auto offset = builder.getNextTemp();
+    builder.addInstruction(std::move(std::make_unique<GetElt>(offset, fmap, std::make_shared<Const>(fieldOffset))));
+    builder.addInstruction(std::move(std::make_unique<BinInst>(fieldEntry, Oper::Mul, offset, std::make_shared<Const>(8))));
 
     auto existsBlock = builder.createBlock();
     auto dneBlock = builder.createBlock();
@@ -267,23 +258,21 @@ void FieldAssignStatement::convertToIR(IRBuilder& builder) const {
     builder.addInstruction(std::move(std::make_unique<BinInst>(fieldAddr, Oper::Add, objVar, fieldEntry)));
 
     builder.addInstruction(std::move(std::make_unique<Store>(fieldAddr, targetVal)));
-
-    // retag pointer
-    builder.tagVal(objVar, TagType::Pointer);
 }
 
 void IfStatement::convertToIR(IRBuilder& builder) const {
-    auto condVar = condition->convertToIR(builder, nullptr);
+    auto condVar = builder.getNextTemp();
+    condition->convertToIR(builder, condVar);
     
     auto thenBlock = builder.createBlock();
     auto elseBlock = builder.createBlock();
     BasicBlock* mergeBlock = nullptr;
         
     builder.tagCheck(condVar, TagType::Integer);
-    builder.untagVal(condVar);
+    condVar = builder.untagVal(condVar);
+
     builder.terminate(std::move(std::make_unique<Conditional>(condVar, thenBlock, elseBlock)));
     builder.setCurrentBlock(thenBlock);
-    builder.tagVal(condVar, TagType::Integer);
 
     auto terminated = builder.processBlock(thenBranch);
     if (!terminated) {
@@ -305,16 +294,17 @@ void IfStatement::convertToIR(IRBuilder& builder) const {
 }
 
 void IfOnlyStatement::convertToIR(IRBuilder& builder) const {
-    auto condVar = condition->convertToIR(builder, nullptr);
+    auto condVar = builder.getNextTemp();
+    condition->convertToIR(builder, condVar);
 
     auto bodyBlock = builder.createBlock();
     auto mergeBlock = builder.createBlock();
     
     builder.tagCheck(condVar, TagType::Integer);
-    builder.untagVal(condVar);
+    condVar = builder.untagVal(condVar);
+
     builder.terminate(std::move(std::make_unique<Conditional>(condVar, bodyBlock, mergeBlock)));
     builder.setCurrentBlock(bodyBlock);
-    builder.tagVal(condVar, TagType::Integer);
 
     auto terminated = builder.processBlock(body);
     if (!terminated)
@@ -330,15 +320,17 @@ void WhileStatement::convertToIR(IRBuilder& builder) const {
     
     builder.setCurrentBlock(condBlock);
 
-    auto condVar = condition->convertToIR(builder, nullptr);    
+    auto condVar = builder.getNextTemp();
+    condition->convertToIR(builder, condVar);   
+    
     auto bodyBlock = builder.createBlock();
     auto mergeBlock = builder.createBlock();
     
     builder.tagCheck(condVar, TagType::Integer);
-    builder.untagVal(condVar);
+    condVar = builder.untagVal(condVar);
+
     builder.terminate(std::move(std::make_unique<Conditional>(condVar, bodyBlock, mergeBlock)));
     builder.setCurrentBlock(bodyBlock);
-    builder.tagVal(condVar, TagType::Integer);
 
     auto terminated = builder.processBlock(body);
     if (!terminated)
@@ -354,14 +346,12 @@ void ReturnStatement::convertToIR(IRBuilder& builder) const {
 
 void PrintStatement::convertToIR(IRBuilder& builder) const {
     auto val = value->convertToIR(builder, nullptr);
+
     // check that value is integer before printing
     builder.tagCheck(val, TagType::Integer);
-    builder.untagVal(val);
-        
-    builder.addInstruction(std::move(std::make_unique<Print>(val)));
+    val = builder.untagVal(val);
 
-    // retag value
-    builder.tagVal(val, Integer);
+    builder.addInstruction(std::move(std::make_unique<Print>(val)));
 }
 
 std::shared_ptr<MethodIR> Method::convertToIR(std::string classname, 
