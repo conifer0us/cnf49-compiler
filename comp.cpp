@@ -46,11 +46,15 @@ int main(int argc, char **argv) {
 
     // output IR with or without pinhole optimization depending on -noopt arg
     std::unique_ptr<CFG> prgIR;
-    if (strcmp(argv[1], "-noopt") == 0)
+    if (strcmp(argv[1], "-noopt") == 0) {
         prgIR = AST->convertToIR(false);
-    else
+        prgIR->outputIR();
+        return 0;
+    }
+    else {
         prgIR = AST->convertToIR();
-
+    }
+        
     if (strcmp(argv[1], "-noSSA") == 0) {
         prgIR->outputIR();
         return 0;

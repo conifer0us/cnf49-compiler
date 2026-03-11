@@ -32,10 +32,9 @@ public:
 
     void addInstruction(std::unique_ptr<IROp> op);
     
-    ValPtr getTag(ValPtr lcl);
     void tagCheck(ValPtr lcl, TagType tag);
-    void tagVal(ValPtr lcl, TagType tag);
-    void tagVal(ValPtr lcl, ValPtr tag);
+    LclPtr tagVal(LclPtr lcl, TagType tag);
+    ValPtr tagVal(ValPtr val, TagType tag);
     LclPtr untagVal(ValPtr lcl);
 
     void terminate(std::unique_ptr<ControlTransfer> blockTerm);

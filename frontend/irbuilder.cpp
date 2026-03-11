@@ -15,16 +15,6 @@ void IRBuilder::addInstruction(std::unique_ptr<IROp> op) {
     current->instructions.push_back(std::move(op));
 }
 
-ValPtr IRBuilder::getTag(ValPtr lcl) {
-    // PINHOLE OPTIMIZATION: DO NOT CHECK TAG ON THIS VAL
-    if (pinhole && lcl->getString() == "this")
-        return nullptr;
-
-    auto tmp = getNextTemp();
-    addInstruction(std::move(std::make_unique<BinInst>(tmp, Oper::BitAnd, lcl, std::make_shared<Const>(1))));
-    return tmp;
-}
-
 void IRBuilder::tagCheck(ValPtr lcl, TagType tag) {
     // PINHOLE OPTIMIZATION: AVOID TAG CHECKS IF WORKING WITH %THIS
     if (pinhole && lcl->getString() == "this") {
@@ -55,26 +45,45 @@ void IRBuilder::tagCheck(ValPtr lcl, TagType tag) {
     setCurrentBlock(istagbranch);
 }
 
-void IRBuilder::tagVal(ValPtr val, ValPtr tag) {
+ValPtr IRBuilder::tagVal(ValPtr val, TagType tag) {
     // PINHOLE OPTIMIZATION: AVOID TAG CHECKS IF WORKING WITH %THIS
     if (pinhole && val->getString() == "this")
-        return;
+        return val;
 
-    addInstruction(std::move(std::make_unique<BinInst>(val, Oper::Mul, val, std::make_shared<Const>(2))));
-    
-    if (tag)
-        addInstruction(std::move(std::make_unique<BinInst>(val, Oper::BitXor, val, tag)));
+    // if temp value, get new temp to return. else do operation on existing var
+    // strange name conversion required here to make new Local since types were weirdly conceived 
+    LclPtr out = (val->ignoreSSA) ? getNextTemp() : std::make_shared<Local>(val->getString(), 0);
+
+    if (tag) {
+        auto untagged = getNextTemp();
+        addInstruction(std::move(std::make_unique<BinInst>(untagged, Oper::Mul, val, std::make_shared<Const>(2))));
+        addInstruction(std::move(std::make_unique<BinInst>(out, Oper::BitXor, untagged, std::make_shared<Const>(tag))));
+    }
+    else {
+        addInstruction(std::move(std::make_unique<BinInst>(out, Oper::Mul, val, std::make_shared<Const>(2))));
+    }
+
+    return out;
 }
 
-void IRBuilder::tagVal(ValPtr val, TagType tag) {
+LclPtr IRBuilder::tagVal(LclPtr lcl, TagType tag) {
     // PINHOLE OPTIMIZATION: AVOID TAG CHECKS IF WORKING WITH %THIS
-    if (pinhole && val->getString() == "this")
-        return;
+    if (pinhole && lcl->getString() == "this")
+        return lcl;
 
-    addInstruction(std::move(std::make_unique<BinInst>(val, Oper::Mul, val, std::make_shared<Const>(2))));
+    // if temp value, get new temp to return. else do operation on existing var
+    auto out = (lcl->ignoreSSA) ? getNextTemp() : lcl;
 
-    if (tag)
-        addInstruction(std::move(std::make_unique<BinInst>(val, Oper::BitXor, val, std::make_shared<Const>(tag))));
+    if (tag) {
+        auto untagged = getNextTemp();
+        addInstruction(std::move(std::make_unique<BinInst>(untagged, Oper::Mul, lcl, std::make_shared<Const>(2))));
+        addInstruction(std::move(std::make_unique<BinInst>(out, Oper::BitXor, untagged, std::make_shared<Const>(tag))));
+    }
+    else {
+        addInstruction(std::move(std::make_unique<BinInst>(out, Oper::Mul, lcl, std::make_shared<Const>(2))));
+    }
+
+    return out;
 }
 
 LclPtr IRBuilder::untagVal(ValPtr val) {

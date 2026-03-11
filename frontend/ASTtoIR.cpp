@@ -60,7 +60,7 @@ ValPtr ClassRef::convertToIR(IRBuilder& builder, LclPtr out) const {
     builder.addInstruction(std::move(storeFtbl));
 
     // tag heap value as a pointer
-    builder.tagVal(var, TagType::Pointer);
+    var = builder.tagVal(var, TagType::Pointer);
 
     return var;
 }
@@ -121,7 +121,7 @@ ValPtr Binop::convertToIR(IRBuilder& builder, LclPtr out) const {
     auto binInst = std::make_unique<BinInst>(result, optype, lhsVar, rhsVar);
     builder.addInstruction(std::move(binInst));
 
-    builder.tagVal(result, TagType::Integer);
+    result = builder.tagVal(result, TagType::Integer);
     return result;
 }
 
@@ -174,6 +174,7 @@ ValPtr MethodCall::convertToIR(IRBuilder& builder, LclPtr out) const {
 
     // check the base value to make sure it's a pointer and then unwrap pointer
     builder.tagCheck(objVar, TagType::Pointer);
+    auto taggedObj = objVar;
     objVar = builder.untagVal(objVar);
 
     auto retVar = out ? out : builder.getNextTemp();
@@ -199,13 +200,15 @@ ValPtr MethodCall::convertToIR(IRBuilder& builder, LclPtr out) const {
     // object passed to first argument for %this
     std::vector<ValPtr> argVars;
 
-    argVars.push_back(objVar);
+    // push either untagged or tagged obj var to method depending on pinhole optimization
+    if (!builder.getPinhole())
+        argVars.push_back(taggedObj);
+    else 
+        argVars.push_back(objVar);
+    
     for (auto& arg : args) {
         argVars.push_back(arg->convertToIR(builder, nullptr));
     }
-
-    if (!builder.getPinhole())
-        builder.tagVal(objVar, TagType::Pointer);
 
     builder.addInstruction(std::move(std::make_unique<Call>(retVar, funcEntry, std::move(argVars))));
 
