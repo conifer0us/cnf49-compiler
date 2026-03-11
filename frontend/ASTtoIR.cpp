@@ -264,8 +264,7 @@ void FieldAssignStatement::convertToIR(IRBuilder& builder) const {
 }
 
 void IfStatement::convertToIR(IRBuilder& builder) const {
-    auto condVar = builder.getNextTemp();
-    condition->convertToIR(builder, condVar);
+    auto condVar = condition->convertToIR(builder, nullptr);
     
     auto thenBlock = builder.createBlock();
     auto elseBlock = builder.createBlock();
@@ -297,8 +296,7 @@ void IfStatement::convertToIR(IRBuilder& builder) const {
 }
 
 void IfOnlyStatement::convertToIR(IRBuilder& builder) const {
-    auto condVar = builder.getNextTemp();
-    condition->convertToIR(builder, condVar);
+    auto condVar = condition->convertToIR(builder, nullptr);
 
     auto bodyBlock = builder.createBlock();
     auto mergeBlock = builder.createBlock();
@@ -323,8 +321,7 @@ void WhileStatement::convertToIR(IRBuilder& builder) const {
     
     builder.setCurrentBlock(condBlock);
 
-    auto condVar = builder.getNextTemp();
-    condition->convertToIR(builder, condVar);   
+    auto condVar = condition->convertToIR(builder, nullptr);   
     
     auto bodyBlock = builder.createBlock();
     auto mergeBlock = builder.createBlock();
