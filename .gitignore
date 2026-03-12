@@ -2,6 +2,7 @@ build/*
 out/*
 frontend/CMakeFiles/*
 compdef/CMakeFiles/*
+irpasses/CMakeFiles/*
 CmakeFiles/*
 
 **/MakeFile

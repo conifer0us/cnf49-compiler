@@ -1,2 +1,0 @@
-/usr/bin/ar qc libirpasses.a CMakeFiles/irpasses.dir/ir.cpp.o CMakeFiles/irpasses.dir/vn.cpp.o CMakeFiles/irpasses.dir/ssa.cpp.o
-/usr/bin/ranlib libirpasses.a
