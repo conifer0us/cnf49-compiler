@@ -2,6 +2,7 @@
 #include <string.h>
 #include <sstream>
 #include <fstream>
+
 #include "tokenizer.h"
 #include "parser.h"
 #include "ASTNodes.h"
@@ -46,7 +47,7 @@ int main(int argc, char **argv) {
 
     // output IR with or without pinhole optimization depending on -noopt arg
     std::unique_ptr<CFG> prgIR;
-    if (strcmp(argv[1], "-noopt") == 0) {
+    if (strcmp(argv[1], "-noOPT") == 0) {
         prgIR = AST->convertToIR(false);
         prgIR->outputIR();
         return 0;
@@ -61,6 +62,13 @@ int main(int argc, char **argv) {
     }
 
     prgIR->convertSSA();
+    
+    if (strcmp(argv[1], "-noVN")) {
+        prgIR->outputIR();
+        return 0;
+    }
+
+    prgIR->valueNumberingPass();
     prgIR->outputIR();
 
     return 0;

@@ -83,10 +83,24 @@ irpasses/CMakeFiles/irpasses.dir/ir.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/irpasses.dir/ir.cpp.s"
 	cd /mnt/c/Users/cnfer/Desktop/projects/sufferlang/irpasses && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/cnfer/Desktop/projects/sufferlang/irpasses/ir.cpp -o CMakeFiles/irpasses.dir/ir.cpp.s
 
+irpasses/CMakeFiles/irpasses.dir/vn.cpp.o: irpasses/CMakeFiles/irpasses.dir/flags.make
+irpasses/CMakeFiles/irpasses.dir/vn.cpp.o: irpasses/vn.cpp
+irpasses/CMakeFiles/irpasses.dir/vn.cpp.o: irpasses/CMakeFiles/irpasses.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/cnfer/Desktop/projects/sufferlang/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object irpasses/CMakeFiles/irpasses.dir/vn.cpp.o"
+	cd /mnt/c/Users/cnfer/Desktop/projects/sufferlang/irpasses && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT irpasses/CMakeFiles/irpasses.dir/vn.cpp.o -MF CMakeFiles/irpasses.dir/vn.cpp.o.d -o CMakeFiles/irpasses.dir/vn.cpp.o -c /mnt/c/Users/cnfer/Desktop/projects/sufferlang/irpasses/vn.cpp
+
+irpasses/CMakeFiles/irpasses.dir/vn.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/irpasses.dir/vn.cpp.i"
+	cd /mnt/c/Users/cnfer/Desktop/projects/sufferlang/irpasses && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/cnfer/Desktop/projects/sufferlang/irpasses/vn.cpp > CMakeFiles/irpasses.dir/vn.cpp.i
+
+irpasses/CMakeFiles/irpasses.dir/vn.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/irpasses.dir/vn.cpp.s"
+	cd /mnt/c/Users/cnfer/Desktop/projects/sufferlang/irpasses && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/cnfer/Desktop/projects/sufferlang/irpasses/vn.cpp -o CMakeFiles/irpasses.dir/vn.cpp.s
+
 irpasses/CMakeFiles/irpasses.dir/ssa.cpp.o: irpasses/CMakeFiles/irpasses.dir/flags.make
 irpasses/CMakeFiles/irpasses.dir/ssa.cpp.o: irpasses/ssa.cpp
 irpasses/CMakeFiles/irpasses.dir/ssa.cpp.o: irpasses/CMakeFiles/irpasses.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/cnfer/Desktop/projects/sufferlang/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object irpasses/CMakeFiles/irpasses.dir/ssa.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/cnfer/Desktop/projects/sufferlang/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object irpasses/CMakeFiles/irpasses.dir/ssa.cpp.o"
 	cd /mnt/c/Users/cnfer/Desktop/projects/sufferlang/irpasses && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT irpasses/CMakeFiles/irpasses.dir/ssa.cpp.o -MF CMakeFiles/irpasses.dir/ssa.cpp.o.d -o CMakeFiles/irpasses.dir/ssa.cpp.o -c /mnt/c/Users/cnfer/Desktop/projects/sufferlang/irpasses/ssa.cpp
 
 irpasses/CMakeFiles/irpasses.dir/ssa.cpp.i: cmake_force
@@ -100,16 +114,18 @@ irpasses/CMakeFiles/irpasses.dir/ssa.cpp.s: cmake_force
 # Object files for target irpasses
 irpasses_OBJECTS = \
 "CMakeFiles/irpasses.dir/ir.cpp.o" \
+"CMakeFiles/irpasses.dir/vn.cpp.o" \
 "CMakeFiles/irpasses.dir/ssa.cpp.o"
 
 # External object files for target irpasses
 irpasses_EXTERNAL_OBJECTS =
 
 irpasses/libirpasses.a: irpasses/CMakeFiles/irpasses.dir/ir.cpp.o
+irpasses/libirpasses.a: irpasses/CMakeFiles/irpasses.dir/vn.cpp.o
 irpasses/libirpasses.a: irpasses/CMakeFiles/irpasses.dir/ssa.cpp.o
 irpasses/libirpasses.a: irpasses/CMakeFiles/irpasses.dir/build.make
 irpasses/libirpasses.a: irpasses/CMakeFiles/irpasses.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/mnt/c/Users/cnfer/Desktop/projects/sufferlang/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX static library libirpasses.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/mnt/c/Users/cnfer/Desktop/projects/sufferlang/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX static library libirpasses.a"
 	cd /mnt/c/Users/cnfer/Desktop/projects/sufferlang/irpasses && $(CMAKE_COMMAND) -P CMakeFiles/irpasses.dir/cmake_clean_target.cmake
 	cd /mnt/c/Users/cnfer/Desktop/projects/sufferlang/irpasses && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/irpasses.dir/link.txt --verbose=$(VERBOSE)
 

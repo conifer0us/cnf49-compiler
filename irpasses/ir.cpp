@@ -30,10 +30,7 @@ ValType Global::getValType() const {
 
 // only tag from ir generation
 void Const::outputIR() const {
-    if (tag)
-        std::cout << ((value << 1) | 1);
-    else
-        std::cout << value;
+    std::cout << value;
 }
 
 std::string Const::getString() const {

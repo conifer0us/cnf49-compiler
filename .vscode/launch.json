@@ -12,8 +12,9 @@
             "options": [
                 "-help",
                 "-printAST",
+                "-noOPT",
                 "-noSSA",
-                "-noopt",
+                "-noVN",
                 ""
             ],
             "default": ""

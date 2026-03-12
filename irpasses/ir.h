@@ -16,6 +16,7 @@ struct Value {
     virtual void outputIR() const = 0;
     virtual std::string getString() const = 0;
     virtual ValType getValType() const = 0;
+    virtual int hash() const = 0;
 };
 
 using ValPtr = std::shared_ptr<Value>;
@@ -32,6 +33,7 @@ struct Local : Value {
     void outputIR() const override;
     std::string getString() const override;
     ValType getValType() const override;
+    int hash() const override;
 };
 
 using LclPtr = std::shared_ptr<Local>;
@@ -47,18 +49,25 @@ struct Global : Value {
     void outputIR() const override;
     std::string getString() const override;
     ValType getValType() const override;
+    int hash() const override;
 };
 
 struct Const : Value {
     long value;
-    bool tag;
-    explicit Const(long v, bool tag = false, bool tempVal = false) : value(v), tag(tag) {
+
+    explicit Const(long v, bool tag = false) {
         ignoreSSA = true;
+
+        if (tag)
+            value = (v << 1) | 1;
+        else
+            value = v;
     }
 
     void outputIR() const override;
     std::string getString() const override;
     ValType getValType() const override;
+    int hash() const override;
 };
 
 enum class Oper {    
@@ -109,7 +118,8 @@ struct BinInst : IROp {
     ValPtr rhs;
 
     void outputIR() const override;
-    
+    int hash() const;
+
     BinInst(ValPtr d, Oper o, ValPtr l, ValPtr r): 
         dest(d), op(o), lhs(std::move(l)), rhs(std::move(r)) {}
 
@@ -472,6 +482,7 @@ struct BasicBlock {
     ~BasicBlock() = default;
 
     void outputIR() const;
+    void valueNumberingPass();
     void convertSSA();
     void renameVars(std::map<std::string,int> &counter, std::map<std::string,std::vector<int>> &stack);
     std::vector<BasicBlock *> getNextBlocks() {
@@ -566,6 +577,7 @@ struct CFG {
 
     void outputIR() const;
     void convertSSA();
+    void valueNumberingPass();
 
     CFG (std::vector<std::string> allfields, std::vector<std::string> allmethods,
             std::map<std::string, std::unique_ptr<ClassMetadata>> classdata,
