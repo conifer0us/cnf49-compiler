@@ -384,7 +384,7 @@ ProgramPtr Parser::parseProgram() {
 
     do {
         statements.push_back(std::move(parseStatement()));
-    } while (tok.next().type == NEWLINE);
+    } while (tok.next().type == NEWLINE && tok.peekNext().type != ENDOFFILE);
 
     MethodPtr m = std::make_unique<Method>(mname, std::move(args), std::move(locals), std::move(statements));
     return std::make_unique<Program>(std::move(m), std::move(classes));

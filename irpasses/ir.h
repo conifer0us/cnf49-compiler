@@ -118,7 +118,7 @@ struct BinInst : IROp {
     ValPtr rhs;
 
     void outputIR() const override;
-    int hash() const;
+    int hash(int lhsVN, int rhsVN) const;
 
     BinInst(ValPtr d, Oper o, ValPtr l, ValPtr r): 
         dest(d), op(o), lhs(std::move(l)), rhs(std::move(r)) {}

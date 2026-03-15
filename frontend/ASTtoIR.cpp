@@ -108,12 +108,9 @@ ValPtr Binop::convertToIR(IRBuilder& builder, LclPtr out) const {
 
     auto lhsVar = lhs->convertToIR(builder, lOut);
     auto rhsVar = rhs->convertToIR(builder, rOut);
-    
-    // if operation is not != or ==, must tag check
-    if (!allowptr) {
-        builder.tagCheck(lhsVar, TagType::Integer);
-        builder.tagCheck(rhsVar, TagType::Integer);
-    }
+
+    auto oglhs = lhsVar;
+    auto ogrhs = rhsVar;
 
     lhsVar = builder.untagVal(lhsVar);
     rhsVar = builder.untagVal(rhsVar);
@@ -122,6 +119,15 @@ ValPtr Binop::convertToIR(IRBuilder& builder, LclPtr out) const {
     builder.addInstruction(std::move(binInst));
 
     result = builder.tagVal(result, TagType::Integer);
+    
+    // if operation is not != or ==, must tag check
+    // emit after the operation to allow VN to do its work
+    // no harm in this since no errors will come from performing bogus ops before quitting
+    if (!allowptr) {
+        builder.tagCheck(oglhs, TagType::Integer);
+        builder.tagCheck(ogrhs, TagType::Integer);
+    }
+
     return result;
 }
 

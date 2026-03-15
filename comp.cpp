@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
 
     prgIR->convertSSA();
     
-    if (strcmp(argv[1], "-noVN")) {
+    if (strcmp(argv[1], "-noVN") == 0) {
         prgIR->outputIR();
         return 0;
     }
