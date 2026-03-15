@@ -21,6 +21,8 @@ inline void indent(int n) {
 struct Expression : ASTNode {
     virtual ~Expression();
     virtual ValPtr convertToIR(IRBuilder& builder, LclPtr out) const;
+
+    std::string type;
 };
 
 using ExprPtr = std::unique_ptr<Expression>;
@@ -32,6 +34,10 @@ struct ThisExpr : Expression {
     }
 
     ValPtr convertToIR(IRBuilder& builder, LclPtr out = nullptr) const override;
+
+    explicit ThisExpr(std::string t) {
+        type = t;
+    }
 };
 
 struct Constant : Expression {
@@ -45,7 +51,9 @@ struct Constant : Expression {
     ValPtr convertToIR(IRBuilder& builder, LclPtr out = nullptr) const override;
     
     explicit Constant(long val):
-        value(val) {}
+        value(val) {
+        type = "int";
+    }
 };
 
 struct ClassRef : Expression {
@@ -59,7 +67,9 @@ struct ClassRef : Expression {
     ValPtr convertToIR(IRBuilder& builder, LclPtr out = nullptr) const override;
     
     explicit ClassRef(std::string cname):
-        classname(std::move(cname)) {}
+        classname(std::move(cname)) {
+            type = classname;
+        }
 };
 
 struct Binop : Expression {
@@ -80,7 +90,16 @@ struct Binop : Expression {
     ValPtr convertToIR(IRBuilder& builder, LclPtr out = nullptr) const override;
     
     Binop(ExprPtr left, char oper, ExprPtr right):
-        lhs(std::move(left)), rhs(std::move(right)), op(oper) {}
+        lhs(std::move(left)), rhs(std::move(right)), op(oper) {
+            if (lhs->type != rhs->type) {
+                std::cout << "Types of expression arguments must match: \n";
+                lhs->print(1);
+                rhs->print(1);
+                std::runtime_error("Expression args do not match");
+            }
+
+            type = lhs->type;
+        }
 };
 
 struct FieldRead : Expression {

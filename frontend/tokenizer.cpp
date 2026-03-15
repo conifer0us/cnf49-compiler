@@ -118,6 +118,7 @@ Token Tokenizer::advanceCurrent() {
                 
                 // Unlike the constant parsing switch above, this has already advanced current
                 if (fragment == "if") return Token{TokenType::IF};
+                else if (fragment == "returning") return Token{TokenType::RETURNING};
                 else if (fragment == "ifonly") return Token{TokenType::IFONLY};
                 else if (fragment == "while") return Token{TokenType::WHILE};
                 else if (fragment == "return") return Token{TokenType::RETURN};
@@ -129,6 +130,8 @@ Token Tokenizer::advanceCurrent() {
                 else if (fragment == "method") return Token{TokenType::METHOD};
                 else if (fragment == "fields") return Token{TokenType::FIELDS};
                 else if (fragment == "locals") return Token{TokenType::LOCALS};
+                else if (fragment == "null") return Token{TokenType::NUL};
+                else if (fragment == "int") return Token{TokenType::INT};
                 else return Token{TokenType::IDENTIFIER, fragment};
             } else {
                 std::cerr << "Tokenizer caught unsupported character: " << curChar();
