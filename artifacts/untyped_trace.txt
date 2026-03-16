@@ -1,0 +1,3705 @@
+Parsed: Stacker_do10:
+    %tmp21 = %tmp16 & 1
+    if %tmp21 then Stacker_do12 else Stacker_do13
+Stacker_do21:
+    %tmp34 = %tmp31 / 2
+    if %tmp34 then Stacker_do19 else Stacker_do20
+Stacker_do7:
+    fail NotAPointer
+Stack_pop16:
+    %tmp26 = call(%tmp28, %tmp25)
+    %tmp29 = %this + 8
+    %tmp30 = load(%tmp29)
+    %tmp32 = getelt(%tmp30, 2)
+    %tmp31 = %tmp32 * 8
+    if %tmp31 then Stack_pop17 else Stack_pop18
+Stack_push7:
+    fail NoSuchField
+Stacker_do12:
+    jump Stacker_do1
+Stack_pop6:
+    fail NotANumber
+ListNode_getVal2:
+    %tmp6 = %this + %tmp5
+    %tmp1 = load(%tmp6)
+    ret %tmp1
+Stack_push3:
+    %tmp8 = %tmp3 + %tmp6
+    store(%tmp8, %v)
+    %tmp9 = %tmpv3 & 1
+    if %tmp9 then Stack_push6 else Stack_push5
+main3:
+    %tmp8 = %tmp3 + %tmp6
+    store(%tmp8, 1)
+    %stkrv2 = alloc(2)
+    store(%stkrv2, @vtableStacker)
+    %tmp9 = %stkrv2 + 8
+    store(%tmp9, @ftableStacker)
+    %stkrv3 = %stkrv2 * 2
+    %tmp10 = %stkrv3 & 1
+    if %tmp10 then main6 else main5
+Stack_push6:
+    fail NotAPointer
+Stack_push1:
+    %tmp3 = %tmpv3 / 2
+    %tmp4 = %tmp3 + 8
+    %tmp5 = load(%tmp4)
+    %tmp7 = getelt(%tmp5, 0)
+    %tmp6 = %tmp7 * 8
+    if %tmp6 then Stack_push3 else Stack_push4
+Stack_pop18:
+    fail NoSuchField
+Stacker_do25:
+    %tmp38 = %stk / 2
+    %tmp39 = load(%tmp38)
+    %tmp40 = getelt(%tmp39, 3)
+    if %tmp40 then Stacker_do28 else Stacker_do27
+Stack_push11:
+    %tmp26 = %this + %tmp24
+    store(%tmp26, %tmpv3)
+    ret 1
+Stack_push10:
+    fail NoSuchField
+Stack_pop1:
+    fail NoSuchField
+Stacker_do20:
+    ret 0
+Stack_push5:
+    %tmp10 = %tmpv3 / 2
+    %tmp12 = %this + 8
+    %tmp13 = load(%tmp12)
+    %tmp14 = getelt(%tmp13, 2)
+    %tmp15 = %tmp14 * 8
+    if %tmp15 then Stack_push8 else Stack_push7
+ListNode_getNext(this):
+    %tmp2 = %this + 8
+    %tmp3 = load(%tmp2)
+    %tmp4 = getelt(%tmp3, 1)
+    %tmp5 = %tmp4 * 8
+    if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Stacker_do23:
+    %tmp36 = %vv3 / 2
+    print(%tmp36)
+    %tmp37 = %stk & 1
+    if %tmp37 then Stacker_do26 else Stacker_do25
+Stack_pop8:
+    %tmp19 = %this + %tmp18
+    %headv2 = load(%tmp19)
+    %tmp20 = %headv2 & 1
+    if %tmp20 then Stack_pop10 else Stack_pop9
+Stacker_do24:
+    fail NotANumber
+Stack_pop12:
+    %tmpv2 = call(%tmp23, %tmp21)
+    %tmp24 = %headv2 & 1
+    if %tmp24 then Stack_pop14 else Stack_pop13
+main5:
+    %tmp11 = %stkrv3 / 2
+    %tmp13 = load(%tmp11)
+    %tmp14 = getelt(%tmp13, 4)
+    if %tmp14 then main8 else main7
+Stack_pop10:
+    fail NotAPointer
+Stacker_do22:
+    fail NotANumber
+Stack_pop(this):
+    %tmpv1 = 1
+    %headv1 = 1
+    %tmp4 = %this + 8
+    %tmp5 = load(%tmp4)
+    %tmp6 = getelt(%tmp5, 2)
+    %tmp7 = %tmp6 * 8
+    if %tmp7 then Stack_pop2 else Stack_pop1
+Stacker_do14:
+    %tmp23 = %stk / 2
+    %tmp24 = load(%tmp23)
+    %tmp25 = getelt(%tmp24, 3)
+    if %tmp25 then Stacker_do17 else Stacker_do16
+Stack_push9:
+    %tmp21 = %tmp10 + %tmp19
+    store(%tmp21, %tmp11)
+    %tmp22 = %this + 8
+    %tmp23 = load(%tmp22)
+    %tmp25 = getelt(%tmp23, 2)
+    %tmp24 = %tmp25 * 8
+    if %tmp24 then Stack_push11 else Stack_push12
+Stacker_do11:
+    fail NotANumber
+ListNode_getNext1:
+    fail NoSuchField
+main8:
+    %tmp12 = call(%tmp14, %tmp11, %stkv3)
+    ret 0
+Stack_pop17:
+    %tmp33 = %this + %tmp31
+    store(%tmp33, %tmp26)
+    ret %tmpv2
+Stacker_do9:
+    %tmp12 = call(%tmp14, %tmp11, %xv3)
+    %tmp15 = %xv3
+    %tmp16 = 3
+    %tmp17 = %tmp15 / 2
+    %tmp18 = %tmp16 / 2
+    %xv4 = %tmp17 - %tmp18
+    %tmp19 = %xv4 * 2
+    %xv5 = %tmp19 ^ 1
+    %tmp20 = %tmp15 & 1
+    if %tmp20 then Stacker_do10 else Stacker_do11
+main6:
+    fail NotAPointer
+Stacker_do2:
+    %tmp10 = %stk & 1
+    if %tmp10 then Stacker_do7 else Stacker_do6
+Stack_pop13:
+    %tmp25 = %headv2 / 2
+    %tmp27 = load(%tmp25)
+    %tmp28 = getelt(%tmp27, 0)
+    if %tmp28 then Stack_pop16 else Stack_pop15
+Stack_pop5:
+    %tmp14 = %tmp11 / 2
+    if %tmp14 then Stack_pop3 else Stack_pop4
+ListNode_getVal1:
+    fail NoSuchField
+ListNode_getNext2:
+    %tmp6 = %this + %tmp5
+    %tmp1 = load(%tmp6)
+    ret %tmp1
+Stacker_do16:
+    fail NoSuchMethod
+Stack_pop15:
+    fail NoSuchMethod
+Stacker_do5:
+    fail NotANumber
+Stacker_do6:
+    %tmp11 = %stk / 2
+    %tmp13 = load(%tmp11)
+    %tmp14 = getelt(%tmp13, 2)
+    if %tmp14 then Stacker_do9 else Stacker_do8
+Stacker_do1:
+    %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+    %tmp1 = %xv3
+    %tmp2 = 1
+    %tmp4 = %tmp1 / 2
+    %tmp5 = %tmp2 / 2
+    %tmp3 = %tmp4 != %tmp5
+    %tmp7 = %tmp3 * 2
+    %tmp6 = %tmp7 ^ 1
+    %tmp8 = %tmp6 & 1
+    if %tmp8 then Stacker_do4 else Stacker_do5
+Stacker_do(this, stk):
+    %xv1 = 1
+    %vv1 = 1
+    %xv2 = 41
+    jump Stacker_do1
+Stack_pop11:
+    fail NoSuchMethod
+Stacker_do15:
+    fail NotAPointer
+ListNode_getVal(this):
+    %tmp2 = %this + 8
+    %tmp3 = load(%tmp2)
+    %tmp4 = getelt(%tmp3, 0)
+    %tmp5 = %tmp4 * 8
+    if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Stack_push8:
+    %tmp16 = %this + %tmp15
+    %tmp11 = load(%tmp16)
+    %tmp17 = %tmp10 + 8
+    %tmp18 = load(%tmp17)
+    %tmp20 = getelt(%tmp18, 1)
+    %tmp19 = %tmp20 * 8
+    if %tmp19 then Stack_push9 else Stack_push10
+Stacker_do13:
+    fail NotANumber
+Stacker_do26:
+    fail NotAPointer
+Stacker_do8:
+    fail NoSuchMethod
+Stack_push12:
+    fail NoSuchField
+Stack_pop14:
+    fail NotAPointer
+Stacker_do27:
+    fail NoSuchMethod
+Stacker_do18:
+    %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+    %tmp26 = %vv3
+    %tmp27 = 1
+    %tmp29 = %tmp26 / 2
+    %tmp30 = %tmp27 / 2
+    %tmp28 = %tmp29 != %tmp30
+    %tmp32 = %tmp28 * 2
+    %tmp31 = %tmp32 ^ 1
+    %tmp33 = %tmp31 & 1
+    if %tmp33 then Stacker_do21 else Stacker_do22
+Stack_push2:
+    fail NotAPointer
+Stack_pop4:
+    %tmp15 = %this + 8
+    %tmp16 = load(%tmp15)
+    %tmp17 = getelt(%tmp16, 2)
+    %tmp18 = %tmp17 * 8
+    if %tmp18 then Stack_pop8 else Stack_pop7
+Stacker_do3:
+    %tmp22 = %stk & 1
+    if %tmp22 then Stacker_do15 else Stacker_do14
+Stacker_do19:
+    %tmp35 = %vv3 & 1
+    if %tmp35 then Stacker_do23 else Stacker_do24
+Stack_pop3:
+    ret 1
+Stack_pop2:
+    %tmp8 = %this + %tmp7
+    %tmp1 = load(%tmp8)
+    %tmp2 = 1
+    %tmp9 = %tmp1 / 2
+    %tmp10 = %tmp2 / 2
+    %tmp3 = %tmp9 == %tmp10
+    %tmp12 = %tmp3 * 2
+    %tmp11 = %tmp12 ^ 1
+    %tmp13 = %tmp11 & 1
+    if %tmp13 then Stack_pop5 else Stack_pop6
+Stacker_do4:
+    %tmp9 = %tmp6 / 2
+    if %tmp9 then Stacker_do2 else Stacker_do3
+Stack_push(this, v):
+    %tmpv1 = 1
+    %tmpv2 = alloc(4)
+    store(%tmpv2, @vtableListNode)
+    %tmp1 = %tmpv2 + 8
+    store(%tmp1, @ftableListNode)
+    %tmpv3 = %tmpv2 * 2
+    %tmp2 = %tmpv3 & 1
+    if %tmp2 then Stack_push2 else Stack_push1
+Stack_pop7:
+    fail NoSuchField
+Stacker_do28:
+    %vv4 = call(%tmp40, %tmp38)
+    jump Stacker_do18
+Stacker_do17:
+    %vv2 = call(%tmp25, %tmp23)
+    jump Stacker_do18
+main:
+    %stkv1 = 1
+    %stkrv1 = 1
+    %stkv2 = alloc(3)
+    store(%stkv2, @vtableStack)
+    %tmp1 = %stkv2 + 8
+    store(%tmp1, @ftableStack)
+    %stkv3 = %stkv2 * 2
+    %tmp2 = %stkv3 & 1
+    if %tmp2 then main2 else main1
+main4:
+    fail NoSuchField
+Stack_pop9:
+    %tmp21 = %headv2 / 2
+    %tmp22 = load(%tmp21)
+    %tmp23 = getelt(%tmp22, 1)
+    if %tmp23 then Stack_pop12 else Stack_pop11
+main7:
+    fail NoSuchMethod
+main1:
+    %tmp3 = %stkv3 / 2
+    %tmp4 = %tmp3 + 8
+    %tmp5 = load(%tmp4)
+    %tmp7 = getelt(%tmp5, 2)
+    %tmp6 = %tmp7 * 8
+    if %tmp6 then main3 else main4
+main2:
+    fail NotAPointer
+Stack_push4:
+    fail NoSuchField
+
+
+Initial Globals:
+{"vtableStacker": 160, "ftableListNode": 72, "vtableListNode": 32, "ftableStack": 136, "ftableStacker": 200, "vtableStack": 96}
+Executing: %stkv1 = 1
+Executing: %stkrv1 = 1
+Executing: %stkv2 = alloc(3)
+Executing: store(%stkv2, @vtableStack)
+Executing: %tmp1 = %stkv2 + 8
+Executing: store(%tmp1, @ftableStack)
+Executing: %stkv3 = %stkv2 * 2
+Executing: %tmp2 = %stkv3 & 1
+Transfering via: if %tmp2 then main2 else main1
+Executing: %tmp3 = %stkv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 2)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then main3 else main4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, 1)
+Executing: %stkrv2 = alloc(2)
+Executing: store(%stkrv2, @vtableStacker)
+Executing: %tmp9 = %stkrv2 + 8
+Executing: store(%tmp9, @ftableStacker)
+Executing: %stkrv3 = %stkrv2 * 2
+Executing: %tmp10 = %stkrv3 & 1
+Transfering via: if %tmp10 then main6 else main5
+Executing: %tmp11 = %stkrv3 / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 4)
+Transfering via: if %tmp14 then main8 else main7
+Executing: %tmp12 = call(%tmp14, %tmp11, %stkv3)
+Executing: %xv1 = 1
+Executing: %vv1 = 1
+Executing: %xv2 = 41
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp10 = %stk & 1
+Transfering via: if %tmp10 then Stacker_do7 else Stacker_do6
+Executing: %tmp11 = %stk / 2
+Executing: %tmp13 = load(%tmp11)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Transfering via: if %tmp14 then Stacker_do9 else Stacker_do8
+Executing: %tmp12 = call(%tmp14, %tmp11, %xv3)
+Executing: %tmpv1 = 1
+Executing: %tmpv2 = alloc(4)
+Executing: store(%tmpv2, @vtableListNode)
+Executing: %tmp1 = %tmpv2 + 8
+Executing: store(%tmp1, @ftableListNode)
+Executing: %tmpv3 = %tmpv2 * 2
+Executing: %tmp2 = %tmpv3 & 1
+Transfering via: if %tmp2 then Stack_push2 else Stack_push1
+Executing: %tmp3 = %tmpv3 / 2
+Executing: %tmp4 = %tmp3 + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp7 = getelt(%tmp5, 0)
+Executing: %tmp6 = %tmp7 * 8
+Transfering via: if %tmp6 then Stack_push3 else Stack_push4
+Executing: %tmp8 = %tmp3 + %tmp6
+Executing: store(%tmp8, %v)
+Executing: %tmp9 = %tmpv3 & 1
+Transfering via: if %tmp9 then Stack_push6 else Stack_push5
+Executing: %tmp10 = %tmpv3 / 2
+Executing: %tmp12 = %this + 8
+Executing: %tmp13 = load(%tmp12)
+Executing: %tmp14 = getelt(%tmp13, 2)
+Executing: %tmp15 = %tmp14 * 8
+Transfering via: if %tmp15 then Stack_push8 else Stack_push7
+Executing: %tmp16 = %this + %tmp15
+Executing: %tmp11 = load(%tmp16)
+Executing: %tmp17 = %tmp10 + 8
+Executing: %tmp18 = load(%tmp17)
+Executing: %tmp20 = getelt(%tmp18, 1)
+Executing: %tmp19 = %tmp20 * 8
+Transfering via: if %tmp19 then Stack_push9 else Stack_push10
+Executing: %tmp21 = %tmp10 + %tmp19
+Executing: store(%tmp21, %tmp11)
+Executing: %tmp22 = %this + 8
+Executing: %tmp23 = load(%tmp22)
+Executing: %tmp25 = getelt(%tmp23, 2)
+Executing: %tmp24 = %tmp25 * 8
+Transfering via: if %tmp24 then Stack_push11 else Stack_push12
+Executing: %tmp26 = %this + %tmp24
+Executing: store(%tmp26, %tmpv3)
+Transfering via: ret 1
+Call to "Stack_push" returned Data { val: 1 }, storing into %"tmp12"
+Executing: %tmp15 = %xv3
+Executing: %tmp16 = 3
+Executing: %tmp17 = %tmp15 / 2
+Executing: %tmp18 = %tmp16 / 2
+Executing: %xv4 = %tmp17 - %tmp18
+Executing: %tmp19 = %xv4 * 2
+Executing: %xv5 = %tmp19 ^ 1
+Executing: %tmp20 = %tmp15 & 1
+Transfering via: if %tmp20 then Stacker_do10 else Stacker_do11
+Executing: %tmp21 = %tmp16 & 1
+Transfering via: if %tmp21 then Stacker_do12 else Stacker_do13
+Transfering via: jump Stacker_do1
+Executing: %xv3 = phi(Stacker_do, %xv2, Stacker_do12, %xv5)
+Executing: %tmp1 = %xv3
+Executing: %tmp2 = 1
+Executing: %tmp4 = %tmp1 / 2
+Executing: %tmp5 = %tmp2 / 2
+Executing: %tmp3 = %tmp4 != %tmp5
+Executing: %tmp7 = %tmp3 * 2
+Executing: %tmp6 = %tmp7 ^ 1
+Executing: %tmp8 = %tmp6 & 1
+Transfering via: if %tmp8 then Stacker_do4 else Stacker_do5
+Executing: %tmp9 = %tmp6 / 2
+Transfering via: if %tmp9 then Stacker_do2 else Stacker_do3
+Executing: %tmp22 = %stk & 1
+Transfering via: if %tmp22 then Stacker_do15 else Stacker_do14
+Executing: %tmp23 = %stk / 2
+Executing: %tmp24 = load(%tmp23)
+Executing: %tmp25 = getelt(%tmp24, 3)
+Transfering via: if %tmp25 then Stacker_do17 else Stacker_do16
+Executing: %vv2 = call(%tmp25, %tmp23)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 3 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 2016 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 3 }, storing into %"vv2"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+1
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 5 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 1936 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 5 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+2
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 7 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 1856 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 7 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+3
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 9 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 1776 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 9 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+4
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 11 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 1696 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 11 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+5
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 13 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 1616 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 13 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+6
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 15 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 1536 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 15 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+7
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 17 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 1456 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 17 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+8
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 19 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 1376 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 19 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+9
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 21 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 1296 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 21 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+10
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 23 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 1216 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 23 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+11
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 25 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 1136 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 25 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+12
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 27 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 1056 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 27 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+13
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 29 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 976 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 29 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+14
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 31 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 896 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 31 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+15
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 33 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 816 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 33 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+16
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 35 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 736 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 35 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+17
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 37 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 656 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 37 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+18
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 39 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 576 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 39 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+19
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Executing: %tmp15 = %this + 8
+Executing: %tmp16 = load(%tmp15)
+Executing: %tmp17 = getelt(%tmp16, 2)
+Executing: %tmp18 = %tmp17 * 8
+Transfering via: if %tmp18 then Stack_pop8 else Stack_pop7
+Executing: %tmp19 = %this + %tmp18
+Executing: %headv2 = load(%tmp19)
+Executing: %tmp20 = %headv2 & 1
+Transfering via: if %tmp20 then Stack_pop10 else Stack_pop9
+Executing: %tmp21 = %headv2 / 2
+Executing: %tmp22 = load(%tmp21)
+Executing: %tmp23 = getelt(%tmp22, 1)
+Transfering via: if %tmp23 then Stack_pop12 else Stack_pop11
+Executing: %tmpv2 = call(%tmp23, %tmp21)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 0)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getVal2 else ListNode_getVal1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getVal" returned Data { val: 41 }, storing into %"tmpv2"
+Executing: %tmp24 = %headv2 & 1
+Transfering via: if %tmp24 then Stack_pop14 else Stack_pop13
+Executing: %tmp25 = %headv2 / 2
+Executing: %tmp27 = load(%tmp25)
+Executing: %tmp28 = getelt(%tmp27, 0)
+Transfering via: if %tmp28 then Stack_pop16 else Stack_pop15
+Executing: %tmp26 = call(%tmp28, %tmp25)
+Executing: %tmp2 = %this + 8
+Executing: %tmp3 = load(%tmp2)
+Executing: %tmp4 = getelt(%tmp3, 1)
+Executing: %tmp5 = %tmp4 * 8
+Transfering via: if %tmp5 then ListNode_getNext2 else ListNode_getNext1
+Executing: %tmp6 = %this + %tmp5
+Executing: %tmp1 = load(%tmp6)
+Transfering via: ret %tmp1
+Call to "ListNode_getNext" returned Data { val: 1 }, storing into %"tmp26"
+Executing: %tmp29 = %this + 8
+Executing: %tmp30 = load(%tmp29)
+Executing: %tmp32 = getelt(%tmp30, 2)
+Executing: %tmp31 = %tmp32 * 8
+Transfering via: if %tmp31 then Stack_pop17 else Stack_pop18
+Executing: %tmp33 = %this + %tmp31
+Executing: store(%tmp33, %tmp26)
+Transfering via: ret %tmpv2
+Call to "Stack_pop" returned Data { val: 41 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Executing: %tmp35 = %vv3 & 1
+Transfering via: if %tmp35 then Stacker_do23 else Stacker_do24
+Executing: %tmp36 = %vv3 / 2
+Executing: print(%tmp36)
+20
+Executing: %tmp37 = %stk & 1
+Transfering via: if %tmp37 then Stacker_do26 else Stacker_do25
+Executing: %tmp38 = %stk / 2
+Executing: %tmp39 = load(%tmp38)
+Executing: %tmp40 = getelt(%tmp39, 3)
+Transfering via: if %tmp40 then Stacker_do28 else Stacker_do27
+Executing: %vv4 = call(%tmp40, %tmp38)
+Executing: %tmpv1 = 1
+Executing: %headv1 = 1
+Executing: %tmp4 = %this + 8
+Executing: %tmp5 = load(%tmp4)
+Executing: %tmp6 = getelt(%tmp5, 2)
+Executing: %tmp7 = %tmp6 * 8
+Transfering via: if %tmp7 then Stack_pop2 else Stack_pop1
+Executing: %tmp8 = %this + %tmp7
+Executing: %tmp1 = load(%tmp8)
+Executing: %tmp2 = 1
+Executing: %tmp9 = %tmp1 / 2
+Executing: %tmp10 = %tmp2 / 2
+Executing: %tmp3 = %tmp9 == %tmp10
+Executing: %tmp12 = %tmp3 * 2
+Executing: %tmp11 = %tmp12 ^ 1
+Executing: %tmp13 = %tmp11 & 1
+Transfering via: if %tmp13 then Stack_pop5 else Stack_pop6
+Executing: %tmp14 = %tmp11 / 2
+Transfering via: if %tmp14 then Stack_pop3 else Stack_pop4
+Transfering via: ret 1
+Call to "Stack_pop" returned Data { val: 1 }, storing into %"vv4"
+Transfering via: jump Stacker_do18
+Executing: %vv3 = phi(Stacker_do17, %vv2, Stacker_do28, %vv4)
+Executing: %tmp26 = %vv3
+Executing: %tmp27 = 1
+Executing: %tmp29 = %tmp26 / 2
+Executing: %tmp30 = %tmp27 / 2
+Executing: %tmp28 = %tmp29 != %tmp30
+Executing: %tmp32 = %tmp28 * 2
+Executing: %tmp31 = %tmp32 ^ 1
+Executing: %tmp33 = %tmp31 & 1
+Transfering via: if %tmp33 then Stacker_do21 else Stacker_do22
+Executing: %tmp34 = %tmp31 / 2
+Transfering via: if %tmp34 then Stacker_do19 else Stacker_do20
+Transfering via: ret 0
+Call to "Stacker_do" returned Data { val: 0 }, storing into %"tmp12"
+Transfering via: ret 0
+Final result: Data { val: 0 }
