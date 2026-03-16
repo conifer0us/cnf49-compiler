@@ -39,6 +39,8 @@ public:
 
     int getMethodOffset(std::string method);
 
+    unsigned long getGCMap(std::string classname);
+
     // Process a set of statements from the current position
     // If block terminates in a return, return true
     bool processBlock(const std::vector<StmtPtr>& statements);

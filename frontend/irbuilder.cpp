@@ -61,3 +61,22 @@ bool IRBuilder::processBlock(const std::vector<StmtPtr>& statements) {
 
     return false;
 }
+
+unsigned long IRBuilder::getGCMap(std::string classname) {
+    unsigned long gcm = 0;
+
+    int bit = 1;
+    for (auto &[_, type] : classes[classname]->typedFields) {
+        if (bit > 63)
+            throw std::runtime_error("Type not allowed more than 63 fields: " + classname);
+
+        if (type != "int")
+            gcm |= (1 << bit);
+
+        bit++;
+    }
+
+    // std::cout << classname << ":" << gcm << "\n";
+
+    return gcm;
+}

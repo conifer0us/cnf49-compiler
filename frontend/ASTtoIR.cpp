@@ -63,6 +63,13 @@ ValPtr ClassRef::convertToIR(IRBuilder& builder, LclPtr out) const {
     auto storeVtbl = std::make_unique<Store>(var, vtable);
     builder.addInstruction(std::move(storeVtbl));
 
+    // get prior address (to store layout)
+    auto gcMapAddr = builder.getNextTemp();
+    builder.addInstruction(std::move(std::make_unique<BinInst>(gcMapAddr, Oper::Sub, var, std::make_shared<Const>(8))));
+
+    auto gcMapVal = builder.getGCMap(classname);
+    builder.addInstruction(std::move(std::make_unique<Store>(gcMapAddr, std::make_shared<Const>(gcMapVal))));
+
     return var;
 }
 

@@ -26,7 +26,7 @@ class Stack [
 class Stacker [
     fields
     method do(stk:Stack) returning int with locals x:int, v:int:
-        x = 20
+        x = 5
         while (x != 0): {
             _ = ^stk.push(x)
             x = (x - 1)

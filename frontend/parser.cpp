@@ -230,6 +230,10 @@ StmtPtr Parser::parseStatement() {
 
         return std::make_unique<PrintStatement>(std::move(e));
     }
+    case NEWLINE: {
+        // get next statement if just a newline
+        return parseStatement();
+    }
     default: tok.failCurrentLine("Unexpected character; failed to parse statement");
     }
 
