@@ -18,11 +18,25 @@ inline void indent(int n) {
     while (n--) std::cout << ' ';
 }
 
+// forward definition
+struct Class;
+using ClassPtr = std::unique_ptr<Class>;
+struct Method;
+using MethodPtr = std::unique_ptr<Method>;
+
+// TypeEnv structure to store program type information
+struct TypeEnv {
+    std::map<std::string, ClassPtr>& classes;
+    Class* curClass;
+    std::map<std::string, std::string>& locals;
+    Method* curMethod;
+};
+
 struct Expression : ASTNode {
     virtual ~Expression();
     virtual ValPtr convertToIR(IRBuilder& builder, LclPtr out) const;
 
-    std::string type;
+    virtual std::string getType(const TypeEnv& tenv) const = 0;
 };
 
 using ExprPtr = std::unique_ptr<Expression>;
@@ -34,10 +48,21 @@ struct ThisExpr : Expression {
     }
 
     ValPtr convertToIR(IRBuilder& builder, LclPtr out = nullptr) const override;
+    std::string getType(const TypeEnv& tenv) const override;
+};
 
-    explicit ThisExpr(std::string t) {
-        type = t;
+struct NullExpr : Expression {
+    std::string type;
+
+    void print(int ind) const override {
+        indent(ind);
+        std::cout << "NULL (type=" << type << ")\n";
     }
+
+    ValPtr convertToIR(IRBuilder& builder, LclPtr out = nullptr) const override;
+    explicit NullExpr(std::string t) : type(t) {}
+
+    std::string getType(const TypeEnv& tenv) const override;
 };
 
 struct Constant : Expression {
@@ -51,9 +76,9 @@ struct Constant : Expression {
     ValPtr convertToIR(IRBuilder& builder, LclPtr out = nullptr) const override;
     
     explicit Constant(long val):
-        value(val) {
-        type = "int";
-    }
+        value(val) {}
+
+    std::string getType(const TypeEnv& tenv) const override;
 };
 
 struct ClassRef : Expression {
@@ -67,9 +92,9 @@ struct ClassRef : Expression {
     ValPtr convertToIR(IRBuilder& builder, LclPtr out = nullptr) const override;
     
     explicit ClassRef(std::string cname):
-        classname(std::move(cname)) {
-            type = classname;
-        }
+        classname(std::move(cname)) {}
+
+    std::string getType(const TypeEnv& tenv) const override;
 };
 
 struct Binop : Expression {
@@ -90,16 +115,9 @@ struct Binop : Expression {
     ValPtr convertToIR(IRBuilder& builder, LclPtr out = nullptr) const override;
     
     Binop(ExprPtr left, char oper, ExprPtr right):
-        lhs(std::move(left)), rhs(std::move(right)), op(oper) {
-            if (lhs->type != rhs->type) {
-                std::cout << "Types of expression arguments must match: \n";
-                lhs->print(1);
-                rhs->print(1);
-                std::runtime_error("Expression args do not match");
-            }
+        lhs(std::move(left)), rhs(std::move(right)), op(oper) {}
 
-            type = lhs->type;
-        }
+    std::string getType(const TypeEnv& tenv) const override;
 };
 
 struct FieldRead : Expression {
@@ -119,6 +137,8 @@ struct FieldRead : Expression {
     
     FieldRead(ExprPtr b, std::string fname):
         base(std::move(b)), fieldname(std::move(fname)) {}
+
+    std::string getType(const TypeEnv& tenv) const override;
 };
 
 struct Var : Expression {
@@ -131,11 +151,10 @@ struct Var : Expression {
 
     ValPtr convertToIR(IRBuilder& builder, LclPtr out = nullptr) const override;
     
-    explicit Var(std::string n):
-        name(std::move(n)) {};
-};
+    Var(std::string n): name(std::move(n)) {};
 
-using VarPtr = std::unique_ptr<Var>;
+    std::string getType(const TypeEnv& tenv) const override;
+};
 
 struct MethodCall : Expression {
     const ExprPtr base;
@@ -163,11 +182,15 @@ struct MethodCall : Expression {
     
     MethodCall(ExprPtr b, std::string mname, std::vector<ExprPtr> arglist) :
         base(std::move(b)), methodname(std::move(mname)), args(std::move(arglist)) {}
+    
+    std::string getType(const TypeEnv& tenv) const override;
 };
 
 struct Statement : ASTNode {
     virtual ~Statement();
     virtual void convertToIR(IRBuilder& builder) const;
+
+    virtual void typeCheck(const TypeEnv& tenv) const = 0;
 };
 
 using StmtPtr = std::unique_ptr<Statement>;
@@ -189,6 +212,7 @@ struct AssignStatement : Statement {
     }
 
     void convertToIR(IRBuilder& builder) const override;
+    void typeCheck(const TypeEnv& tenv) const override;
     
     AssignStatement(std::string name, ExprPtr value): 
         name(std::move(name)), value(std::move(value)) {}
@@ -207,6 +231,7 @@ struct DiscardStatement : Statement {
     }
 
     void convertToIR(IRBuilder& builder) const override;
+    void typeCheck(const TypeEnv& tenv) const override;
     
     explicit DiscardStatement(ExprPtr expr): 
         expr(std::move(expr)) {}
@@ -234,6 +259,7 @@ struct FieldAssignStatement : Statement {
     }
 
     void convertToIR(IRBuilder& builder) const override;
+    void typeCheck(const TypeEnv& tenv) const override;
     
     FieldAssignStatement(ExprPtr object, std::string field, ExprPtr value): 
         object(std::move(object)), field(std::move(field)), value(std::move(value)) {}
@@ -266,6 +292,7 @@ struct IfStatement : Statement {
     }
 
     void convertToIR(IRBuilder& builder) const override;
+    void typeCheck(const TypeEnv& tenv) const override;
     
     IfStatement(ExprPtr condition, std::vector<StmtPtr> thenBranch, std::vector<StmtPtr> elseBranch): 
         condition(std::move(condition)), thenBranch(std::move(thenBranch)), elseBranch(std::move(elseBranch)) {}
@@ -290,6 +317,7 @@ struct IfOnlyStatement : Statement {
     }
 
     void convertToIR(IRBuilder& builder) const override;
+    void typeCheck(const TypeEnv& tenv) const override;
     
     IfOnlyStatement(ExprPtr condition, std::vector<StmtPtr> body): 
         condition(std::move(condition)), body(std::move(body)) {}
@@ -314,7 +342,8 @@ struct WhileStatement : Statement {
     }
 
     void convertToIR(IRBuilder& builder) const override;
-    
+    void typeCheck(const TypeEnv& tenv) const override;
+
     WhileStatement(ExprPtr condition, std::vector<StmtPtr> body): 
         condition(std::move(condition)), body(std::move(body)) {}
 };
@@ -332,7 +361,8 @@ struct ReturnStatement : Statement {
     }
 
     void convertToIR(IRBuilder& builder) const override;
-    
+    void typeCheck(const TypeEnv& tenv) const override;
+
     explicit ReturnStatement(ExprPtr value): 
         value(std::move(value)) {}
 };
@@ -350,6 +380,7 @@ struct PrintStatement : Statement {
     }
 
     void convertToIR(IRBuilder& builder) const override;
+    void typeCheck(const TypeEnv& tenv) const override;
     
     explicit PrintStatement(ExprPtr value): 
         value(std::move(value)) {}
@@ -357,36 +388,46 @@ struct PrintStatement : Statement {
 
 struct Method : ASTNode {
     std::string name;
-    std::vector<VarPtr> args;
-    std::vector<VarPtr> locals;
+
+    // pair of <argname, argtype> pairs
+    std::vector<std::pair<std::string, std::string>> typedArgs;
+    
+    // pair of <localname, localtype> pairs
+    std::vector<std::pair<std::string, std::string>> typedLcls;
     std::vector<StmtPtr> body;
 
-    Method(std::string nm, std::vector<VarPtr> arg, std::vector<VarPtr> lcls, std::vector<StmtPtr> bdy): 
-        name(std::move(nm)), args(std::move(arg)), locals(std::move(lcls)), body(std::move(bdy)) {}
+    std::string retType;
+
+    Method(std::string nm, std::vector<std::pair<std::string, std::string>> arg, 
+        std::vector<std::pair<std::string, std::string>> lcls, std::vector<StmtPtr> bdy, std::string rType): 
+        name(std::move(nm)), typedArgs(std::move(arg)), 
+        typedLcls(std::move(lcls)), body(std::move(bdy)), retType(std::move(rType)) {}
 
     std::shared_ptr<MethodIR> convertToIR(std::string classname, 
         std::map<std::string, std::unique_ptr<ClassMetadata>>& cls,
-        std::vector<std::string>& mem, 
+        std::vector<std::string>& mem,
         std::vector<std::string>& mthd,
         bool pinhole,
         bool mainmethod) const;
+
+    void typeCheck(std::map<std::string, ClassPtr>& classes, Class* curClass);
 
     void print(int ind) const override {
         indent(ind);
         std::cout << "Method: " << name << "\n";
 
         indent(ind + 2);
-        std::cout << "Arguments (" << args.size() << "):\n";
-        for (const auto& arg : args) {
+        std::cout << "Arguments (" << typedArgs.size() << "):\n";
+        for (const auto& [arg, _] : typedArgs) {
             indent(ind + 4);
-            std::cout << "- " << arg->name << "\n";
+            std::cout << "- " << arg << "\n";
         }
 
         indent(ind + 2);
-        std::cout << "Locals (" << locals.size() << "):\n";
-        for (const auto& local : locals) {
+        std::cout << "Locals (" << typedLcls.size() << "):\n";
+        for (const auto& [local, _] : typedLcls) {
             indent(ind + 4);
-            std::cout << "- " << local->name << "\n";
+            std::cout << "- " << local << "\n";
         }
 
         indent(ind + 2);
@@ -400,11 +441,11 @@ using MethodPtr = std::unique_ptr<Method>;
 
 struct Class : ASTNode {
     std::string name;
-    std::vector<VarPtr> fields;
-    std::vector<MethodPtr> methods;
+    std::map<std::string, std::string> fieldTypes;
+    std::map<std::string, MethodPtr> methods;
 
-    Class(std::string n, std::vector<VarPtr> f, std::vector<MethodPtr> m): 
-        name(std::move(n)), fields(std::move(f)), methods(std::move(m)) {}
+    Class(std::string n, std::map<std::string, std::string> f, std::map<std::string, MethodPtr> m): 
+        name(std::move(n)), fieldTypes(std::move(f)), methods(std::move(m)) {}
 
     void convertToIR() const;
 
@@ -413,15 +454,15 @@ struct Class : ASTNode {
         std::cout << "Class: " << name << "\n";
 
         indent(ind + 2);
-        std::cout << "Fields (" << fields.size() << "):\n";
-        for (const auto& field : fields) {
+        std::cout << "Fields (" << fieldTypes.size() << "):\n";
+        for (const auto& [field, _] : fieldTypes) {
             indent(ind + 4);
-            std::cout << "- " << field->name << "\n";
+            std::cout << "- " << field << "\n";
         }
 
         indent(ind + 2);
         std::cout << "Methods (" << methods.size() << "):\n";
-        for (const auto& method : methods)
+        for (const auto& [_, method] : methods)
             method->print(ind + 4);
     }
 };
@@ -430,12 +471,13 @@ using ClassPtr = std::unique_ptr<Class>;
 
 struct Program : ASTNode {
     MethodPtr main;
-    std::vector<ClassPtr> classes;
+    std::map<std::string, ClassPtr> classes;
 
-    Program(MethodPtr mainmethod, std::vector<ClassPtr> classlist)
+    Program(MethodPtr mainmethod, std::map<std::string, ClassPtr> classlist)
         : main(std::move(mainmethod)), classes(std::move(classlist)) {}
 
     std::unique_ptr<CFG> convertToIR(bool pinhole = true) const;
+    void typeCheck();
 
     void print(int ind) const override {
         indent(ind);
@@ -447,7 +489,7 @@ struct Program : ASTNode {
 
         indent(ind + 2);
         std::cout << "Classes (" << classes.size() << "):\n";
-        for (const auto& cls : classes)
+        for (const auto& [_, cls] : classes)
             cls->print(ind + 4);
     }
 };

@@ -14,6 +14,7 @@ class B [
 ]
 
 main with x:A:
+ x = null:A
  x = @A
  !x.x = 3
  print(^x.m())

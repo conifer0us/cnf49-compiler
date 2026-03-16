@@ -55,13 +55,9 @@ struct Global : Value {
 struct Const : Value {
     long value;
 
-    explicit Const(long v, bool tag = false) {
+    explicit Const(long v) {
         ignoreSSA = true;
-
-        if (tag)
-            value = (v << 1) | 1;
-        else
-            value = v;
+        value = v;
     }
 
     void outputIR() const override;

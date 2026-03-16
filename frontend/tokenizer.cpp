@@ -32,9 +32,9 @@ unsigned char Tokenizer::curChar() {
 void Tokenizer::failCurrentLine(std::string error_msg) {
     std::cerr << "At Char: " << curChar() << "\nIn line: \n";
 
-    while (curChar() != '\n') current--;
+    while (curChar() != '\n' && current != 0) current--;
     current++;
-    while (curChar() != '\n') {
+    while (curChar() != '\n' && curChar() != EOF) {
         std::cerr << curChar();
         current++;
     }
@@ -131,7 +131,6 @@ Token Tokenizer::advanceCurrent() {
                 else if (fragment == "fields") return Token{TokenType::FIELDS};
                 else if (fragment == "locals") return Token{TokenType::LOCALS};
                 else if (fragment == "null") return Token{TokenType::NUL};
-                else if (fragment == "int") return Token{TokenType::INT};
                 else return Token{TokenType::IDENTIFIER, fragment};
             } else {
                 std::cerr << "Tokenizer caught unsupported character: " << curChar();

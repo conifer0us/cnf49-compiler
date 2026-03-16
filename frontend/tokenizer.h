@@ -39,7 +39,6 @@ enum TokenType {
     LOCALS,
     RETURNING,
     NUL,
-    INT,
 
     // Tokens with data
     OPERATOR,

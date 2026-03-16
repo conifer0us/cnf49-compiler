@@ -32,11 +32,6 @@ public:
 
     void addInstruction(std::unique_ptr<IROp> op);
     
-    void tagCheck(ValPtr lcl, TagType tag);
-    LclPtr tagVal(LclPtr lcl, TagType tag);
-    ValPtr tagVal(ValPtr val, TagType tag);
-    LclPtr untagVal(ValPtr lcl);
-
     void terminate(std::unique_ptr<ControlTransfer> blockTerm);
 
     LclPtr getNextTemp();
@@ -48,8 +43,7 @@ public:
     int getMethodOffset(std::string method);
 
     // Process a set of statements from the current position
-    // If the block control transfer is set, return true
-    // Refuses to process statements in a block after return statement
+    // If block terminates in a return, return true
     bool processBlock(const std::vector<StmtPtr>& statements);
 
     // returns if pinhole optimization is enabled

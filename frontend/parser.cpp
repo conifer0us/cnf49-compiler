@@ -96,6 +96,20 @@ ExprPtr Parser::parseExpr() {
                 tok.failCurrentLine("Parser failed parsing classref variant (bad initialization)");
         }
         case THIS: return std::make_unique<ThisExpr>();
+        case NUL: {
+            if (tok.next().type != COLON || tok.next().type != IDENTIFIER)
+                tok.failCurrentLine("Expected type definition after null.");
+
+            auto curtok = tok.peek();
+            auto strptr = std::get_if<std::string>(&curtok.value);
+
+            if (!strptr)
+                tok.failCurrentLine("Parser failed parsing null class expression (bad initialization)");
+        
+            auto str = *strptr;
+
+            return std::make_unique<NullExpr>(str);
+        }
         default: 
             tok.failCurrentLine("Unexpected character; failed to parse expression.");
     }
@@ -233,7 +247,8 @@ ClassPtr Parser::parseClass() {
     
     auto name = *ptr;
 
-    std::vector<VarPtr> fptr = {};
+    // store field names and types
+    std::map<std::string, std::string> fptr = {};
     if (tok.next().type != LEFT_BRACKET || tok.next().type != NEWLINE)
         tok.failCurrentLine("Expected '[\\n' after class declaration");
 
@@ -247,18 +262,32 @@ ClassPtr Parser::parseClass() {
             }
                 
             curtok = tok.peek();
-            auto fname = std::get_if<std::string>(&curtok.value);
-            if (!fname)
+            auto fieldptr = std::get_if<std::string>(&curtok.value);
+            if (!fieldptr)
                 tok.failCurrentLine("Parser failed parsing Field Name variant (bad initialization)");
 
-            fptr.push_back(std::make_unique<Var>(*fname));
+            auto fname = *fieldptr;
+
+            if (tok.next().type != COLON || tok.next().type != IDENTIFIER)
+                tok.failCurrentLine("Expected type annotation for class fields");
+
+            auto curtok = tok.peek();
+            auto typeptr = std::get_if<std::string>(&curtok.value);
+
+            if (!typeptr)
+                tok.failCurrentLine("Parser failed parsing class field types (bad initialization)");
+
+            fptr[fname] = *typeptr;
         } while(tok.next().type == COMMA);
 
         if (tok.peek().type != NEWLINE)
             tok.failCurrentLine("Expected a newline after field definition in class definition");
     }
 
-    std::vector<MethodPtr> mptr = {};
+    while(tok.peekNext().type == NEWLINE)
+        tok.next(); 
+
+    std::map<std::string, MethodPtr> mptr = {};
     while (tok.peekNext().type == METHOD) {
         tok.next();
         if (tok.next().type != IDENTIFIER)
@@ -274,8 +303,8 @@ ClassPtr Parser::parseClass() {
         if (tok.next().type != LEFT_PAREN)
             tok.failCurrentLine("Expected ( after method declaration");
 
-        std::vector<VarPtr> args;
-        args.push_back(std::move(std::make_unique<Var>("this")));
+        // this set will not contain '%this' which is handled as a separate case
+        std::vector<std::pair<std::string, std::string>> args;
 
         do {
             if (tok.next().type != IDENTIFIER) { 
@@ -286,17 +315,44 @@ ClassPtr Parser::parseClass() {
             }
 
             curtok = tok.peek();
-            auto aname = std::get_if<std::string>(&curtok.value);
-            if (!aname)
+            auto aptr = std::get_if<std::string>(&curtok.value);
+            if (!aptr)
                 tok.failCurrentLine("Parser failed parsing Method Argument variant (bad initialization)");
 
-            args.push_back(std::make_unique<Var>(*aname));
+            auto aname = *aptr;
+
+            if (tok.next().type != COLON || tok.next().type != IDENTIFIER)
+                tok.failCurrentLine("Expected type definition after method arg");
+
+            curtok = tok.peek();
+            auto argtypeptr = std::get_if<std::string>(&curtok.value);
+
+            if (!argtypeptr)
+                tok.failCurrentLine("Parser failed parsing method args (bad initialization)");
+
+            auto argtype = *argtypeptr;
+
+            args.push_back({aname, argtype});
         } while(tok.next().type == COMMA);
 
         if (tok.peek().type != RIGHT_PAREN)
             tok.failCurrentLine("Expected ) to close method arguments");
 
-        std::vector<VarPtr> locals = {};
+        if (tok.next().type != RETURNING)
+            tok.failCurrentLine("Expected 'returning' after method declaration");
+
+        auto curtok = tok.next();
+
+        if (curtok.type != IDENTIFIER)
+            tok.failCurrentLine("Expected return type for method");
+
+        auto retPtr = std::get_if<std::string>(&curtok.value);
+        if (!retPtr)
+            tok.failCurrentLine("Parser failed parsing method return type (bad initialization)");
+
+        auto retType = *retPtr;
+
+        std::vector<std::pair<std::string, std::string>> locals = {};
 
         if (tok.next().type == WITH) {
             if (tok.next().type != LOCALS)
@@ -311,11 +367,24 @@ ClassPtr Parser::parseClass() {
                 }
 
                 curtok = tok.peek();
-                auto lname = std::get_if<std::string>(&curtok.value);
-                if (!lname)
+                auto lptr = std::get_if<std::string>(&curtok.value);
+                if (!lptr)
                     tok.failCurrentLine("Parser failed parsing Method Locals variant (bad initialization)");
 
-                locals.push_back(std::make_unique<Var>(*lname));
+                auto lname = *lptr;
+
+                if (tok.next().type != COLON || tok.next().type != IDENTIFIER)
+                    tok.failCurrentLine("Expected type definition after method local");
+
+                curtok = tok.peek();
+                auto typeptrlcl = std::get_if<std::string>(&curtok.value);
+
+                if (!typeptrlcl)
+                    tok.failCurrentLine("Parser failed parsing method locals (bad initialization)");
+
+                auto ltype = *typeptrlcl;
+
+                locals.push_back({lname, ltype});
             } while(tok.next().type == COMMA);
         }
 
@@ -331,7 +400,7 @@ ClassPtr Parser::parseClass() {
             statements.push_back(std::move(parseStatement()));
         } while (tok.next().type == NEWLINE && tok.peekNext().type != RIGHT_BRACKET && tok.peekNext().type != METHOD);
 
-        mptr.push_back(std::make_unique<Method>(mname, std::move(args), std::move(locals), std::move(statements)));
+        mptr[mname] = std::make_unique<Method>(mname, std::move(args), std::move(locals), std::move(statements), retType);
     }
     
     if (tok.next().type != RIGHT_BRACKET && tok.next().type != NEWLINE)
@@ -341,12 +410,13 @@ ClassPtr Parser::parseClass() {
 }
 
 ProgramPtr Parser::parseProgram() {
-    std::vector<ClassPtr> classes = {};
+    std::map<std::string, ClassPtr> classes = {};
     
     while (tok.next().type == CLASS || tok.peek().type == NEWLINE) {
         if (tok.peek().type == NEWLINE) continue;
 
-        classes.push_back(parseClass());
+        auto clsp = parseClass();
+        classes[clsp->name] = std::move(clsp);
     }
 
     auto curtok = tok.peek();
@@ -359,8 +429,8 @@ ProgramPtr Parser::parseProgram() {
     if (tok.peek().type != IDENTIFIER || mname != "main")
         tok.failCurrentLine("Expected main declaration after class definitions");
 
-    std::vector<VarPtr> args = {};
-    std::vector<VarPtr> locals = {};
+    std::vector<std::pair<std::string, std::string>> args = {};
+    std::vector<std::pair<std::string, std::string>> locals = {};
 
     if (tok.next().type != WITH)
         tok.failCurrentLine("'with' expected after main to define local variables");
@@ -370,13 +440,26 @@ ProgramPtr Parser::parseProgram() {
             tok.failCurrentLine("Expected identifier for method locals");
 
         curtok = tok.peek();
-        auto lname = std::get_if<std::string>(&curtok.value);
-        if (!lname)
+        auto lnameptr = std::get_if<std::string>(&curtok.value);
+        if (!lnameptr)
             tok.failCurrentLine("Parser failed parsing Assignment variant (bad initialization)");
 
-        locals.push_back(std::make_unique<Var>(*lname));
-    } while(tok.next().type == COMMA);
+        auto lname = *lnameptr;
 
+        if (tok.next().type != COLON || tok.next().type != IDENTIFIER)
+            tok.failCurrentLine("Expected type definition after method local");
+
+        curtok = tok.peek();
+        auto typeptrlcl = std::get_if<std::string>(&curtok.value);
+
+        if (!typeptrlcl)
+            tok.failCurrentLine("Parser failed parsing method locals (bad initialization)");
+
+        auto typelcl = *typeptrlcl;
+
+        locals.push_back({lname, typelcl});
+    } while(tok.next().type == COMMA);
+    
     if (tok.peek().type != COLON || tok.next().type != NEWLINE)
         tok.failCurrentLine("Expected ':\\n' after declaration of main locals");
         
@@ -386,6 +469,11 @@ ProgramPtr Parser::parseProgram() {
         statements.push_back(std::move(parseStatement()));
     } while (tok.next().type == NEWLINE && tok.peekNext().type != ENDOFFILE);
 
-    MethodPtr m = std::make_unique<Method>(mname, std::move(args), std::move(locals), std::move(statements));
-    return std::make_unique<Program>(std::move(m), std::move(classes));
+    MethodPtr m = std::make_unique<Method>(mname, std::move(args), std::move(locals), std::move(statements), "int");
+    auto prg = std::make_unique<Program>(std::move(m), std::move(classes));
+
+    // perform type checking pass before returning parsed program
+    prg->typeCheck();
+
+    return prg;
 }
