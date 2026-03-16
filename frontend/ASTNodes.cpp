@@ -1,29 +1,31 @@
 #include "ASTNodes.h"
 #include <stdexcept>
 
-std::string ThisExpr::getType(const TypeEnv& tenv) const {
+std::string ThisExpr::getType(const TypeEnv& tenv) {
     if (!tenv.curClass)
         throw std::runtime_error("Cannot use %this outside of class declaration.");
 
-    return tenv.curClass->name;
-}
-
-std::string NullExpr::getType(const TypeEnv&) const {
+    type = tenv.curClass->name;
     return type;
 }
 
-std::string Constant::getType(const TypeEnv&) const {
-    return "int";
+std::string NullExpr::getType(const TypeEnv&) {
+    return type;
 }
 
-std::string ClassRef::getType(const TypeEnv& tenv) const {
+std::string Constant::getType(const TypeEnv&) {
+    return type;
+}
+
+std::string ClassRef::getType(const TypeEnv& tenv) {
     if (!tenv.classes.contains(classname)) 
         throw std::runtime_error("Unknown class: " + classname);
     
-    return classname;
+    type = classname;
+    return type;
 }
 
-std::string Binop::getType(const TypeEnv& tenv) const {
+std::string Binop::getType(const TypeEnv& tenv) {
     auto lt = lhs->getType(tenv);
     auto rt = rhs->getType(tenv);
     
@@ -37,11 +39,12 @@ std::string Binop::getType(const TypeEnv& tenv) const {
     if (op != 'n' && op != 'e' && (lt != "int" || rt != "int")) {
         throw std::runtime_error("Operation requires integer arguments" + op);
     }
-        
-    return "int";
+    
+    type = "int";
+    return type;
 }
 
-std::string FieldRead::getType(const TypeEnv& tenv) const {
+std::string FieldRead::getType(const TypeEnv& tenv) {
     auto baseType = base->getType(tenv);
 
     if (!tenv.classes.contains(baseType))
@@ -53,17 +56,19 @@ std::string FieldRead::getType(const TypeEnv& tenv) const {
     if (!fields.contains(fieldname))
         throw std::runtime_error("Unknown field: " + fieldname);
 
-    return fields[fieldname];
+    type = fields[fieldname];
+    return type;
 }
 
-std::string Var::getType(const TypeEnv& tenv) const {    
+std::string Var::getType(const TypeEnv& tenv) {    
     if (!tenv.locals.contains(name)) 
         throw std::runtime_error("Unknown variable: " + name);
     
-    return tenv.locals[name];
+    type = tenv.locals[name];
+    return type;
 }
 
-std::string MethodCall::getType(const TypeEnv& tenv) const {
+std::string MethodCall::getType(const TypeEnv& tenv) {
     auto baseType = base->getType(tenv);
 
     if (!tenv.classes.contains(baseType))
@@ -88,7 +93,8 @@ std::string MethodCall::getType(const TypeEnv& tenv) const {
             throw std::runtime_error("Argument type mismatch in call to: " + methodname);
     }
 
-    return method->retType;
+    type = method->retType;
+    return type;
 }
 
 void AssignStatement::typeCheck(const TypeEnv& tenv) const {

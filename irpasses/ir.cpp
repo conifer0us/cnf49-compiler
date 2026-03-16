@@ -217,7 +217,7 @@ void HangingBlock::outputIR() const {
     std::cout << "ret 0";
 }
 
-void ClassMetadata::outputIR(const std::vector<std::string>& methods, const std::vector<std::string>& fields) const {
+void ClassMetadata::outputIR() const {
     std::cout << "global array " << VTABLE(name).getString();
     std::cout << ": { ";
     
@@ -227,14 +227,6 @@ void ClassMetadata::outputIR(const std::vector<std::string>& methods, const std:
     }
     
     std::cout << " }\n";
-
-    std::cout << "global array " << FTABLE(name).getString();
-    std::cout << ": { ";
-    for (size_t i = 0; i < ftable.size(); ++i) {
-        if (i) std::cout << ", ";
-        std::cout << ftable[i];
-    }
-    std::cout << " }\n\n";
 }
 
 void BasicBlock::outputIR() const {
@@ -259,14 +251,14 @@ void BasicBlock::outputIR() const {
 
 void MethodIR::outputIR() const {
     // replace first block label with one that has arguments
-    if (args.size() > 0) {
+    if (typedArgs.size() > 0) {
         auto newlbl = name;
 
         newlbl += "(";
 
-        for (int i = 0; i < args.size(); i++) {
+        for (int i = 0; i < typedArgs.size(); i++) {
             if (i) newlbl += ", ";
-            newlbl += args[i];
+            newlbl += typedArgs[i].first;
         }
 
         newlbl += ")";
@@ -283,19 +275,8 @@ void MethodIR::outputIR() const {
 void CFG::outputIR() const {
     std::cout << "data:\n";
 
-    if (classfields.size() > 0) {
-        std::cout << "debug fieldnames: {";
-        for (int i = 0; i < classfields.size(); i++) {
-            if (i) std::cout << ", ";
-            std::cout << classfields.at(i);
-        }
-
-        std::cout << "}\n";
-    }
-
-    for (const auto& [_, meta] : classinfo) {
-        meta->outputIR(classmethods, classfields);
-    }
+    for (const auto& [_, cls] : classinfo)
+        cls->outputIR();
 
     std::cout << "\ncode:\n\n";
 

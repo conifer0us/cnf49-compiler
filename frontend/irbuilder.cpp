@@ -32,14 +32,15 @@ int IRBuilder::getClassSize(std::string classname) {
     return classes[classname]->size();
 }
 
-int IRBuilder::getFieldOffset(std::string member) {
-    for (size_t i = 0; i < members.size(); i++)
-        if (members[i] == member)
-            return i;
-
-    throw std::runtime_error("Could not find member: " +  member);
+int IRBuilder::getFieldOffset(std::string type, std::string fieldname) {
+    for (int i = 0; i < classes[type]->typedFields.size(); i++) {
+        if (classes[type]->typedFields[i].first == fieldname) {
+            // field offset is offset by 1 to account for vtable and multiplied by 8 to align with 64 bit values
+            return 8 * (i + 1);
+        }
+    }
     
-    return -1;
+    throw std::runtime_error("Could not find field: " + fieldname);
 }
 
 int IRBuilder::getMethodOffset(std::string method) {
@@ -48,8 +49,6 @@ int IRBuilder::getMethodOffset(std::string method) {
             return i;
 
     throw std::runtime_error("Could not find method: " + method);
-    
-    return -1;
 }
 
 bool IRBuilder::processBlock(const std::vector<StmtPtr>& statements) {
@@ -61,8 +60,4 @@ bool IRBuilder::processBlock(const std::vector<StmtPtr>& statements) {
     }
 
     return false;
-}
-
-bool IRBuilder::getPinhole() {
-    return pinhole;
 }

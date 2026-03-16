@@ -35,37 +35,38 @@ struct TypeEnv {
 struct Expression : ASTNode {
     virtual ~Expression();
     virtual ValPtr convertToIR(IRBuilder& builder, LclPtr out) const;
+    std::string type;
 
-    virtual std::string getType(const TypeEnv& tenv) const = 0;
+    virtual std::string getType(const TypeEnv& tenv) = 0;
 };
 
 using ExprPtr = std::unique_ptr<Expression>;
 
-struct ThisExpr : Expression {
+struct ThisExpr : public Expression {
     void print(int ind) const override {
         indent(ind);
         std::cout << "this\n";
     }
 
     ValPtr convertToIR(IRBuilder& builder, LclPtr out = nullptr) const override;
-    std::string getType(const TypeEnv& tenv) const override;
+    std::string getType(const TypeEnv& tenv) override;
 };
 
-struct NullExpr : Expression {
-    std::string type;
-
+struct NullExpr : public Expression {
     void print(int ind) const override {
         indent(ind);
         std::cout << "NULL (type=" << type << ")\n";
     }
 
     ValPtr convertToIR(IRBuilder& builder, LclPtr out = nullptr) const override;
-    explicit NullExpr(std::string t) : type(t) {}
+    explicit NullExpr(std::string t) {
+        type = t;
+    }
 
-    std::string getType(const TypeEnv& tenv) const override;
+    std::string getType(const TypeEnv& tenv) override;
 };
 
-struct Constant : Expression {
+struct Constant : public Expression {
     const long value;
 
     void print(int ind) const override {
@@ -76,9 +77,11 @@ struct Constant : Expression {
     ValPtr convertToIR(IRBuilder& builder, LclPtr out = nullptr) const override;
     
     explicit Constant(long val):
-        value(val) {}
+        value(val) {
+            type = "int";
+        }
 
-    std::string getType(const TypeEnv& tenv) const override;
+    std::string getType(const TypeEnv& tenv) override;
 };
 
 struct ClassRef : Expression {
@@ -94,7 +97,7 @@ struct ClassRef : Expression {
     explicit ClassRef(std::string cname):
         classname(std::move(cname)) {}
 
-    std::string getType(const TypeEnv& tenv) const override;
+    std::string getType(const TypeEnv& tenv) override;
 };
 
 struct Binop : Expression {
@@ -117,7 +120,7 @@ struct Binop : Expression {
     Binop(ExprPtr left, char oper, ExprPtr right):
         lhs(std::move(left)), rhs(std::move(right)), op(oper) {}
 
-    std::string getType(const TypeEnv& tenv) const override;
+    std::string getType(const TypeEnv& tenv) override;
 };
 
 struct FieldRead : Expression {
@@ -138,7 +141,7 @@ struct FieldRead : Expression {
     FieldRead(ExprPtr b, std::string fname):
         base(std::move(b)), fieldname(std::move(fname)) {}
 
-    std::string getType(const TypeEnv& tenv) const override;
+    std::string getType(const TypeEnv& tenv) override;
 };
 
 struct Var : Expression {
@@ -153,7 +156,7 @@ struct Var : Expression {
     
     Var(std::string n): name(std::move(n)) {};
 
-    std::string getType(const TypeEnv& tenv) const override;
+    std::string getType(const TypeEnv& tenv) override;
 };
 
 struct MethodCall : Expression {
@@ -183,7 +186,7 @@ struct MethodCall : Expression {
     MethodCall(ExprPtr b, std::string mname, std::vector<ExprPtr> arglist) :
         base(std::move(b)), methodname(std::move(mname)), args(std::move(arglist)) {}
     
-    std::string getType(const TypeEnv& tenv) const override;
+    std::string getType(const TypeEnv& tenv) override;
 };
 
 struct Statement : ASTNode {
@@ -405,9 +408,7 @@ struct Method : ASTNode {
 
     std::shared_ptr<MethodIR> convertToIR(std::string classname, 
         std::map<std::string, std::unique_ptr<ClassMetadata>>& cls,
-        std::vector<std::string>& mem,
         std::vector<std::string>& mthd,
-        bool pinhole,
         bool mainmethod) const;
 
     void typeCheck(std::map<std::string, ClassPtr>& classes, Class* curClass);
@@ -476,7 +477,7 @@ struct Program : ASTNode {
     Program(MethodPtr mainmethod, std::map<std::string, ClassPtr> classlist)
         : main(std::move(mainmethod)), classes(std::move(classlist)) {}
 
-    std::unique_ptr<CFG> convertToIR(bool pinhole = true) const;
+    std::unique_ptr<CFG> convertToIR() const;
     void typeCheck();
 
     void print(int ind) const override {

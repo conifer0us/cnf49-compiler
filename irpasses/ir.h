@@ -494,8 +494,8 @@ struct BasicBlock {
 
 class MethodIR {
     std::string name;
-    std::vector<std::string> locals;
-    std::vector<std::string> args;
+    std::vector<std::pair<std::string, std::string>> typedLocals;
+    std::vector<std::pair<std::string, std::string>> typedArgs;
     std::vector<std::string> temps;
 
     int lastblknum = 0;
@@ -520,12 +520,12 @@ public:
     BasicBlock *getBlock(int index) { return blocks[index].get(); }
     BasicBlock *getStartBlock() { return getBlock(0); }
 
-    std::vector<std::string> getLocals() {
-        return locals;
+    std::vector<std::pair<std::string, std::string>> getLocals() {
+        return typedLocals;
     }
 
-    std::vector<std::string> getArgs() {
-        return args;
+    std::vector<std::pair<std::string, std::string>> getArgs() {
+        return typedArgs;
     }
 
     std::vector<std::string> getTemps() {
@@ -541,32 +541,34 @@ public:
     void registerTemp(std::string tmp) {temps.push_back(tmp);};
 
     ~MethodIR() = default;
-    MethodIR(std::string nm, std::vector<std::string> lcls, std::vector<std::string> ars): name(nm), locals(lcls), args(ars) { newBasicBlock(); }
+    MethodIR(std::string nm, std::vector<std::pair<std::string, std::string>> typedLcls, std::vector<std::pair<std::string, std::string>> typedArs): 
+        name(nm), typedLocals(typedLcls), typedArgs(typedArs) { 
+            newBasicBlock(); 
+        }
 };
 
 // In IR, global method table and field table labeled "vtableCLASSNAME" and "ftableCLASSNAME"
 #define VTABLE(classname) Global("vtable" + classname)
-#define FTABLE(classname) Global("ftable" + classname)
 
 struct ClassMetadata {
     std::vector<std::string> vtable;
-    std::vector<size_t> ftable;
+    std::vector<std::pair<std::string, std::string>> typedFields;
     std::string name;
-    size_t objsize;
 
     int size() {
-        return objsize;
+        return typedFields.size() + 1;
     }
 
-    // output vtable and ftable for the method
-    void outputIR(const std::vector<std::string>& methods, const std::vector<std::string>& fields) const;
+    // output vtable for the method
+    void outputIR() const;
     
-    ClassMetadata(std::string nm) : name(nm) {}
+    ClassMetadata(std::string nm, std::vector<std::pair<std::string, std::string>> typedFlds): 
+        name(nm), typedFields(typedFlds) {}
+    
     ~ClassMetadata() = default;
 };
 
 struct CFG {
-    std::vector<std::string> classfields;
     std::vector<std::string> classmethods;
     std::map<std::string, std::unique_ptr<ClassMetadata>> classinfo;
     std::map<std::string, std::shared_ptr<MethodIR>> methodinfo;
@@ -575,10 +577,9 @@ struct CFG {
     void convertSSA();
     void valueNumberingPass();
 
-    CFG (std::vector<std::string> allfields, std::vector<std::string> allmethods,
+    CFG (std::vector<std::string> allmethods,
             std::map<std::string, std::unique_ptr<ClassMetadata>> classdata,
             std::map<std::string, std::shared_ptr<MethodIR>> methodIR):
-        classfields(std::move(allfields)), 
         classmethods(std::move(allmethods)), 
         classinfo(std::move(classdata)),
         methodinfo(std::move(methodIR)) {}
